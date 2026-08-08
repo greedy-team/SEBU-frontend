@@ -1,11 +1,18 @@
-// features/collegeView/components/DepartmentLabPanel.jsx
+import LabCard from "../../search/components/LabCard";
+
 function DepartmentLabPanel({ department }) {
   return (
     <div>
-      <h4 className="font-bold text-sm mb-3">{department} 연구실</h4>
+      <h4 className="font-bold text-sm mb-3">
+        {department.name}
+        <span className="font-normal text-gray-400 ml-2">
+          연구실 {department.labs.length}개
+        </span>
+      </h4>
       <div className="flex flex-col gap-2">
-        <div className="h-16 bg-gray-100 rounded" />
-        <div className="h-16 bg-gray-100 rounded" />
+        {department.labs.map((lab) => (
+          <LabCard key={lab.id} lab={lab} />
+        ))}
       </div>
     </div>
   );
