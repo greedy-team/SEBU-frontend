@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { mockLabs } from "../data/mockLabs";
+import { mockLabs } from "../../../mocks/mockLabs";
 // import { fetchLaboratories } from "../api/labApi"; // 나중에 주석 해제
 
 export function useLabFilter() {

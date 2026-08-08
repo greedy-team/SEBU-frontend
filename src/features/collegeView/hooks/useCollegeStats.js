@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { mockLabs } from "../../search/data/mockLabs";
+import { mockLabs } from "../../../mocks/mockLabs";
 
 export function useCollegeStats() {
   const colleges = useMemo(() => {
