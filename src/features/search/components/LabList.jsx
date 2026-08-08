@@ -1,4 +1,4 @@
-import LabCard from "./LabCard";
+import LabCard from "../../../components/common/LabCard";
 
 function LabList({ labs }) {
   if (labs.length === 0) {

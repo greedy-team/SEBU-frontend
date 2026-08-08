@@ -1,4 +1,4 @@
-import LabCard from "../../search/components/LabCard";
+import LabCard from "../../../components/common/LabCard";
 
 function DepartmentLabPanel({ department }) {
   return (

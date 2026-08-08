@@ -1,4 +1,4 @@
-import { RECRUITMENT_STATUS } from "../../../constants/recruitmentStatus";
+import { RECRUITMENT_STATUS } from "../../constants/recruitmentStatus";
 
 function LabCard({ lab }) {
   const { name, professor, college, department, recruitmentStatus, bookmarkCount, bookmarked } = lab;
