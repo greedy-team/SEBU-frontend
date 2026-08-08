@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Header from "../../features/search/components/Header";
+import Header from "../../componets/layout/Header";
 import SearchBar from "../../features/search/components/SearchBar";
 import FilterTabs from "../../features/search/components/FilterTabs";
 import CollegeChips from "../../features/search/components/CollegeChips";
