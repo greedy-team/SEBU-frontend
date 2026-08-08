@@ -1,12 +1,10 @@
-// LabList.jsx
+import LabCard from "./LabCard";
+import { mockLabs } from "../data/mockLabs";
 function LabList() {
   return (
     <div className="flex flex-col gap-3">
-      {[1, 2, 3].map((n) => (
-        <div
-          key={n}
-          className="h-24 bg-white border border-gray-200 rounded-lg"
-        />
+      {mockLabs.map((lab) => (
+        <LabCard key={lab.id} lab={lab} />
       ))}
     </div>
   );
