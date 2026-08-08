@@ -6,10 +6,11 @@ function Header() {
 
   return (
     <header className="h-16 border-b border-gray-200 flex items-center px-6 bg-white relative">
-      <span className="font-bold text-blue-600 text-xl">SEBU</span>
+      <Link to="/" className="font-bold text-blue-600 text-xl">
+        SEBU
+      </Link>
 
       <nav className="ml-8 flex gap-6 text-sm text-gray-600">
-        {/* 탐색 드롭다운 */}
         <div className="relative">
           <button
             onClick={() => setIsExploreOpen((prev) => !prev)}
