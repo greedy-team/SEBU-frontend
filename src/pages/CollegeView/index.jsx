@@ -1,9 +1,19 @@
-// src/pages/CollegeView/index.jsx
+// pages/CollegeView/index.jsx
+import Header from "../../components/layout/Header";
+import PageHeader from "../../features/collegeView/components/PageHeader";
+import CollegeAccordionList from "../../features/collegeView/components/CollegeAccordionList";
+
 function CollegeView() {
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold">단과대별 보기</h1>
-      <p className="text-gray-500 mt-2">준비 중인 페이지예요.</p>
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <PageHeader />
+        <div className="mt-6">
+          <CollegeAccordionList />
+        </div>
+      </div>
     </div>
   );
 }
