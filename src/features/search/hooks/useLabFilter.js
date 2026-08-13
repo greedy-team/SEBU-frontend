@@ -8,7 +8,6 @@ export function useLabFilter() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortType, setSortType] = useState("RECENT");
 
-  // 💡 수정됨: college가 아니라 colleges 배열로 변경!
   const [filters, setFilters] = useState({
     colleges: [],
     recruitmentStatus: null,
@@ -24,14 +23,12 @@ export function useLabFilter() {
     return [...map.values()];
   }, [rawLabs]);
 
-  // 💡 수정됨: 배열일 경우 넣고 빼는(Toggle) 로직 추가
   const handleFilterChange = (category, value) => {
     setFilters((prev) => {
       if (category === "colleges") {
         if (Array.isArray(value) && value.length === 0) {
-          return { ...prev, colleges: [] }; // 배열 리셋
+          return { ...prev, colleges: [] };
         }
-        // 기존 토글 로직
         const isAlreadySelected = prev.colleges.includes(value);
         const newColleges = isAlreadySelected
           ? prev.colleges.filter((id) => id !== value)

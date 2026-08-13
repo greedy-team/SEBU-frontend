@@ -3,9 +3,8 @@ const matchSearchTerm = (lab, term) => {
   return lab.name.includes(term) || lab.professor.name.includes(term);
 };
 
-// 💡 수정됨: collegeIds가 배열로 들어옵니다.
 const matchColleges = (lab, collegeIds) => {
-  if (!collegeIds || collegeIds.length === 0) return true; // 아무것도 선택 안 했으면 통과
+  if (!collegeIds || collegeIds.length === 0) return true;
   return collegeIds.includes(lab.college.id);
 };
 

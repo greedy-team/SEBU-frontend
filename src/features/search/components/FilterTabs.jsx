@@ -9,7 +9,6 @@ function FilterTabs({ activeTab, setActiveTab, filters }) {
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
 
-        // 💡 수정됨: 배열이면 갯수를, 아니면 1을 반환
         let activeCount = 0;
         if (tab.filterKey === "colleges") {
           activeCount = filters.colleges.length;
@@ -20,7 +19,7 @@ function FilterTabs({ activeTab, setActiveTab, filters }) {
         return (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)} // 닫히지 않고 계속 열려있게!
+            onClick={() => setActiveTab(tab.id)}
             className={`pb-3 text-sm font-bold flex items-center gap-1.5 border-b-2 transition-colors ${
               isActive
                 ? "border-blue-500 text-blue-600"
@@ -28,7 +27,6 @@ function FilterTabs({ activeTab, setActiveTab, filters }) {
             }`}
           >
             {tab.label}
-            {/* 💡 선택된 갯수 뱃지 띄우기 */}
             {activeCount > 0 && (
               <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs text-white bg-blue-500 rounded-full">
                 {activeCount}
