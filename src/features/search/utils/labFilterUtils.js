@@ -1,0 +1,36 @@
+const matchSearchTerm = (lab, term) => {
+  if (!term) return true;
+  return lab.name.includes(term) || lab.professor.name.includes(term);
+};
+
+// 💡 수정됨: collegeIds가 배열로 들어옵니다.
+const matchColleges = (lab, collegeIds) => {
+  if (!collegeIds || collegeIds.length === 0) return true; // 아무것도 선택 안 했으면 통과
+  return collegeIds.includes(lab.college.id);
+};
+
+const matchStatus = (lab, status) => {
+  if (!status) return true;
+  return lab.recruitmentStatus === status;
+};
+
+export const applyFilters = (labs, filters, searchTerm) => {
+  return labs.filter(
+    (lab) =>
+      matchSearchTerm(lab, searchTerm) &&
+      matchColleges(lab, filters.colleges) &&
+      matchStatus(lab, filters.recruitmentStatus),
+  );
+};
+
+export const applySorting = (labs, sortType) => {
+  const copy = [...labs];
+  switch (sortType) {
+    case "POPULAR":
+      return copy.sort((a, b) => b.bookmarkCount - a.bookmarkCount);
+    case "NAME_ASC":
+      return copy.sort((a, b) => a.name.localeCompare(b.name));
+    default:
+      return copy;
+  }
+};
