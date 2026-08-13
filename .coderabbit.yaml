@@ -1,0 +1,12 @@
+# CodeRabbit AI 한국어 설정
+language: "ko-KR"
+
+reviews:
+  profile: "chill"
+  auto_review:
+    enabled: true
+  request_changes_workflow: false
+
+chat:
+  auto_reply: true
+  
