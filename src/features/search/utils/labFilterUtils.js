@@ -10,6 +10,14 @@ const matchColleges = (lab, collegeIds) => {
 
 const matchStatus = (lab, status) => {
   if (!status) return true;
+
+  if (status === "OPEN") {
+    return (
+      lab.recruitmentStatus === "RECRUITING" ||
+      lab.recruitmentStatus === "ALWAYS_OPEN"
+    );
+  }
+
   return lab.recruitmentStatus === status;
 };
 

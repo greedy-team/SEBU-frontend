@@ -1,8 +1,7 @@
 // src/features/search/components/StatusChips.jsx
 function StatusChips({ selected, onSelect }) {
   const statuses = [
-    { id: "RECRUITING", label: "모집중" },
-    { id: "ALWAYS_OPEN", label: "상시모집" },
+    { id: "OPEN", label: "모집중 (상시 포함)" },
     { id: "CLOSED", label: "마감" },
   ];
 

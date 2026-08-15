@@ -26,12 +26,12 @@ function DetailedFilterPanel({
           />
         )}
 
-        {activeTab === "status" && (
+        {/* {activeTab === "status" && (
           <StatusChips
             selected={filters.recruitmentStatus}
             onSelect={(status) => onFilterChange("recruitmentStatus", status)}
           />
-        )}
+        )} */}
       </div>
     </div>
   );

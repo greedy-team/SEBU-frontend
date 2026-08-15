@@ -1,7 +1,7 @@
 function FilterTabs({ activeTab, setActiveTab, filters }) {
   const tabs = [
     { id: "college", label: "단과대/학과", filterKey: "colleges" },
-    { id: "status", label: "모집 상태", filterKey: "recruitmentStatus" },
+    // { id: "status", label: "모집 상태", filterKey: "recruitmentStatus" },
   ];
 
   return (
