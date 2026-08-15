@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { fetchLaboratories } from "../api/labApi";
+import { fetchLaboratories } from "../../../api/labApi";
 import { applyFilters, applySorting } from "../utils/labFilterUtils";
 
 export function useLabFilter() {
