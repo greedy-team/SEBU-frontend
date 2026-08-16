@@ -1,12 +1,15 @@
 import { RECRUITMENT_STATUS } from "../../constants/recruitmentStatus";
+import { useState } from "react";
 
 function LabDetailModal({ lab, onClose }) {
   const status = RECRUITMENT_STATUS[lab.recruitmentStatus];
-
+  const [copied, setCopied] = useState(false);
   const handleCopyEmail = (email) => {
-    navigator.clipboard.writeText(email);
+    navigator.clipboard.writeText(email).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // 2초 후 원래대로
+    });
   };
-
   return (
     <div
       className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
@@ -77,31 +80,19 @@ function LabDetailModal({ lab, onClose }) {
           </div>
 
           <hr className="border-gray-100" />
-
-          {/* 6. 컨택 이메일 - 데이터 없어서 주석 처리 */}
-          {/* <div>
-            <p className="text-xs text-gray-400 mb-2">컨택 이메일</p>
-            <div className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
-              <span className="text-sm font-medium">{lab.contactEmail}</span>
-              <button
-                onClick={() => handleCopyEmail(lab.contactEmail)}
-                className="text-xs text-gray-400 flex items-center gap-1 hover:text-gray-600"
-              >
-                복사
-              </button>
-            </div>
-          </div> */}
-
-          {/* 교수 이메일 임시로 활용 */}
           <div>
             <p className="text-xs text-gray-400 mb-2">컨택 이메일</p>
             <div className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
               <span className="text-sm font-medium">{lab.professor.email}</span>
               <button
                 onClick={() => handleCopyEmail(lab.professor.email)}
-                className="text-xs text-gray-400 flex items-center gap-1 hover:text-gray-600"
+                className={`text-xs flex items-center gap-1 transition ${
+                  copied
+                    ? "text-green-500"
+                    : "text-gray-400 hover:text-gray-600"
+                }`}
               >
-                🗒 복사
+                {copied ? "✓ 복사됨" : "🗒 복사"}
               </button>
             </div>
           </div>
