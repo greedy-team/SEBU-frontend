@@ -6,7 +6,7 @@ export function useLabFilter() {
   const [rawLabs, setRawLabs] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortType, setSortType] = useState("RECENT");
+  const [sortType, setSortType] = useState("NAME_ASC");
 
   const [filters, setFilters] = useState({
     colleges: [],
