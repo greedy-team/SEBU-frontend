@@ -20,7 +20,7 @@ function LabDetailModal({ lab, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* 1. 헤더 - 모집상태 + 닫기 */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-4">
+        <div className="flex items-center justify-end px-6 pt-6 pb-4">
           {/* <span
             className={`text-sm font-medium flex items-center gap-1.5 ${status.color}`}
           >
