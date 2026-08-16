@@ -8,6 +8,7 @@ function RecommendedLabs() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const topLabs = useMemo(() => {
     return [...mockLabs]
@@ -17,7 +18,7 @@ function RecommendedLabs() {
 
   // 접힌 상태일 때만 2.5초마다 롤링
   useEffect(() => {
-    if (isExpanded) return;
+    if (isExpanded || isHovered) return;
 
     const interval = setInterval(() => {
       setIsAnimating(true);
@@ -28,7 +29,7 @@ function RecommendedLabs() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [isExpanded, topLabs.length]);
+  }, [isExpanded, isHovered, topLabs.length]);
 
   return (
     <>
@@ -46,7 +47,11 @@ function RecommendedLabs() {
 
         {/* 접힌 상태: 롤링 */}
         {!isExpanded && (
-          <div className="overflow-hidden h-12">
+          <div
+            className="overflow-hidden h-12"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             <button
               onClick={() => setSelectedLab(topLabs[currentIndex])}
               className={`flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 text-left w-full transition-all duration-300 ${
