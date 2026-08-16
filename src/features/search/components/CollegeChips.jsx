@@ -11,7 +11,7 @@ function CollegeChips({ colleges, selectedColleges, onSelect }) {
             className={`px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5 transition-all border ${
               isSelected
                 ? "bg-blue-50 text-blue-600 border-blue-200"
-                : "bg-gray-50 text-gray-600 border-transparent hover:bg-gray-100"
+                : "bg-gray-50 text-gray-600 border-blue-200 hover:bg-gray-100"
             }`}
           >
             {isSelected && <span className="font-bold text-blue-600">✓</span>}
