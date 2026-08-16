@@ -1,29 +1,24 @@
-function CollegeChips({ colleges, selected, onSelect }) {
+function CollegeChips({ colleges, selectedColleges, onSelect }) {
   return (
-    <div className="mt-3 flex gap-2 flex-wrap">
-      <button
-        onClick={() => onSelect(null)}
-        className={`px-3 py-1.5 rounded-full text-xs border ${
-          selected === null
-            ? "bg-blue-600 text-white border-blue-600"
-            : "bg-white text-gray-600 border-gray-200"
-        }`}
-      >
-        전체
-      </button>
-      {colleges.map((college) => (
-        <button
-          key={college.id}
-          onClick={() => onSelect(college.id)}
-          className={`px-3 py-1.5 rounded-full text-xs border ${
-            selected === college.id
-              ? "bg-blue-600 text-white border-blue-600"
-              : "bg-white text-gray-600 border-gray-200"
-          }`}
-        >
-          {college.name}
-        </button>
-      ))}
+    <div className="mt-4 flex gap-2.5 flex-wrap">
+      {colleges.map((college) => {
+        const isSelected = selectedColleges.includes(college.id);
+
+        return (
+          <button
+            key={college.id}
+            onClick={() => onSelect(college.id)}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5 transition-all border ${
+              isSelected
+                ? "bg-blue-50 text-blue-600 border-blue-200"
+                : "bg-gray-50 text-gray-600 border-transparent hover:bg-gray-100"
+            }`}
+          >
+            {isSelected && <span className="font-bold text-blue-600">✓</span>}
+            {college.name}
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -1,12 +1,26 @@
-import { useMemo } from "react";
-import { mockLabs } from "../../../mocks/mockLabs";
+import { useMemo, useState, useEffect } from "react";
+import { fetchLaboratories } from "../../../api/labApi";
 
 export function useCollegeStats() {
+  const [labs, setLabs] = useState([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await fetchLaboratories();
+        setLabs(data);
+      } catch (error) {
+        console.error("연구실 데이터를 불러오지 못했습니다.", error);
+      }
+    };
+    loadData();
+  }, []);
+
   const colleges = useMemo(() => {
     // 단과대 기준으로 group by
     const collegeMap = new Map();
 
-    mockLabs.forEach((lab) => {
+    labs.forEach((lab) => {
       const { college, department } = lab;
 
       if (!collegeMap.has(college.id)) {
@@ -38,11 +52,12 @@ export function useCollegeStats() {
         departments,
         totalLabs: allLabs.length,
         recruitingCount: allLabs.filter(
+          // (참고) 여기도 "OPEN" 기준으로 합치려면 아까 배운 OR 조건을 쓸 수 있음.
           (lab) => lab.recruitmentStatus === "RECRUITING",
         ).length,
       };
     });
-  }, []);
+  }, [labs]);
 
   // 전체 통계
   const totalColleges = colleges.length;

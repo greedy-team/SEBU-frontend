@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Header from "../../components/layout/Header";
 import SearchBar from "../../features/search/components/SearchBar";
-import FilterTabs from "../../features/search/components/FilterTabs";
-import CollegeChips from "../../features/search/components/CollegeChips";
+import DetailedFilterPanel from "../../features/search/components/DetailedFilterPanel";
+import ActiveFilterBar from "../../features/search/components/ActiveFilterBar"; // 🔥 불러오기!
 import LabList from "../../features/search/components/LabList";
 import RecommendedLabs from "../../features/search/components/RecommendedLabs";
 import PopularPosts from "../../features/search/components/PopularPosts";
@@ -10,12 +10,13 @@ import { useLabFilter } from "../../features/search/hooks/useLabFilter";
 
 function SearchPage() {
   const [activeTab, setActiveTab] = useState(null);
+
   const {
     searchInput,
     setSearchInput,
     handleSearch,
-    selectedCollege,
-    setSelectedCollege,
+    filters,
+    handleFilterChange,
     colleges,
     filteredLabs,
   } = useLabFilter();
@@ -30,15 +31,22 @@ function SearchPage() {
           onChange={setSearchInput}
           onSearch={handleSearch}
         />
-        <FilterTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        {activeTab === "college" && (
-          <CollegeChips
-            colleges={colleges}
-            selected={selectedCollege}
-            onSelect={setSelectedCollege}
-          />
-        )}
+        {/* 1. 카테고리 탭과 칩 선택 영역 */}
+        <DetailedFilterPanel
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          colleges={colleges}
+        />
+
+        {/* 2. 💡 방금 새로 만든, 선택된 칩들이 모여있는 엑티브 바 영역! */}
+        <ActiveFilterBar
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          colleges={colleges}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mt-6">
           <LabList labs={filteredLabs} />
