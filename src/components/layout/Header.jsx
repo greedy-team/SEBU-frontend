@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
 
 function Header() {
   const [isExploreOpen, setIsExploreOpen] = useState(false);
+  const user = useAuthStore((state) => state.user);
 
   return (
     <header className="h-16 border-b border-gray-200 flex items-center px-6 bg-white relative">
@@ -35,7 +37,21 @@ function Header() {
         <span>커뮤니티</span>
       </nav>
 
-      <div className="ml-auto text-sm text-gray-500">로그인</div>
+      {user ? (
+        <Link
+          to="/mypage-setup"
+          className="ml-auto text-sm font-semibold text-gray-700 hover:text-blue-600 transition-colors"
+        >
+          마이페이지
+        </Link>
+      ) : (
+        <Link
+          to="/login"
+          className="ml-auto text-sm text-gray-500 hover:text-blue-600 transition-colors"
+        >
+          로그인
+        </Link>
+      )}
     </header>
   );
 }
