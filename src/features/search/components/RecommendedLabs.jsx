@@ -8,7 +8,6 @@ function RecommendedLabs() {
 
   const topLabs = useMemo(() => {
     return [...mockLabs]
-      .filter((lab) => lab.recruitmentStatus !== "CLOSED")
       .sort((a, b) => b.bookmarkCount - a.bookmarkCount)
       .slice(0, 3);
   }, []);
