@@ -33,9 +33,9 @@ function LabCard({ lab }) {
 
           <div className="flex items-center gap-2">
             <h3 className="font-bold text-base">{name}</h3>
-            <span className={`text-xs font-medium ${status.color}`}>
+            {/* <span className={`text-xs font-medium ${status.color}`}>
               ● {status.label}
-            </span>
+            </span> */}
           </div>
 
           <p className="text-sm text-gray-500 mt-1">{professor.name} 교수</p>
