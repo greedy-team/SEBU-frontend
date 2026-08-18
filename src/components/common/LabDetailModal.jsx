@@ -99,7 +99,9 @@ function LabDetailModal({ lab, onClose }) {
                 </button>
               </div>
             ) : (
-              <p className="text-sm text-gray-500">컨택 이메일이 없습니다.</p>
+              <p className="text-sm text-gray-500">
+                컨택 이메일이 없습니다 직접 문의 부탁드립니다.
+              </p>
             )}
           </div>
 
