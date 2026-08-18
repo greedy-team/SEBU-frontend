@@ -100,14 +100,18 @@ function LabDetailModal({ lab, onClose }) {
           {/* 7. 연구실 홈페이지 */}
           <div>
             <p className="text-xs text-gray-400 mb-2">연구실 홈페이지</p>
-            <a
-              href={lab.websiteUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 bg-blue-50 rounded-lg px-4 py-3 text-blue-600 text-sm font-medium hover:bg-blue-100"
-            >
-              🔗 {lab.websiteUrl}
-            </a>
+            {lab.websiteUrl ? (
+              <a
+                href={lab.websiteUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 bg-blue-50 rounded-lg px-4 py-3 text-blue-600 text-sm font-medium hover:bg-blue-100"
+              >
+                🔗 {lab.websiteUrl}
+              </a>
+            ) : (
+              <p className="text-sm text-gray-500">홈페이지 링크가 없습니다.</p>
+            )}
           </div>
         </div>
 
