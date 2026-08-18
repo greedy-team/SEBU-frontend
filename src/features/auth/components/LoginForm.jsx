@@ -13,7 +13,7 @@ function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log("2단계 - 입력값 확인:", studentId, password);
+    if (isLoading) return;
 
     executeLogin(studentId, password, (failType) => {
       if (failType === "studentId") studentIdRef.current.focus();

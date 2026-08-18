@@ -27,7 +27,6 @@ export const useLogin = () => {
 
     try {
       const { ok, result } = await sejongLogin(studentId, password);
-      console.log("3단계 - 서버 응답:", result);
 
       if (!ok || !result.success) {
         const errorCode = result.error?.code;
@@ -39,14 +38,7 @@ export const useLogin = () => {
         return;
       }
 
-      console.log(
-        "4단계 - 토큰/유저:",
-        result.data.accessToken,
-        result.data.user,
-      );
-
       setAuth(result.data.accessToken, result.data.user);
-      console.log("5단계 - Zustand 저장 완료!");
 
       if (result.data.user.profileCompleted) {
         navigate("/");
