@@ -82,19 +82,25 @@ function LabDetailModal({ lab, onClose }) {
           <hr className="border-gray-100" />
           <div>
             <p className="text-xs text-gray-400 mb-2">컨택 이메일</p>
-            <div className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
-              <span className="text-sm font-medium">{lab.professor.email}</span>
-              <button
-                onClick={() => handleCopyEmail(lab.professor.email)}
-                className={`text-xs flex items-center gap-1 transition ${
-                  copied
-                    ? "text-green-500"
-                    : "text-gray-400 hover:text-gray-600"
-                }`}
-              >
-                {copied ? "✓ 복사됨" : "🗒 복사"}
-              </button>
-            </div>
+            {lab.professor.email ? (
+              <div className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                <span className="text-sm font-medium">
+                  {lab.professor.email}
+                </span>
+                <button
+                  onClick={() => handleCopyEmail(lab.professor.email)}
+                  className={`text-xs flex items-center gap-1 transition ${
+                    copied
+                      ? "text-green-500"
+                      : "text-gray-400 hover:text-gray-600"
+                  }`}
+                >
+                  {copied ? "✓ 복사됨" : "🗒 복사"}
+                </button>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500">컨택 이메일이 없습니다.</p>
+            )}
           </div>
 
           {/* 7. 연구실 홈페이지 */}
