@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { mockLabs } from "../../../mocks/mockLabs";
-import ComingSoonModal from "../../../components/common/ComingSoonModal";
 import { RECRUITMENT_STATUS } from "../../../constants/recruitmentStatus";
+import LabDetailModal from "../../../components/common/LabDetailModal";
 
 function RecommendedLabs() {
   const [selectedLab, setSelectedLab] = useState(null);
@@ -16,7 +16,6 @@ function RecommendedLabs() {
       .slice(0, 5);
   }, []);
 
-  // 접힌 상태일 때만 2.5초마다 롤링
   useEffect(() => {
     if (isExpanded || isHovered) return;
 
@@ -25,7 +24,7 @@ function RecommendedLabs() {
       setTimeout(() => {
         setCurrentIndex((prev) => (prev + 1) % topLabs.length);
         setIsAnimating(false);
-      }, 400); // 애니메이션 지속시간
+      }, 400);
     }, 3000);
 
     return () => clearInterval(interval);
@@ -34,7 +33,6 @@ function RecommendedLabs() {
   return (
     <>
       <div className="bg-white border border-gray-200 rounded-lg p-4">
-        {/* 헤더 */}
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-sm">인기 · 추천 연구실</h3>
           <button
@@ -79,17 +77,15 @@ function RecommendedLabs() {
                   {topLabs[currentIndex]?.college.name}
                 </p>
               </div>
+              {/* 모집 상태 뱃지 - 추후 표시 여부 논의 후 주석 해제
               <span
                 className={`text-xs shrink-0 ${
-                  RECRUITMENT_STATUS[topLabs[currentIndex]?.recruitmentStatus]
-                    ?.color
+                  RECRUITMENT_STATUS[topLabs[currentIndex]?.recruitmentStatus]?.color
                 }`}
               >
-                {
-                  RECRUITMENT_STATUS[topLabs[currentIndex]?.recruitmentStatus]
-                    ?.label
-                }
+                {RECRUITMENT_STATUS[topLabs[currentIndex]?.recruitmentStatus]?.label}
               </span>
+              */}
             </button>
           </div>
         )}
@@ -98,7 +94,7 @@ function RecommendedLabs() {
         {isExpanded && (
           <div className="flex flex-col gap-2">
             {topLabs.map((lab, index) => {
-              const status = RECRUITMENT_STATUS[lab.recruitmentStatus];
+              // const status = RECRUITMENT_STATUS[lab.recruitmentStatus];
               return (
                 <button
                   key={lab.id}
@@ -124,9 +120,11 @@ function RecommendedLabs() {
                       {lab.college.name}
                     </p>
                   </div>
+                  {/* 모집 상태 뱃지 - 추후 표시 여부 논의 후 주석 해제
                   <span className={`text-xs shrink-0 ${status.color}`}>
                     {status.label}
                   </span>
+                  */}
                 </button>
               );
             })}
@@ -134,7 +132,12 @@ function RecommendedLabs() {
         )}
       </div>
 
-      {selectedLab && <ComingSoonModal onClose={() => setSelectedLab(null)} />}
+      {selectedLab && (
+        <LabDetailModal
+          lab={selectedLab}
+          onClose={() => setSelectedLab(null)}
+        />
+      )}
     </>
   );
 }

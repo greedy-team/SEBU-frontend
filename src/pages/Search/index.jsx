@@ -9,7 +9,7 @@ import PopularPosts from "../../features/search/components/PopularPosts";
 import { useLabFilter } from "../../features/search/hooks/useLabFilter";
 
 function SearchPage() {
-  const [activeTab, setActiveTab] = useState(null);
+  const [activeTab, setActiveTab] = useState("college");
 
   const {
     searchInput,

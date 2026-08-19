@@ -2,11 +2,11 @@ export const mockLabs = [
   {
     id: 1001,
     name: "인공지능연구실",
-    websiteUrl: "https://lab1001.example.ac.kr",
+    websiteUrl: null,
     professor: {
       id: 500,
       name: "오은우",
-      email: "prof500@example.ac.kr",
+      email: null,
     },
     college: {
       id: 3,

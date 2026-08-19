@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { RECRUITMENT_STATUS } from "../../constants/recruitmentStatus";
-import ComingSoonModal from "./ComingSoonModal";
+//import { RECRUITMENT_STATUS } from "../../constants/recruitmentStatus";
+import LabDetailModal from "./LabDetailModal";
 
 function LabCard({ lab }) {
   const [showModal, setShowModal] = useState(false);
@@ -13,7 +13,7 @@ function LabCard({ lab }) {
     bookmarkCount,
     bookmarked,
   } = lab;
-  const status = RECRUITMENT_STATUS[recruitmentStatus];
+  //const status = RECRUITMENT_STATUS[recruitmentStatus];
 
   return (
     <>
@@ -42,17 +42,16 @@ function LabCard({ lab }) {
         </div>
 
         <div className="flex flex-col items-end gap-1 text-gray-400 text-xs">
-          <button
-            aria-label="북마크"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <button aria-label="북마크" onClick={(e) => e.stopPropagation()}>
             {bookmarked ? "★" : "☆"}
           </button>
           <span>{bookmarkCount}</span>
         </div>
       </div>
 
-      {showModal && <ComingSoonModal onClose={() => setShowModal(false)} />}
+      {showModal && (
+        <LabDetailModal lab={lab} onClose={() => setShowModal(false)} />
+      )}
     </>
   );
 }
