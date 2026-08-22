@@ -115,7 +115,10 @@ function MyPage() {
         <SummaryCards summary={summary} />
 
         {/* 관심 랩실 */}
-        <BookmarkedLabs />
+        <BookmarkedLabs
+          items={pageData.bookmarkedLaboratories.items}
+          hasNext={pageData.bookmarkedLaboratories.hasNext}
+        />
 
         {/* 북마크 게시글 */}
         <BookmarkedPosts />
