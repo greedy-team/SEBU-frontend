@@ -27,7 +27,7 @@ export const handlers = [
         { status: 401 },
       );
     }
-    if (studentId === "001") {
+    if (studentId === "0001") {
       return HttpResponse.json(
         {
           success: false,
