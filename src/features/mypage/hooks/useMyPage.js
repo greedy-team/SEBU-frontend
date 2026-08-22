@@ -10,7 +10,10 @@ export function useMyPage() {
   const accessToken = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
-    if (!accessToken) return;
+    if (!accessToken) {
+      setIsLoading(false);
+      return;
+    }
 
     const fetchMyPage = async () => {
       setIsLoading(true);
