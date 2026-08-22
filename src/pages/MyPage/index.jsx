@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import ProfileHeader from "../../features/mypage/components/ProfileHeader";
@@ -7,54 +7,81 @@ import ProfileView from "../../features/mypage/components/ProfileView";
 import SummaryCards from "../../features/mypage/components/SummaryCards";
 import BookmarkedLabs from "../../features/mypage/components/BookmarkedLabs";
 import BookmarkedPosts from "../../features/mypage/components/BookmarkedPosts";
-
-// 임시 더미 데이터 (나중에 API로 교체)
-const DUMMY_PROFILE_COMPLETED = {
-  profile: {
-    name: "김세종",
-    grade: 3,
-    major: { id: "12", name: "소프트웨어학과" },
-    gpaBand: "GTE_3_5",
-    introduction: "머신러닝에 관심있습니다.",
-    profileCompleted: true,
-    profileUpdatedAt: "2026-08-17T01:30:00Z",
-  },
-  summary: {
-    bookmarkedLaboratoryCount: 0,
-    bookmarkedPostCount: 0,
-    receivedRecommendationCount: 0,
-  },
-};
-
-const DUMMY_PROFILE_EMPTY = {
-  profile: {
-    name: null,
-    grade: null,
-    major: null,
-    gpaBand: null,
-    introduction: null,
-    profileCompleted: false,
-    profileUpdatedAt: null,
-  },
-  summary: {
-    bookmarkedLaboratoryCount: 0,
-    bookmarkedPostCount: 0,
-    receivedRecommendationCount: 0,
-  },
-};
+import { useMyPage } from "../../features/mypage/hooks/useMyPage";
+import { useProfileForm } from "../../features/mypage/hooks/useProfileForm";
 
 function MyPage() {
-  // 테스트용 - true면 프로필 완성, false면 미완성
-  //const data = DUMMY_PROFILE_COMPLETED;
-   const data = DUMMY_PROFILE_EMPTY; // 미완성 테스트할 때 이걸로 교체
+  const navigate = useNavigate();
+  const { data, isLoading: isPageLoading, error: pageError } = useMyPage();
+  const [pageData, setPageData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const { profile, summary } = data;
-  const [isEditing, setIsEditing] = useState(!profile.profileCompleted);
+  // useMyPage에서 데이터 받으면 pageData에 저장
+  useEffect(() => {
+    if (data) {
+      setPageData(data);
+      setIsEditing(!data.profile.profileCompleted);
+    }
+  }, [data]);
 
-  const handleSubmit = (formData) => {
-    console.log("저장할 데이터:", formData);
-    // 나중에 API 연결
-  };
+  // 로그인 안 된 상태면 로그인 페이지로
+  useEffect(() => {
+    if (!isPageLoading && !data) {
+      navigate("/login");
+    }
+  }, [isPageLoading, data, navigate]);
+
+  const {
+    handleSubmit,
+    isLoading: isFormLoading,
+    introError,
+    formError,
+  } = useProfileForm(pageData?.profile, (savedProfile) => {
+    setPageData((prev) => ({
+      ...prev,
+      profile: savedProfile,
+    }));
+    setIsEditing(false);
+  });
+
+  // 로딩 중
+  if (isPageLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-2xl mx-auto px-4 py-8 flex items-center justify-center">
+          <p className="text-gray-400 text-sm">불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 에러
+  if (pageError) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-2xl mx-auto px-4 py-8 flex items-center justify-center">
+          <p className="text-red-400 text-sm">{pageError}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // pageData 없을 때 (navigate 처리 중)
+  if (!pageData) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-2xl mx-auto px-4 py-8 flex items-center justify-center">
+          <p className="text-gray-400 text-sm">불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { profile, summary } = pageData;
+  const showForm = !profile.profileCompleted || isEditing;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -72,11 +99,13 @@ function MyPage() {
         />
 
         {/* 프로필 폼 or 뷰 */}
-        {isEditing ? (
+        {showForm ? (
           <ProfileForm
             initialData={profile}
             onSubmit={handleSubmit}
-            isLoading={false}
+            isLoading={isFormLoading}
+            introError={introError}
+            formError={formError}
           />
         ) : (
           <ProfileView profile={profile} onEdit={() => setIsEditing(true)} />

@@ -7,7 +7,13 @@ const GPA_BAND = [
   { value: "GTE_4_0", label: "4.0 이상" },
 ];
 
-function ProfileForm({ initialData = {}, onSubmit, isLoading }) {
+function ProfileForm({
+  initialData = {},
+  onSubmit,
+  isLoading,
+  introError,
+  formError,
+}) {
   const [name, setName] = useState(initialData.name || "");
   const [grade, setGrade] = useState(initialData.grade || null);
   const [major, setMajor] = useState(initialData.major?.name || "");
@@ -15,8 +21,6 @@ function ProfileForm({ initialData = {}, onSubmit, isLoading }) {
   const [introduction, setIntroduction] = useState(
     initialData.introduction || "",
   );
-  const [introError, setIntroError] = useState(""); // 자기소개 에러
-  const [formError, setFormError] = useState(""); // 폼 전체 에러
 
   // 필수값 모두 입력됐는지 확인
   const isValid = name.trim() && grade && major.trim();
@@ -33,7 +37,7 @@ function ProfileForm({ initialData = {}, onSubmit, isLoading }) {
 
   return (
     <div className="bg-white rounded-xl p-6 flex flex-col gap-5">
-      {/* 폼 전체 에러 (429, 503) */}
+      {/* 폼 전체 에러 (429, 503) - props로 받음 */}
       {formError && (
         <p className="text-sm text-red-500 bg-red-50 px-4 py-3 rounded-lg">
           {formError}
@@ -124,16 +128,13 @@ function ProfileForm({ initialData = {}, onSubmit, isLoading }) {
         </label>
         <textarea
           value={introduction}
-          onChange={(e) => {
-            setIntroduction(e.target.value);
-            setIntroError("");
-          }}
+          onChange={(e) => setIntroduction(e.target.value)}
           placeholder="안녕하세요. 머신러닝과 컴퓨터 비전에 관심이 많은 3학년 학생입니다..."
           maxLength={500}
           rows={5}
           className="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl outline-none focus:border-blue-500 focus:bg-white transition-colors text-sm resize-none"
         />
-        {/* 자기소개 에러 (422) */}
+        {/* 자기소개 에러 (422) - props로 받음 */}
         {introError && (
           <p className="text-xs text-red-500 mt-1">{introError}</p>
         )}
