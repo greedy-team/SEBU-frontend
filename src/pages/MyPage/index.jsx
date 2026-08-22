@@ -1,6 +1,6 @@
 import Header from "../../components/layout/Header";
 
-function MyPageSetup() {
+function MyPage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -16,4 +16,4 @@ function MyPageSetup() {
   );
 }
 
-export default MyPageSetup;
+export default MyPage;

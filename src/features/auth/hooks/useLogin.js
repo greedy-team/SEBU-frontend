@@ -43,7 +43,7 @@ export const useLogin = () => {
       if (result.data.user.profileCompleted) {
         navigate("/");
       } else {
-        navigate("/mypage-setup");
+        navigate("/mypage");
       }
     } catch (error) {
       setErrorInfo({ message: "서버와 연결할 수 없습니다.", field: "global" });
