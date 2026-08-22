@@ -37,6 +37,8 @@ export const applySorting = (labs, sortType) => {
       return copy.sort((a, b) => b.bookmarkCount - a.bookmarkCount);
     case "NAME_ASC":
       return copy.sort((a, b) => a.name.localeCompare(b.name));
+    case "NAME_DESC":
+      return copy.sort((a, b) => b.name.localeCompare(a.name));
     default:
       return copy;
   }
