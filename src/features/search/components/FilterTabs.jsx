@@ -5,7 +5,7 @@ function FilterTabs({ activeTab, setActiveTab, filters }) {
   ];
 
   return (
-    <div className="flex gap-8 border-b border-gray-200 mt-2">
+    <div className="mt-2 flex gap-8 border-b border-gray-200">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
 
@@ -20,15 +20,22 @@ function FilterTabs({ activeTab, setActiveTab, filters }) {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`pb-3 text-sm font-bold flex items-center gap-1.5 border-b-2 transition-colors ${
+            /* -mb-px 로 활성 밑줄이 컨테이너 경계선 위에 겹치게 해서 선을 또렷하게 만듭니다 */
+            className={`-mb-px flex items-center gap-1.5 border-b-2 pb-3 text-[15px] font-bold transition-colors ${
               isActive
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-400 hover:text-gray-600"
+                ? "border-brand-500 text-brand-600"
+                : "border-transparent text-gray-400 hover:text-gray-700"
             }`}
           >
             {tab.label}
             {activeCount > 0 && (
-              <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs text-white bg-blue-500 rounded-full">
+              <span
+                className={`flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-bold transition-colors ${
+                  isActive
+                    ? "bg-brand-500 text-white"
+                    : "bg-gray-200 text-gray-600"
+                }`}
+              >
                 {activeCount}
               </span>
             )}
