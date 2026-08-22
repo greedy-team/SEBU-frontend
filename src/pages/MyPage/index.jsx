@@ -121,7 +121,10 @@ function MyPage() {
         />
 
         {/* 북마크 게시글 */}
-        <BookmarkedPosts />
+        <BookmarkedPosts
+          items={pageData.bookmarkedPosts.items}
+          hasNext={pageData.bookmarkedPosts.hasNext}
+        />
       </div>
     </div>
   );
