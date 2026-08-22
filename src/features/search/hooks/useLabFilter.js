@@ -47,6 +47,7 @@ export function useLabFilter() {
   }, [rawLabs, filters, searchTerm, sortType]);
 
   return {
+    rawLabs,
     searchInput,
     setSearchInput,
     handleSearch,

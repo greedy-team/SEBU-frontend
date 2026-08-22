@@ -12,6 +12,7 @@ function SearchPage() {
   const [activeTab, setActiveTab] = useState("college");
 
   const {
+    rawLabs,
     searchInput,
     setSearchInput,
     handleSearch,
@@ -51,7 +52,7 @@ function SearchPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mt-6">
           <LabList labs={filteredLabs} />
           <div className="flex flex-col gap-4">
-            <RecommendedLabs />
+            <RecommendedLabs labs={rawLabs} />
             <PopularPosts />
           </div>
         </div>
