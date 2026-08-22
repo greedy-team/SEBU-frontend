@@ -4,7 +4,7 @@ import { getMyPage } from "../api/mypageApi";
 
 export function useMyPage() {
   const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!!accessToken);
   const [error, setError] = useState(null);
 
   const accessToken = useAuthStore((state) => state.accessToken);
