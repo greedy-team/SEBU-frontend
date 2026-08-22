@@ -66,6 +66,19 @@ export const handlers = [
         { status: 400 },
       );
     }
+    if (studentId === "9999") {
+    return HttpResponse.json(
+      {
+        success: true,
+        data: {
+          accessToken: "fake-jwt-token-completed",
+          tokenType: "Bearer",
+          expiresIn: 1800,
+          user: { id: 17, isNewUser: false, profileCompleted: true },
+        },
+      },
+      { status: 200 },
+    );
 
     return HttpResponse.json(
       {
