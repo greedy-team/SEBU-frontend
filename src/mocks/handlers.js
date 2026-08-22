@@ -80,4 +80,72 @@ export const handlers = [
       { status: 200 },
     );
   }),
+  // GET 마이페이지 조회
+  http.get("/api/v1/users/me/mypage", ({ request }) => {
+    const token = request.headers.get("Authorization");
+
+    // 프로필 완성된 유저 (학번 21012345로 로그인 시)
+    if (token === "Bearer fake-jwt-token-completed") {
+      return HttpResponse.json({
+        data: {
+          profile: {
+            name: "김세종",
+            grade: 3,
+            major: { id: "12", name: "소프트웨어학과" },
+            gpaBand: "GTE_3_5",
+            introduction: "머신러닝에 관심있습니다.",
+            profileCompleted: true,
+            profileUpdatedAt: "2026-08-17T01:30:00Z",
+          },
+          summary: {
+            bookmarkedLaboratoryCount: 0,
+            bookmarkedPostCount: 0,
+            receivedRecommendationCount: 0,
+          },
+          bookmarkedLaboratories: { items: [], hasNext: false },
+          bookmarkedPosts: { items: [], hasNext: false },
+        },
+      });
+    }
+
+    // 신규 유저 (프로필 미완성)
+    return HttpResponse.json({
+      data: {
+        profile: {
+          name: null,
+          grade: null,
+          major: null,
+          gpaBand: null,
+          introduction: null,
+          profileCompleted: false,
+          profileUpdatedAt: null,
+        },
+        summary: {
+          bookmarkedLaboratoryCount: 0,
+          bookmarkedPostCount: 0,
+          receivedRecommendationCount: 0,
+        },
+        bookmarkedLaboratories: { items: [], hasNext: false },
+        bookmarkedPosts: { items: [], hasNext: false },
+      },
+    });
+  }),
+
+  // PUT 프로필 저장
+  http.put("/api/v1/users/me/profile", async ({ request }) => {
+    const body = await request.json();
+    await delay(500);
+
+    return HttpResponse.json({
+      data: {
+        name: body.name,
+        grade: body.grade,
+        major: { id: "12", name: body.major },
+        gpaBand: body.gpaBand,
+        introduction: body.introduction,
+        profileCompleted: true,
+        profileUpdatedAt: new Date().toISOString(),
+      },
+    });
+  }),
 ];
