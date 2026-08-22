@@ -114,6 +114,7 @@ export const STATUS_COLORS = [
 ];
 
 export const RADIUS_TOKENS = [
+  { token: "radius-field", px: "8px", cls: "rounded-field", usage: "태그 · 단과대 배지" },
   { token: "radius-control", px: "12px", cls: "rounded-control", usage: "내비 항목 · 아이콘 버튼" },
   { token: "radius-card", px: "16px", cls: "rounded-card", usage: "카드 · 위젯(펼침)" },
   { token: "radius-ticker", px: "40px", cls: "rounded-ticker", usage: "위젯(축소)" },

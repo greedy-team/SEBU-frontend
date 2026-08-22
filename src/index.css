@@ -91,11 +91,13 @@
   /* ---------- Radius ----------
      Figma 기준: 내비 항목·아이콘 버튼은 12px, 카드/위젯은 16px,
      CTA·칩·배지는 full, 축소된 티커만 40px. */
+  --radius-field: 8px; /* 태그·배지 (AI, Machine Learning, 단과대 배지) */
   --radius-control: 12px; /* 내비 항목, 아이콘 버튼, 메가메뉴 항목 */
   --radius-card: 16px; /* 카드, 위젯 (펼친 상태) */
   --radius-ticker: 40px; /* 인기 위젯 (축소 상태) */
 
   /* ---------- Shadow ---------- */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-header: 0 1px 0 #f2f4f6;
   --shadow-mega: 0 16px 48px rgba(0, 0, 0, 0.08);
   --shadow-widget: 0 4px 20px rgba(0, 0, 0, 0.05);
