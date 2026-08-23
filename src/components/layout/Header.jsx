@@ -37,21 +37,17 @@ function Header() {
         <span>커뮤니티</span>
       </nav>
 
-      {user ? (
-        <Link
-          to="/mypage-setup"
-          className="ml-auto text-sm font-semibold text-gray-700 hover:text-blue-600 transition-colors"
-        >
-          마이페이지
-        </Link>
-      ) : (
-        <Link
-          to="/login"
-          className="ml-auto text-sm text-gray-500 hover:text-blue-600 transition-colors"
-        >
-          로그인
-        </Link>
-      )}
+      <div className="ml-auto text-sm">
+        {user ? (
+          <Link to="/mypage" className="text-blue-600 font-medium">
+            마이페이지
+          </Link>
+        ) : (
+          <Link to="/login" className="text-gray-500">
+            로그인
+          </Link>
+        )}
+      </div>
     </header>
   );
 }

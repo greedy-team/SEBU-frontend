@@ -40,10 +40,13 @@ function LabCard({ lab }) {
 
           <p className="text-sm text-gray-500 mt-1">{professor.name} 교수</p>
         </div>
-
-        <div className="flex flex-col items-end gap-1 text-gray-400 text-xs">
+        <div>
           <button aria-label="북마크" onClick={(e) => e.stopPropagation()}>
-            {bookmarked ? "★" : "☆"}
+            {bookmarked ? (
+              <span className="text-yellow-400">★</span>
+            ) : (
+              <span className="text-gray-400">☆</span>
+            )}
           </button>
           <span>{bookmarkCount}</span>
         </div>
