@@ -65,7 +65,7 @@ function Header() {
         <div className="ml-auto flex items-center gap-1">
           {user ? (
             <Link
-              to="/mypage-setup"
+              to="/mypage"
               className="px-2 text-[13px] font-medium whitespace-nowrap text-gray-600 transition-colors hover:text-gray-900"
             >
               마이페이지
