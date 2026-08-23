@@ -6,7 +6,7 @@ function StatusChips({ selected, onSelect }) {
   ];
 
   return (
-    <div className="mt-3 flex gap-2 flex-wrap">
+    <div className="mt-4 flex flex-wrap gap-2.5">
       {statuses.map((status) => {
         const isSelected = selected === status.id;
 
@@ -14,13 +14,28 @@ function StatusChips({ selected, onSelect }) {
           <button
             key={status.id}
             onClick={() => onSelect(isSelected ? null : status.id)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1 transition-all border ${
+            aria-pressed={isSelected}
+            className={`flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-200 ${
               isSelected
-                ? "bg-blue-50 text-blue-600 border-blue-200"
-                : "bg-gray-100 text-gray-600 border-transparent hover:bg-gray-200"
+                ? "border-brand-500 bg-brand-50 font-bold text-brand-600 shadow-card"
+                : "border-gray-200 bg-white font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
             }`}
           >
-            {isSelected && <span className="font-bold">✓</span>}
+            {isSelected && (
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+            )}
             {status.label}
           </button>
         );

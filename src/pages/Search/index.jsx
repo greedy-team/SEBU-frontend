@@ -3,6 +3,7 @@ import Header from "../../components/layout/Header";
 import SearchBar from "../../features/search/components/SearchBar";
 import DetailedFilterPanel from "../../features/search/components/DetailedFilterPanel";
 import ActiveFilterBar from "../../features/search/components/ActiveFilterBar"; // 🔥 불러오기!
+import LabListHeader from "../../features/search/components/LabListHeader";
 import LabList from "../../features/search/components/LabList";
 import RecommendedLabs from "../../features/search/components/RecommendedLabs";
 import PopularPosts from "../../features/search/components/PopularPosts";
@@ -12,6 +13,7 @@ function SearchPage() {
   const [activeTab, setActiveTab] = useState("college");
 
   const {
+    rawLabs,
     searchInput,
     setSearchInput,
     handleSearch,
@@ -19,6 +21,8 @@ function SearchPage() {
     handleFilterChange,
     colleges,
     filteredLabs,
+    sortType,
+    setSortType,
   } = useLabFilter();
 
   return (
@@ -49,9 +53,21 @@ function SearchPage() {
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mt-6">
-          <LabList labs={filteredLabs} />
+          <div className="flex flex-col">
+            <LabListHeader
+              totalCount={filteredLabs.length}
+              hasFilters={
+                searchInput.trim() !== "" ||
+                filters.colleges.length > 0 ||
+                filters.recruitmentStatus !== null
+              }
+              sortType={sortType}
+              onSortChange={setSortType}
+            />
+            <LabList labs={filteredLabs} />
+          </div>
           <div className="flex flex-col gap-4">
-            <RecommendedLabs />
+            <RecommendedLabs labs={rawLabs} />
             <PopularPosts />
           </div>
         </div>
