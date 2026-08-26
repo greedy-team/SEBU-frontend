@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
-import { useAuthStore } from "../../../store/authStore";
 import { getMyPage } from "../api/mypageApi";
 
-export function useMyPage() {
-  const accessToken = useAuthStore((state) => state.accessToken);
+export function useMyPage(accessToken) {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(!!accessToken);
   const [error, setError] = useState(null);

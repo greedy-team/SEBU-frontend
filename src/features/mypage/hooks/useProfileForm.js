@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { useAuthStore } from "../../../store/authStore";
 import { updateProfile } from "../api/mypageApi";
 
-export function useProfileForm(initialData = {}, onSuccess) {
+export function useProfileForm(
+  initialData = {},
+  accessToken,
+  updateUser,
+  onSuccess,
+) {
   const [isLoading, setIsLoading] = useState(false);
   const [introError, setIntroError] = useState("");
   const [formError, setFormError] = useState("");
-
-  const accessToken = useAuthStore((state) => state.accessToken);
-  const updateUser = useAuthStore((state) => state.updateUser);
 
   const handleSubmit = async (formData) => {
     setIsLoading(true);
