@@ -4,7 +4,8 @@ import CollegeAccordionList from "../../features/collegeView/components/CollegeA
 import { useCollegeStats } from "../../features/collegeView/hooks/useCollegeStats";
 
 function CollegeView() {
-  const { totalColleges, totalLabs, totalRecruiting } = useCollegeStats();
+  const { colleges, totalColleges, totalLabs, totalRecruiting } =
+    useCollegeStats(); // colleges 추가
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -16,7 +17,7 @@ function CollegeView() {
           totalRecruiting={totalRecruiting}
         />
         <div className="mt-6">
-          <CollegeAccordionList />
+          <CollegeAccordionList colleges={colleges} /> {/* props로 내려주기 */}
         </div>
       </div>
     </div>

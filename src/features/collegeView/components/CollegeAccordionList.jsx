@@ -1,9 +1,7 @@
-import { useCollegeStats } from "../hooks/useCollegeStats";
 import CollegeAccordionItem from "./CollegeAccordionItem";
 
-function CollegeAccordionList() {
-  const { colleges } = useCollegeStats();
-
+function CollegeAccordionList({ colleges }) {
+  // props로 받기
   return (
     <div className="flex flex-col gap-3">
       {colleges.map((college) => (
