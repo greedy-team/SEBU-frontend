@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { sejongLogin } from "../api/authApi";
-import { useAuthStore } from "../../../store/authStore";
 
-export const useLogin = () => {
+export const useLogin = (setAuth) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState({ message: "", field: null });
 
   const navigate = useNavigate();
-  const setAuth = useAuthStore((state) => state.setAuth);
 
   const executeLogin = async (studentId, password, onAuthFail) => {
     if (!studentId.trim()) {

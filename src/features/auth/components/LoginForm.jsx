@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useLogin } from "../hooks/useLogin";
-
+import { useAuthStore } from "../../../store/authStore";
 /**
  * 로그인 폼 카드.
  *
@@ -36,8 +36,8 @@ function LoginForm() {
   const studentIdRef = useRef(null);
   const passwordRef = useRef(null);
 
-  const { executeLogin, isLoading, errorInfo, clearError } = useLogin();
-
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const { executeLogin, isLoading, errorInfo, clearError } = useLogin(setAuth);
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -64,7 +64,8 @@ function LoginForm() {
 
   const idError =
     errorInfo.field === "studentId" || errorInfo.field === "global";
-  const pwError = errorInfo.field === "password" || errorInfo.field === "global";
+  const pwError =
+    errorInfo.field === "password" || errorInfo.field === "global";
 
   return (
     <form

@@ -9,14 +9,23 @@ import BookmarkedLabs from "../../features/mypage/components/BookmarkedLabs";
 import BookmarkedPosts from "../../features/mypage/components/BookmarkedPosts";
 import { useMyPage } from "../../features/mypage/hooks/useMyPage";
 import { useProfileForm } from "../../features/mypage/hooks/useProfileForm";
+import { useAuthStore } from "../../store/authStore";
 
 function MyPage() {
   const navigate = useNavigate();
-  const { data, isLoading: isPageLoading, error: pageError } = useMyPage();
+
+  // authStore 구독은 여기서만
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const updateUser = useAuthStore((state) => state.updateUser);
+
+  const {
+    data,
+    isLoading: isPageLoading,
+    error: pageError,
+  } = useMyPage(accessToken);
   const [pageData, setPageData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // useMyPage에서 데이터 받으면 pageData에 저장
   useEffect(() => {
     if (data) {
       setPageData(data);
@@ -24,7 +33,6 @@ function MyPage() {
     }
   }, [data]);
 
-  // 로그인 안 된 상태면 로그인 페이지로
   useEffect(() => {
     if (!isPageLoading && !data) {
       navigate("/login");
@@ -36,15 +44,19 @@ function MyPage() {
     isLoading: isFormLoading,
     introError,
     formError,
-  } = useProfileForm(pageData?.profile, (savedProfile) => {
-    setPageData((prev) => ({
-      ...prev,
-      profile: savedProfile,
-    }));
-    setIsEditing(false);
-  });
+  } = useProfileForm(
+    pageData?.profile,
+    accessToken,
+    updateUser,
+    (savedProfile) => {
+      setPageData((prev) => ({
+        ...prev,
+        profile: savedProfile,
+      }));
+      setIsEditing(false);
+    },
+  );
 
-  // 로딩 중
   if (isPageLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -56,7 +68,6 @@ function MyPage() {
     );
   }
 
-  // 에러
   if (pageError) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -68,7 +79,6 @@ function MyPage() {
     );
   }
 
-  // pageData 없을 때 (navigate 처리 중)
   if (!pageData) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -88,17 +98,14 @@ function MyPage() {
       <Header />
 
       <div className="max-w-2xl mx-auto px-4 py-8">
-        {/* 브레드크럼 */}
         <p className="text-xs text-gray-400 mb-4">SEBU &gt; 마이페이지</p>
 
-        {/* 프로필 헤더 */}
         <ProfileHeader
           name={profile.name}
           grade={profile.grade}
           profileCompleted={profile.profileCompleted}
         />
 
-        {/* 프로필 폼 or 뷰 */}
         {showForm ? (
           <ProfileForm
             initialData={profile}
@@ -111,16 +118,13 @@ function MyPage() {
           <ProfileView profile={profile} onEdit={() => setIsEditing(true)} />
         )}
 
-        {/* 요약 카드 */}
         <SummaryCards summary={summary} />
 
-        {/* 관심 랩실 */}
         <BookmarkedLabs
           items={pageData.bookmarkedLaboratories.items}
           hasNext={pageData.bookmarkedLaboratories.hasNext}
         />
 
-        {/* 북마크 게시글 */}
         <BookmarkedPosts
           items={pageData.bookmarkedPosts.items}
           hasNext={pageData.bookmarkedPosts.hasNext}
