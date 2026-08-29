@@ -1,6 +1,43 @@
 import { http, HttpResponse, delay } from "msw";
 import { mockLabs } from "./mockLabs";
 
+/* ────────────────────────────────────────────────────────────
+ * MSW 전용 가짜 세션
+ *
+ * 실제 서버는 Refresh Token을 HttpOnly 쿠키로 관리하지만,
+ * HttpOnly 쿠키는 JS가 읽을 수 없어 mock에서 흉내낼 수 없습니다.
+ * 그래서 "로그인한 적이 있는지"만 sessionStorage로 대신 기억합니다.
+ *
+ * 이건 mock이 서버 역할을 흉내내기 위한 장치일 뿐,
+ * 실제 앱 코드의 토큰 저장이 아닙니다.
+ * (앱은 여전히 accessToken을 zustand 메모리에만 보관합니다)
+ * ──────────────────────────────────────────────────────────── */
+const MOCK_SESSION_KEY = "msw-mock-session";
+
+const saveMockSession = (accessToken) => {
+  try {
+    sessionStorage.setItem(MOCK_SESSION_KEY, accessToken);
+  } catch {
+    // 저장 실패해도 mock 동작에 치명적이지 않음
+  }
+};
+
+const readMockSession = () => {
+  try {
+    return sessionStorage.getItem(MOCK_SESSION_KEY);
+  } catch {
+    return null;
+  }
+};
+
+const clearMockSession = () => {
+  try {
+    sessionStorage.removeItem(MOCK_SESSION_KEY);
+  } catch {
+    // noop
+  }
+};
+
 export const handlers = [
   http.get("/api/v1/laboratories", () => {
     return HttpResponse.json({
@@ -67,6 +104,7 @@ export const handlers = [
       );
     }
     if (studentId === "9999") {
+      saveMockSession("fake-jwt-token-completed");
       return HttpResponse.json(
         {
           success: true,
@@ -81,6 +119,7 @@ export const handlers = [
       );
     }
 
+    saveMockSession("fake-jwt-token-12345");
     return HttpResponse.json(
       {
         success: true,
@@ -202,6 +241,80 @@ export const handlers = [
         profileCompleted: true,
         profileUpdatedAt: new Date().toISOString(),
       },
+    });
+  }),
+
+  // ── 세션 복원: Access Token 재발급 ──────────────
+  // 실제 서버는 Rotation 방식이라 호출할 때마다 Refresh Token이 교체되지만,
+  // mock은 "세션이 살아있는가"만 판단합니다.
+  http.post("/api/v1/auth/refresh", async () => {
+    await delay(300);
+
+    const accessToken = readMockSession();
+
+    // 로그인한 적 없음 = 쿠키 없음 → 비로그인 사용자의 정상적인 상황
+    if (!accessToken) {
+      return HttpResponse.json(
+        {
+          success: false,
+          error: {
+            code: "REFRESH_TOKEN_INVALID",
+            message: "로그인이 만료되었습니다. 다시 로그인해주세요.",
+          },
+        },
+        { status: 401 },
+      );
+    }
+
+    return HttpResponse.json({
+      success: true,
+      data: {
+        accessToken,
+        tokenType: "Bearer",
+        expiresIn: 1800,
+      },
+    });
+  }),
+
+  // ── 현재 로그인 사용자 조회 ─────────────────────
+  // 로그인 API와 달리 data를 user로 감싸지 않고 그대로 내려줍니다.
+  http.get("/api/v1/me", ({ request }) => {
+    const token = request.headers.get("Authorization");
+
+    if (!token || !token.startsWith("Bearer ")) {
+      return HttpResponse.json(
+        {
+          success: false,
+          error: {
+            code: "ACCESS_TOKEN_INVALID",
+            message: "유효하지 않은 인증 토큰입니다.",
+          },
+        },
+        { status: 401 },
+      );
+    }
+
+    const profileCompleted = token === "Bearer fake-jwt-token-completed";
+
+    return HttpResponse.json({
+      success: true,
+      data: {
+        id: 17,
+        nickname: profileCompleted ? "세부인" : null,
+        profileCompleted,
+      },
+    });
+  }),
+
+  // ── 로그아웃 ────────────────────────────────────
+  // 이미 만료됐거나 없는 토큰이어도 항상 성공으로 응답합니다.
+  http.post("/api/v1/auth/logout", async () => {
+    await delay(200);
+    clearMockSession();
+
+    return HttpResponse.json({
+      success: true,
+      data: { message: "로그아웃되었습니다." },
     });
   }),
 ];
