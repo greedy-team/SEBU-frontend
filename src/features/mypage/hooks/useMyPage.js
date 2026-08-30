@@ -1,23 +1,19 @@
 import { useState, useEffect } from "react";
 import { getMyPage } from "../api/mypageApi";
 
-export function useMyPage(accessToken) {
+export function useMyPage() {
+  // accessToken 파라미터 제거
   const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(!!accessToken);
+  const [isLoading, setIsLoading] = useState(true); // 항상 true로 시작
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!accessToken) {
-      setIsLoading(false);
-      return;
-    }
-
     const fetchMyPage = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const { ok, result } = await getMyPage(accessToken);
+        const { ok, result } = await getMyPage(); // accessToken 제거
 
         if (!ok || !result.data) {
           setError("마이페이지를 불러오는데 실패했습니다.");
@@ -33,7 +29,7 @@ export function useMyPage(accessToken) {
     };
 
     fetchMyPage();
-  }, [accessToken]);
+  }, []); // 의존성 배열에서 accessToken 제거
 
   return { data, isLoading, error };
 }

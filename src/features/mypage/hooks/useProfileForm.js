@@ -3,8 +3,7 @@ import { updateProfile } from "../api/mypageApi";
 
 export function useProfileForm(
   initialData = {},
-  accessToken,
-  updateUser,
+  updateUser, // accessToken 제거
   onSuccess,
 ) {
   const [isLoading, setIsLoading] = useState(false);
@@ -17,12 +16,11 @@ export function useProfileForm(
     setFormError("");
 
     try {
-      const { ok, result } = await updateProfile(accessToken, formData);
+      const { ok, result } = await updateProfile(formData); // accessToken 제거
 
       if (!ok) {
         const errorCode = result.error?.code;
 
-        // 자기소개 정책 위반 (422) → 자기소개 아래 에러
         if (errorCode === "CONTENT_POLICY_VIOLATION") {
           setIntroError(
             result.error.fieldErrors?.[0]?.message ||
@@ -31,7 +29,6 @@ export function useProfileForm(
           return;
         }
 
-        // 과도한 요청 (429), 시스템 장애 (503) → 폼 전체 에러
         if (
           errorCode === "RATE_LIMITED" ||
           errorCode === "CONTENT_MODERATION_UNAVAILABLE"
@@ -40,16 +37,12 @@ export function useProfileForm(
           return;
         }
 
-        // 그 외 에러
         setFormError(result.error?.message || "저장에 실패했습니다.");
         return;
       }
 
-      // 성공 → authStore user 업데이트 + 부모에 알림
-      updateUser({
-        profileCompleted: true,
-      });
-      onSuccess(result.data); // 저장된 프로필 데이터 전달
+      updateUser({ profileCompleted: true });
+      onSuccess(result.data);
     } catch (err) {
       setFormError("서버와 연결할 수 없습니다.");
     } finally {
