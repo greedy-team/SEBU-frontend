@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import ProfileHeader from "../../features/mypage/components/ProfileHeader";
-import ProfileForm from "../../features/mypage/components/ProfileForm";
-import ProfileView from "../../features/mypage/components/ProfileView";
+import ProfileModal from "../../features/mypage/components/ProfileModal";
 import SummaryCards from "../../features/mypage/components/SummaryCards";
 import BookmarkedLabs from "../../features/mypage/components/BookmarkedLabs";
 import BookmarkedPosts from "../../features/mypage/components/BookmarkedPosts";
@@ -14,7 +13,6 @@ import { useAuthStore } from "../../store/authStore";
 function MyPage() {
   const navigate = useNavigate();
 
-  // authStore 구독은 여기서만
   const accessToken = useAuthStore((state) => state.accessToken);
   const updateUser = useAuthStore((state) => state.updateUser);
 
@@ -24,12 +22,15 @@ function MyPage() {
     error: pageError,
   } = useMyPage(accessToken);
   const [pageData, setPageData] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (data) {
       setPageData(data);
-      setIsEditing(!data.profile.profileCompleted);
+      // 최초 로그인이면 모달 자동으로 열기
+      if (!data.profile.profileCompleted) {
+        setIsModalOpen(true);
+      }
     }
   }, [data]);
 
@@ -53,7 +54,7 @@ function MyPage() {
         ...prev,
         profile: savedProfile,
       }));
-      setIsEditing(false);
+      setIsModalOpen(false);
     },
   );
 
@@ -91,7 +92,6 @@ function MyPage() {
   }
 
   const { profile, summary } = pageData;
-  const showForm = !profile.profileCompleted || isEditing;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -100,36 +100,63 @@ function MyPage() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         <p className="text-xs text-gray-400 mb-4">SEBU &gt; 마이페이지</p>
 
+        {/* 프로필 헤더 */}
         <ProfileHeader
           name={profile.name}
           grade={profile.grade}
           profileCompleted={profile.profileCompleted}
         />
 
-        {showForm ? (
-          <ProfileForm
-            initialData={profile}
-            onSubmit={handleSubmit}
-            isLoading={isFormLoading}
-            introError={introError}
-            formError={formError}
-          />
-        ) : (
-          <ProfileView profile={profile} onEdit={() => setIsEditing(true)} />
-        )}
+        {/* 한 줄 요약 버튼 */}
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition mb-4"
+        >
+          <div className="flex items-center gap-2 text-sm text-gray-700">
+            {profile.profileCompleted ? (
+              <>
+                <span className="font-medium">{profile.name}</span>
+                <span className="text-gray-300">·</span>
+                <span>{profile.grade}학년</span>
+                <span className="text-gray-300">·</span>
+                <span>{profile.major?.name}</span>
+              </>
+            ) : (
+              <span className="text-gray-400">내 정보를 입력해주세요</span>
+            )}
+          </div>
+          <span className="text-xs text-blue-600">
+            {profile.profileCompleted ? "내 정보 보기 →" : "입력하기 →"}
+          </span>
+        </button>
 
+        {/* 요약 카드 */}
         <SummaryCards summary={summary} />
 
+        {/* 관심 랩실 */}
         <BookmarkedLabs
           items={pageData.bookmarkedLaboratories.items}
           hasNext={pageData.bookmarkedLaboratories.hasNext}
         />
 
+        {/* 북마크 게시글 */}
         <BookmarkedPosts
           items={pageData.bookmarkedPosts.items}
           hasNext={pageData.bookmarkedPosts.hasNext}
         />
       </div>
+
+      {/* 프로필 모달 */}
+      {isModalOpen && (
+        <ProfileModal
+          profile={profile}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleSubmit}
+          isLoading={isFormLoading}
+          introError={introError}
+          formError={formError}
+        />
+      )}
     </div>
   );
 }
