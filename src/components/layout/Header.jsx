@@ -1,5 +1,6 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
+import { logout } from "../../features/auth/api/authApi";
 
 /**
  * 상단 내비게이션.
@@ -41,7 +42,31 @@ const navItemClass = ({ isActive }) =>
   ].join(" ");
 
 function Header() {
-  const user = useAuthStore((state) => state.user);
+  const status = useAuthStore((state) => state.status);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
+  const navigate = useNavigate();
+
+  /**
+   * 로그아웃
+   *
+   * 서버 호출이 실패해도 프론트는 반드시 로그아웃 처리합니다.
+   * 사용자가 로그아웃을 눌렀는데 네트워크 오류로 여전히 로그인 상태면
+   * 그게 훨씬 이상하기 때문에, finally에서 무조건 상태를 비웁니다.
+   *
+   * 이동은 로그인 페이지가 아니라 홈입니다.
+   * 비로그인도 연구실을 둘러볼 수 있는 서비스라, 로그아웃 직후 로그인 화면이 뜨면
+   * "다시 로그인하라"는 압박으로 읽힙니다. (명세 §7과 다르게 구현한 부분)
+   */
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      // 네트워크 오류 — 그래도 아래 finally에서 로그아웃 처리합니다
+    } finally {
+      clearAuth();
+      navigate("/");
+    }
+  };
 
   return (
     <header
@@ -63,13 +88,35 @@ function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-1">
-          {user ? (
-            <Link
-              to="/mypage"
-              className="px-2 text-[13px] font-medium whitespace-nowrap text-gray-600 transition-colors hover:text-gray-900"
+          {/*
+            인증 상태 3분기.
+            loading일 때 '로그인'을 먼저 그리면, 복원이 끝나는 순간
+            '마이페이지'로 바뀌면서 깜빡입니다. 그래서 판단이 끝날 때까지 보류합니다.
+            자리는 유지해야 옆의 CTA 버튼이 밀리지 않습니다.
+          */}
+          {status === "loading" ? (
+            <span
+              className="px-2 text-[13px] font-medium whitespace-nowrap opacity-0"
+              aria-hidden="true"
             >
               마이페이지
-            </Link>
+            </span>
+          ) : status === "authenticated" ? (
+            <>
+              <Link
+                to="/mypage"
+                className="px-2 text-[13px] font-medium whitespace-nowrap text-gray-600 transition-colors hover:text-gray-900"
+              >
+                마이페이지
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="px-2 text-[13px] font-medium whitespace-nowrap text-gray-400 transition-colors hover:text-gray-700"
+              >
+                로그아웃
+              </button>
+            </>
           ) : (
             <Link
               to="/login"
