@@ -61,7 +61,7 @@ function CommunityPage() {
             </div>
           ) : (
             <PostList
-              title={activeTab.listTitle}
+              title={keyword ? "검색 결과" : activeTab.listTitle}
               posts={posts}
               totalElements={totalElements}
               isLoading={isLoading}
