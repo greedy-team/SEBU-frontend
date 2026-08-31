@@ -9,6 +9,7 @@ function PostList({
   error,
   sort,
   onSortChange,
+  emptyMessage,
 }) {
   return (
     <div className="overflow-hidden rounded-card border border-gray-200 bg-white">
@@ -55,6 +56,12 @@ function PostList({
       {!isLoading && !error && posts.length === 0 && (
         <p className="px-5 py-16 text-center text-sm text-gray-400">
           아직 글이 없어요.
+        </p>
+      )}
+
+      {!isLoading && !error && posts.length === 0 && (
+        <p className="px-5 py-16 text-center text-sm text-gray-400">
+          {emptyMessage}
         </p>
       )}
 

@@ -1,11 +1,16 @@
 import { useState } from "react";
 import Header from "../../components/layout/Header";
+import CommunitySearchBar from "../../features/community/components/CommunitySearchBar";
 import CategoryTabs from "../../features/community/components/CategoryTabs";
 import PostList from "../../features/community/components/PostList";
 import { useCommunityPosts } from "../../features/community/hooks/useCommunityPosts";
 import { COMMUNITY_TABS } from "../../constants/postCategory";
 
 function CommunityPage() {
+  // 입력 중인 값과 실제로 조회에 쓰는 값을 나눕니다.
+  const [searchInput, setSearchInput] = useState("");
+  const [keyword, setKeyword] = useState("");
+
   const [activeTabId, setActiveTabId] = useState("ALL");
   const [sort, setSort] = useState("LATEST");
 
@@ -14,8 +19,16 @@ function CommunityPage() {
 
   const { posts, totalElements, isLoading, error } = useCommunityPosts({
     category: activeTab.category,
+    keyword,
     sort,
   });
+
+  const handleSearch = () => setKeyword(searchInput.trim());
+
+  const handleClearSearch = () => {
+    setSearchInput("");
+    setKeyword("");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -24,6 +37,15 @@ function CommunityPage() {
         <h1 className="text-2xl font-bold text-gray-900">커뮤니티 홈</h1>
 
         <div className="mt-6">
+          <CommunitySearchBar
+            value={searchInput}
+            onChange={setSearchInput}
+            onSubmit={handleSearch}
+            onClear={handleClearSearch}
+          />
+        </div>
+
+        <div className="mt-5">
           <CategoryTabs activeTabId={activeTabId} onChange={setActiveTabId} />
         </div>
 
@@ -46,6 +68,11 @@ function CommunityPage() {
               error={error}
               sort={sort}
               onSortChange={setSort}
+              emptyMessage={
+                keyword
+                  ? `'${keyword}' 검색 결과가 없어요.`
+                  : "아직 글이 없어요."
+              }
             />
           )}
         </div>
