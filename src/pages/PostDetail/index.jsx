@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import { usePostDetail } from "../../features/community/hooks/usePostDetail";
+import { useComments } from "../../features/community/hooks/useComments";
+import CommentSection from "../../features/community/components/CommentSection";
 import {
   toggleLike,
   toggleBookmark,
@@ -49,6 +51,18 @@ function PostDetailPage() {
     postId,
     accessToken,
   );
+
+  const {
+    comments,
+    totalElements: commentCount,
+    hasNext: hasMoreComments,
+    isLoading: isCommentsLoading,
+    error: commentsError,
+    loadMore: loadMoreComments,
+    addComment,
+    editComment,
+    removeComment,
+  } = useComments(postId, accessToken);
 
   // 좋아요·북마크 요청이 겹치지 않게 막고, 실패 사유를 한 줄로 보여줍니다.
   const [isReacting, setIsReacting] = useState(false);
@@ -193,6 +207,22 @@ function PostDetailPage() {
               </p>
             )}
           </article>
+        )}
+
+        {!isLoading && post && (
+          <CommentSection
+            comments={comments}
+            totalElements={commentCount}
+            hasNext={hasMoreComments}
+            isLoading={isCommentsLoading}
+            error={commentsError}
+            isLoggedIn={Boolean(accessToken)}
+            postAuthorId={post.author.id}
+            onSubmit={addComment}
+            onEdit={editComment}
+            onDelete={removeComment}
+            onLoadMore={loadMoreComments}
+          />
         )}
       </div>
     </div>

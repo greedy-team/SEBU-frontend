@@ -52,17 +52,38 @@ export const getPopularPosts = async () =>
 export const getPost = async (postId, accessToken) =>
   request(`/api/v1/posts/${postId}`, { accessToken });
 
-// GET /posts/{postId}/comments
-export const getComments = async (postId) =>
-  notImplemented("getComments", postId);
+/** 댓글 목록. 인증은 선택이며 토큰이 있으면 mine이 계산돼서 옵니다. */
+export const getComments = async (
+  postId,
+  { page = 0, size = 20 } = {},
+  accessToken,
+) =>
+  request(`/api/v1/posts/${postId}/comments?page=${page}&size=${size}`, {
+    accessToken,
+  });
 
-// POST /posts/{postId}/comments
-export const createComment = async (postId, body) =>
-  notImplemented("createComment", postId, body);
+/** 댓글 등록. 응답: { comment, commentCount } */
+export const createComment = async (postId, content, accessToken) =>
+  request(`/api/v1/posts/${postId}/comments`, {
+    method: "POST",
+    body: { content },
+    accessToken,
+  });
 
-// DELETE /comments/{commentId}
-export const deleteComment = async (commentId) =>
-  notImplemented("deleteComment", commentId);
+/** 댓글 수정. 명세는 PATCH입니다(게시글 수정은 PUT). */
+export const updateComment = async (postId, commentId, content, accessToken) =>
+  request(`/api/v1/posts/${postId}/comments/${commentId}`, {
+    method: "PATCH",
+    body: { content },
+    accessToken,
+  });
+
+/** 댓글 삭제. 응답: { postId, commentId, commentCount } */
+export const deleteComment = async (postId, commentId, accessToken) =>
+  request(`/api/v1/posts/${postId}/comments/${commentId}`, {
+    method: "DELETE",
+    accessToken,
+  });
 
 /**
  * 좋아요 등록·해제. 요청 본문은 없고 메서드로 구분합니다. (명세 §3.5)
