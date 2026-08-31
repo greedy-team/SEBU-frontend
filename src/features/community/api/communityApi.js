@@ -3,11 +3,21 @@
  *
  * 아직 axios 공통 client(#35)가 dev에 없어서 fetch를 씁니다.
  * 반환 형태 { ok, result }는 authApi·mypageApi와 동일한 규칙이에요.
- * client가 머지되면 axios로 바꾸면서 이 형태는 유지합니다.
+ * accessToken은 인자로 받습니다 (#31에서 정리한 파라미터 전달 방식).
  */
 
-const request = async (path) => {
-  const response = await fetch(path);
+const request = async (path, { method = "GET", body, accessToken } = {}) => {
+  const response = await fetch(path, {
+    method,
+    headers: {
+      ...(body ? { "Content-Type": "application/json" } : {}),
+      // 토큰이 없을 때 Authorization을 아예 안 붙입니다.
+      // `Bearer null`을 보내면 서버가 "토큰 없음"이 아니라 "잘못된 토큰"으로 처리해요.
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+    },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
+
   const result = await response.json();
   return { ok: response.ok, result };
 };
@@ -18,11 +28,6 @@ const notImplemented = (name) => {
 
 /* ── 커뮤니티 HOME ── */
 
-/**
- * GET /posts — 게시글 목록
- * 값이 없는 파라미터는 아예 보내지 않습니다. 빈 문자열을 보내면
- * 서버가 "빈 문자열로 검색"으로 해석할 수 있어서요.
- */
 export const getPosts = async ({
   keyword,
   category,
@@ -37,17 +42,15 @@ export const getPosts = async ({
   return request(`/api/v1/posts?${params}`);
 };
 
-/**
- * 인기글 TOP 4.
- * 별도 엔드포인트가 아니라 목록 API의 정렬 옵션입니다. (명세 §2)
- */
+/** 인기글 TOP 4. 별도 엔드포인트가 아니라 목록 API의 정렬 옵션입니다. (명세 §2) */
 export const getPopularPosts = async () =>
   getPosts({ sort: "POPULAR", page: 0, size: 4 });
 
 /* ── 게시글 상세 ── */
 
-// GET /posts/{postId}
-export const getPost = async (postId) => notImplemented("getPost", postId);
+/** 인증은 선택. 토큰이 있으면 liked·bookmarked·mine이 계산돼서 옵니다. */
+export const getPost = async (postId, accessToken) =>
+  request(`/api/v1/posts/${postId}`, { accessToken });
 
 // GET /posts/{postId}/comments
 export const getComments = async (postId) =>
