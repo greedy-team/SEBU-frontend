@@ -8,6 +8,11 @@ export const sejongLogin = async (studentId, password) => {
     });
     return { ok: true, result: response.data };
   } catch (error) {
-    return { ok: false, result: error.response?.data };
+    return {
+      ok: false,
+      result: error.response?.data ?? {
+        error: { message: "네트워크 오류가 발생했습니다." },
+      },
+    };
   }
 };
