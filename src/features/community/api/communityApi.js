@@ -3,11 +3,21 @@
  *
  * 아직 axios 공통 client(#35)가 dev에 없어서 fetch를 씁니다.
  * 반환 형태 { ok, result }는 authApi·mypageApi와 동일한 규칙이에요.
- * client가 머지되면 axios로 바꾸면서 이 형태는 유지합니다.
+ * accessToken은 인자로 받습니다 (#31에서 정리한 파라미터 전달 방식).
  */
 
-const request = async (path) => {
-  const response = await fetch(path);
+const request = async (path, { method = "GET", body, accessToken } = {}) => {
+  const response = await fetch(path, {
+    method,
+    headers: {
+      ...(body ? { "Content-Type": "application/json" } : {}),
+      // 토큰이 없을 때 Authorization을 아예 안 붙입니다.
+      // `Bearer null`을 보내면 서버가 "토큰 없음"이 아니라 "잘못된 토큰"으로 처리해요.
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+    },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
+
   const result = await response.json();
   return { ok: response.ok, result };
 };
@@ -18,11 +28,6 @@ const notImplemented = (name) => {
 
 /* ── 커뮤니티 HOME ── */
 
-/**
- * GET /posts — 게시글 목록
- * 값이 없는 파라미터는 아예 보내지 않습니다. 빈 문자열을 보내면
- * 서버가 "빈 문자열로 검색"으로 해석할 수 있어서요.
- */
 export const getPosts = async ({
   keyword,
   category,
@@ -37,37 +42,68 @@ export const getPosts = async ({
   return request(`/api/v1/posts?${params}`);
 };
 
-/**
- * 인기글 TOP 4.
- * 별도 엔드포인트가 아니라 목록 API의 정렬 옵션입니다. (명세 §2)
- */
+/** 인기글 TOP 4. 별도 엔드포인트가 아니라 목록 API의 정렬 옵션입니다. (명세 §2) */
 export const getPopularPosts = async () =>
   getPosts({ sort: "POPULAR", page: 0, size: 4 });
 
 /* ── 게시글 상세 ── */
 
-// GET /posts/{postId}
-export const getPost = async (postId) => notImplemented("getPost", postId);
+/** 인증은 선택. 토큰이 있으면 liked·bookmarked·mine이 계산돼서 옵니다. */
+export const getPost = async (postId, accessToken) =>
+  request(`/api/v1/posts/${postId}`, { accessToken });
 
-// GET /posts/{postId}/comments
-export const getComments = async (postId) =>
-  notImplemented("getComments", postId);
+/** 댓글 목록. 인증은 선택이며 토큰이 있으면 mine이 계산돼서 옵니다. */
+export const getComments = async (
+  postId,
+  { page = 0, size = 20 } = {},
+  accessToken,
+) =>
+  request(`/api/v1/posts/${postId}/comments?page=${page}&size=${size}`, {
+    accessToken,
+  });
 
-// POST /posts/{postId}/comments
-export const createComment = async (postId, body) =>
-  notImplemented("createComment", postId, body);
+/** 댓글 등록. 응답: { comment, commentCount } */
+export const createComment = async (postId, content, accessToken) =>
+  request(`/api/v1/posts/${postId}/comments`, {
+    method: "POST",
+    body: { content },
+    accessToken,
+  });
 
-// DELETE /comments/{commentId}
-export const deleteComment = async (commentId) =>
-  notImplemented("deleteComment", commentId);
+/** 댓글 수정. 명세는 PATCH입니다(게시글 수정은 PUT). */
+export const updateComment = async (postId, commentId, content, accessToken) =>
+  request(`/api/v1/posts/${postId}/comments/${commentId}`, {
+    method: "PATCH",
+    body: { content },
+    accessToken,
+  });
 
-// POST / DELETE /posts/{postId}/likes
-export const toggleLike = async (postId, liked) =>
-  notImplemented("toggleLike", postId, liked);
+/** 댓글 삭제. 응답: { postId, commentId, commentCount } */
+export const deleteComment = async (postId, commentId, accessToken) =>
+  request(`/api/v1/posts/${postId}/comments/${commentId}`, {
+    method: "DELETE",
+    accessToken,
+  });
 
-// POST / DELETE /posts/{postId}/bookmarks
-export const toggleBookmark = async (postId, bookmarked) =>
-  notImplemented("toggleBookmark", postId, bookmarked);
+/**
+ * 좋아요 등록·해제. 요청 본문은 없고 메서드로 구분합니다. (명세 §3.5)
+ * 응답: { liked, likeCount }
+ */
+export const toggleLike = async (postId, liked, accessToken) =>
+  request(`/api/v1/posts/${postId}/likes`, {
+    method: liked ? "PUT" : "DELETE",
+    accessToken,
+  });
+
+/**
+ * 북마크 등록·해제.
+ * 응답에 개수가 없습니다 — 북마크 수는 화면에 노출하지 않기 때문이에요.
+ */
+export const toggleBookmark = async (postId, bookmarked, accessToken) =>
+  request(`/api/v1/posts/${postId}/bookmarks`, {
+    method: bookmarked ? "PUT" : "DELETE",
+    accessToken,
+  });
 
 /* ── 글 작성 ── */
 

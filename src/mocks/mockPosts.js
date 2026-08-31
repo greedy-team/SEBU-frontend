@@ -1,3 +1,4 @@
+import { hoursAgo } from "./mockTime";
 /**
  * 커뮤니티 게시글 mock 데이터.
  *
@@ -8,13 +9,6 @@
  * 변환은 communityHandlers.js가 담당합니다. (COMMUNITY_API.md §1, §2 참고)
  */
 
-/** n시간 전 시각을 명세 형식(offset 없는 ISO-8601)으로 만듭니다. */
-const hoursAgo = (n) => {
-  const d = new Date(Date.now() - n * 60 * 60 * 1000);
-  const p = (v) => String(v).padStart(2, "0");
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
-};
-
 export const mockPosts = [
   {
     id: 101,
@@ -24,7 +18,7 @@ export const mockPosts = [
       "지난 학기부터 AI연구실에서 학부연구생으로 지내고 있어요. 컨택부터 면접, 실제로 하는 일까지 정리해봤습니다.\n\n처음엔 논문을 읽는 것조차 버거웠는데, 매주 세미나를 하면서 조금씩 익숙해졌어요. 궁금한 점 있으면 댓글 남겨주세요!",
     author: { id: 7, nickname: "세종이공계" },
     likeCount: 147,
-    commentCount: 62,
+    commentCount: 0,
     viewCount: 3821,
     bookmarkCount: 210,
     createdAt: hoursAgo(3),
