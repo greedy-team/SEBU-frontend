@@ -10,8 +10,8 @@ import { useAuthStore } from "../../store/authStore";
  *   - CTA는 pill + shadow-cta
  *
  * 항목은 라우트가 있는 것만 넣습니다 (DESIGN_SYSTEM.md §1 "범위는 코드 기준").
- * Figma에는 '커뮤니티'·'튜토리얼'과 각각의 메가메뉴, 그리고 우측 아이콘
- * (검색·알림·북마크)이 더 있어요. 해당 페이지/기능이 생기면 그때 추가합니다.
+ * Figma에는 '튜토리얼'과 메가메뉴, 그리고 우측 아이콘(검색·알림·북마크)이
+ * 더 있어요. 해당 페이지/기능이 생기면 그때 추가합니다.
  */
 
 function ArrowRightIcon() {
@@ -59,6 +59,9 @@ function Header() {
         <nav className="ml-8 flex items-center gap-1">
           <NavLink to="/colleges" className={navItemClass}>
             단과대별 보기
+          </NavLink>
+          <NavLink to="/community" className={navItemClass}>
+            커뮤니티
           </NavLink>
         </nav>
 
