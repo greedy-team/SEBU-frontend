@@ -3,10 +3,12 @@ import Header from "../../components/layout/Header";
 import CommunitySearchBar from "../../features/community/components/CommunitySearchBar";
 import CategoryTabs from "../../features/community/components/CategoryTabs";
 import PostList from "../../features/community/components/PostList";
+import LabReviewList from "../../features/community/components/LabReviewList";
 import WritePromptCard from "../../features/community/components/WritePromptCard";
 import PopularPostsCard from "../../features/community/components/PopularPostsCard";
 import { useCommunityPosts } from "../../features/community/hooks/useCommunityPosts";
 import { usePopularPosts } from "../../features/community/hooks/usePopularPosts";
+import { useLabList } from "../../features/community/hooks/useLabList";
 import { COMMUNITY_TABS } from "../../constants/postCategory";
 
 function CommunityPage() {
@@ -33,6 +35,12 @@ function CommunityPage() {
   });
   const { posts: popularPosts, isLoading: isPopularLoading } =
     usePopularPosts();
+  const {
+    labs,
+    totalElements: labTotal,
+    isLoading: isLabsLoading,
+    error: labsError,
+  } = useLabList();
 
   const handleSearch = () => setKeyword(searchInput.trim());
 
@@ -64,14 +72,12 @@ function CommunityPage() {
         <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_300px]">
           <div>
             {isLabReview ? (
-              <div className="rounded-card border border-gray-200 bg-white px-5 py-16 text-center">
-                <p className="text-sm font-bold text-gray-900">
-                  랩실 평가는 준비 중이에요
-                </p>
-                <p className="mt-1.5 text-sm text-gray-400">
-                  연구실별 후기를 곧 여기서 볼 수 있어요.
-                </p>
-              </div>
+              <LabReviewList
+                labs={labs}
+                totalElements={labTotal}
+                isLoading={isLabsLoading}
+                error={labsError}
+              />
             ) : (
               <PostList
                 title={keyword ? "검색 결과" : activeTab.listTitle}

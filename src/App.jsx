@@ -7,6 +7,7 @@ import DesignSystem from "./pages/DesignSystem";
 import CommunityPage from "./pages/Community";
 import PostDetailPage from "./pages/PostDetail";
 import PostWritePage from "./pages/PostWrite";
+import LabReviewPage from "./pages/LabReview";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Route path="/design-system" element={<DesignSystem />} />
       <Route path="/community" element={<CommunityPage />} />
       <Route path="/community/write" element={<PostWritePage />} />
+      <Route path="/community/labs/:laboratoryId" element={<LabReviewPage />} />
       <Route path="/community/:postId" element={<PostDetailPage />} />
     </Routes>
   );
