@@ -64,13 +64,25 @@ export const createComment = async (postId, body) =>
 export const deleteComment = async (commentId) =>
   notImplemented("deleteComment", commentId);
 
-// POST / DELETE /posts/{postId}/likes
-export const toggleLike = async (postId, liked) =>
-  notImplemented("toggleLike", postId, liked);
+/**
+ * 좋아요 등록·해제. 요청 본문은 없고 메서드로 구분합니다. (명세 §3.5)
+ * 응답: { liked, likeCount }
+ */
+export const toggleLike = async (postId, liked, accessToken) =>
+  request(`/api/v1/posts/${postId}/likes`, {
+    method: liked ? "PUT" : "DELETE",
+    accessToken,
+  });
 
-// POST / DELETE /posts/{postId}/bookmarks
-export const toggleBookmark = async (postId, bookmarked) =>
-  notImplemented("toggleBookmark", postId, bookmarked);
+/**
+ * 북마크 등록·해제.
+ * 응답에 개수가 없습니다 — 북마크 수는 화면에 노출하지 않기 때문이에요.
+ */
+export const toggleBookmark = async (postId, bookmarked, accessToken) =>
+  request(`/api/v1/posts/${postId}/bookmarks`, {
+    method: bookmarked ? "PUT" : "DELETE",
+    accessToken,
+  });
 
 /* ── 글 작성 ── */
 

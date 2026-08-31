@@ -1,6 +1,11 @@
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import { usePostDetail } from "../../features/community/hooks/usePostDetail";
+import {
+  toggleLike,
+  toggleBookmark,
+} from "../../features/community/api/communityApi";
 import { useAuthStore } from "../../store/authStore";
 import { POST_CATEGORY, POST_BADGE } from "../../constants/postCategory";
 import { formatDate, formatCount } from "../../features/community/utils/format";
@@ -28,10 +33,67 @@ function Avatar({ nickname }) {
   );
 }
 
+const reactionButtonClass = (isActive) =>
+  [
+    "flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium transition-colors",
+    "disabled:opacity-50",
+    isActive
+      ? "bg-brand-50 font-bold text-brand-600"
+      : "bg-gray-100 text-gray-600 hover:bg-gray-200",
+  ].join(" ");
+
 function PostDetailPage() {
   const { postId } = useParams();
   const accessToken = useAuthStore((state) => state.accessToken);
-  const { post, isLoading, errorCode } = usePostDetail(postId, accessToken);
+  const { post, setPost, isLoading, errorCode } = usePostDetail(
+    postId,
+    accessToken,
+  );
+
+  // 좋아요·북마크 요청이 겹치지 않게 막고, 실패 사유를 한 줄로 보여줍니다.
+  const [isReacting, setIsReacting] = useState(false);
+  const [reactionMessage, setReactionMessage] = useState("");
+
+  /**
+   * 좋아요·북마크는 요청/응답 처리가 같아서 한 함수로 묶었습니다.
+   * apply는 응답 data로 post의 어떤 값을 갈아끼울지 정합니다.
+   */
+  const runReaction = async (requestFn, apply) => {
+    if (!accessToken) {
+      setReactionMessage("로그인하면 참여할 수 있어요.");
+      return;
+    }
+    if (isReacting) return;
+
+    setIsReacting(true);
+    setReactionMessage("");
+
+    try {
+      const { ok, result } = await requestFn();
+      if (!ok || !result.success) {
+        setReactionMessage("잠시 후 다시 시도해주세요.");
+        return;
+      }
+      // 상세를 통째로 다시 부르지 않고 바뀐 값만 갈아끼웁니다.
+      setPost((prev) => ({ ...prev, ...apply(result.data) }));
+    } catch {
+      setReactionMessage("서버와 연결할 수 없어요.");
+    } finally {
+      setIsReacting(false);
+    }
+  };
+
+  const handleLike = () =>
+    runReaction(
+      () => toggleLike(post.id, !post.liked, accessToken),
+      (data) => ({ liked: data.liked, likeCount: data.likeCount }),
+    );
+
+  const handleBookmark = () =>
+    runReaction(
+      () => toggleBookmark(post.id, !post.bookmarked, accessToken),
+      (data) => ({ bookmarked: data.bookmarked }),
+    );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -102,6 +164,34 @@ function PostDetailPage() {
             <p className="mt-6 border-t border-gray-100 pt-6 text-sm leading-relaxed whitespace-pre-line text-gray-800">
               {post.content}
             </p>
+
+            {/* 좋아요 · 북마크 */}
+            <div className="mt-8 flex justify-center gap-3">
+              <button
+                type="button"
+                onClick={handleLike}
+                disabled={isReacting}
+                aria-pressed={post.liked}
+                className={reactionButtonClass(post.liked)}
+              >
+                👍 좋아요 {formatCount(post.likeCount)}
+              </button>
+              <button
+                type="button"
+                onClick={handleBookmark}
+                disabled={isReacting}
+                aria-pressed={post.bookmarked}
+                className={reactionButtonClass(post.bookmarked)}
+              >
+                🔖 {post.bookmarked ? "북마크됨" : "북마크"}
+              </button>
+            </div>
+
+            {reactionMessage && (
+              <p className="mt-3 text-center text-xs text-gray-400">
+                {reactionMessage}
+              </p>
+            )}
           </article>
         )}
       </div>
