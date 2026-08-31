@@ -1,13 +1,16 @@
 /**
- * 커뮤니티 API 함수 껍데기.
+ * 커뮤니티 API.
  *
- * 이 이슈(#37)에서는 실제 HTTP 호출을 넣지 않습니다.
- *   - 현재 dev에는 공통 axios client(src/api/client.js)가 아직 없습니다. (PR #35 대기)
- *   - API 응답 구조에 의존하는 코드를 만들지 않는 것이 이 이슈의 방침입니다.
- *
- * 후속 이슈에서 담당자가 각자 맡은 함수의 본문만 채우면 됩니다.
- * 엔드포인트는 커뮤니티 API 명세 기준이며, 확정 명세와 다르면 그때 맞춰주세요.
+ * 아직 axios 공통 client(#35)가 dev에 없어서 fetch를 씁니다.
+ * 반환 형태 { ok, result }는 authApi·mypageApi와 동일한 규칙이에요.
+ * client가 머지되면 axios로 바꾸면서 이 형태는 유지합니다.
  */
+
+const request = async (path) => {
+  const response = await fetch(path);
+  const result = await response.json();
+  return { ok: response.ok, result };
+};
 
 const notImplemented = (name) => {
   throw new Error(`communityApi.${name}는 아직 구현되지 않았습니다.`);
@@ -15,11 +18,31 @@ const notImplemented = (name) => {
 
 /* ── 커뮤니티 HOME ── */
 
-// GET /posts — 게시글 목록 (카테고리·검색·정렬·페이징)
-export const getPosts = async (query) => notImplemented("getPosts", query);
+/**
+ * GET /posts — 게시글 목록
+ * 값이 없는 파라미터는 아예 보내지 않습니다. 빈 문자열을 보내면
+ * 서버가 "빈 문자열로 검색"으로 해석할 수 있어서요.
+ */
+export const getPosts = async ({
+  keyword,
+  category,
+  sort = "LATEST",
+  page = 0,
+  size = 20,
+} = {}) => {
+  const params = new URLSearchParams({ sort, page, size });
+  if (keyword) params.set("keyword", keyword);
+  if (category) params.set("category", category);
 
-// GET /posts/popular — 인기글 TOP 4
-export const getPopularPosts = async () => notImplemented("getPopularPosts");
+  return request(`/api/v1/posts?${params}`);
+};
+
+/**
+ * 인기글 TOP 4.
+ * 별도 엔드포인트가 아니라 목록 API의 정렬 옵션입니다. (명세 §2)
+ */
+export const getPopularPosts = async () =>
+  getPosts({ sort: "POPULAR", page: 0, size: 4 });
 
 /* ── 게시글 상세 ── */
 

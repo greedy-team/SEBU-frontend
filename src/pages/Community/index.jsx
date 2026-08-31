@@ -1,14 +1,24 @@
 import Header from "../../components/layout/Header";
+import PostList from "../../features/community/components/PostList";
+import { useCommunityPosts } from "../../features/community/hooks/useCommunityPosts";
 
 function CommunityPage() {
+  const { posts, totalElements, isLoading, error } = useCommunityPosts();
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="mx-auto max-w-6xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-900">커뮤니티</h1>
-        <p className="mt-2 text-sm text-gray-500">
-          게시글 목록·카테고리 탭·검색·인기글은 후속 이슈에서 구현합니다.
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900">커뮤니티 홈</h1>
+
+        <div className="mt-6">
+          <PostList
+            posts={posts}
+            totalElements={totalElements}
+            isLoading={isLoading}
+            error={error}
+          />
+        </div>
       </div>
     </div>
   );
