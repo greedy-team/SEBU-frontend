@@ -6,7 +6,8 @@ import ActiveFilterBar from "../../features/search/components/ActiveFilterBar"; 
 import LabListHeader from "../../features/search/components/LabListHeader";
 import LabList from "../../features/search/components/LabList";
 import RecommendedLabs from "../../features/search/components/RecommendedLabs";
-import PopularPosts from "../../features/search/components/PopularPosts";
+import PopularPostsCard from "../../features/community/components/PopularPostsCard";
+import { usePopularPosts } from "../../features/community/hooks/usePopularPosts";
 import { useLabFilter } from "../../features/search/hooks/useLabFilter";
 
 function SearchPage() {
@@ -24,6 +25,9 @@ function SearchPage() {
     sortType,
     setSortType,
   } = useLabFilter();
+
+  const { posts: popularPosts, isLoading: isPopularLoading } =
+    usePopularPosts();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -68,7 +72,10 @@ function SearchPage() {
           </div>
           <div className="flex flex-col gap-4">
             <RecommendedLabs labs={rawLabs} />
-            <PopularPosts />
+            <PopularPostsCard
+              posts={popularPosts}
+              isLoading={isPopularLoading}
+            />
           </div>
         </div>
       </div>
