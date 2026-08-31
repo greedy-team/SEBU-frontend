@@ -3,14 +3,15 @@ import Header from "../../components/layout/Header";
 import CommunitySearchBar from "../../features/community/components/CommunitySearchBar";
 import CategoryTabs from "../../features/community/components/CategoryTabs";
 import PostList from "../../features/community/components/PostList";
+import WritePromptCard from "../../features/community/components/WritePromptCard";
+import PopularPostsCard from "../../features/community/components/PopularPostsCard";
 import { useCommunityPosts } from "../../features/community/hooks/useCommunityPosts";
+import { usePopularPosts } from "../../features/community/hooks/usePopularPosts";
 import { COMMUNITY_TABS } from "../../constants/postCategory";
 
 function CommunityPage() {
-  // 입력 중인 값과 실제로 조회에 쓰는 값을 나눕니다.
   const [searchInput, setSearchInput] = useState("");
   const [keyword, setKeyword] = useState("");
-
   const [activeTabId, setActiveTabId] = useState("ALL");
   const [sort, setSort] = useState("LATEST");
 
@@ -22,6 +23,8 @@ function CommunityPage() {
     keyword,
     sort,
   });
+  const { posts: popularPosts, isLoading: isPopularLoading } =
+    usePopularPosts();
 
   const handleSearch = () => setKeyword(searchInput.trim());
 
@@ -49,32 +52,43 @@ function CommunityPage() {
           <CategoryTabs activeTabId={activeTabId} onChange={setActiveTabId} />
         </div>
 
-        <div className="mt-4">
-          {isLabReview ? (
-            <div className="rounded-card border border-gray-200 bg-white px-5 py-16 text-center">
-              <p className="text-sm font-bold text-gray-900">
-                랩실 평가는 준비 중이에요
-              </p>
-              <p className="mt-1.5 text-sm text-gray-400">
-                연구실별 후기를 곧 여기서 볼 수 있어요.
-              </p>
-            </div>
-          ) : (
-            <PostList
-              title={keyword ? "검색 결과" : activeTab.listTitle}
-              posts={posts}
-              totalElements={totalElements}
-              isLoading={isLoading}
-              error={error}
-              sort={sort}
-              onSortChange={setSort}
-              emptyMessage={
-                keyword
-                  ? `'${keyword}' 검색 결과가 없어요.`
-                  : "아직 글이 없어요."
-              }
+        {/* 좁은 화면에서는 사이드바가 목록 아래로 내려갑니다 */}
+        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_300px]">
+          <div>
+            {isLabReview ? (
+              <div className="rounded-card border border-gray-200 bg-white px-5 py-16 text-center">
+                <p className="text-sm font-bold text-gray-900">
+                  랩실 평가는 준비 중이에요
+                </p>
+                <p className="mt-1.5 text-sm text-gray-400">
+                  연구실별 후기를 곧 여기서 볼 수 있어요.
+                </p>
+              </div>
+            ) : (
+              <PostList
+                title={keyword ? "검색 결과" : activeTab.listTitle}
+                posts={posts}
+                totalElements={totalElements}
+                isLoading={isLoading}
+                error={error}
+                sort={sort}
+                onSortChange={setSort}
+                emptyMessage={
+                  keyword
+                    ? `'${keyword}' 검색 결과가 없어요.`
+                    : "아직 글이 없어요."
+                }
+              />
+            )}
+          </div>
+
+          <aside className="flex flex-col gap-4 lg:sticky lg:top-20 lg:self-start">
+            <WritePromptCard />
+            <PopularPostsCard
+              posts={popularPosts}
+              isLoading={isPopularLoading}
             />
-          )}
+          </aside>
         </div>
       </div>
     </div>
