@@ -1,3 +1,4 @@
+import { hoursAgo } from "./mockTime";
 /**
  * 커뮤니티 게시글 mock 데이터.
  *
@@ -7,9 +8,6 @@
  *  - `content`는 목록 응답에는 없고 상세 응답에만 들어갑니다.
  * 변환은 communityHandlers.js가 담당합니다. (COMMUNITY_API.md §1, §2 참고)
  */
-
-/** n시간 전 시각을 명세 형식(offset 없는 ISO-8601)으로 만듭니다. */
-import { hoursAgo } from "./mockTime";
 
 export const mockPosts = [
   {
