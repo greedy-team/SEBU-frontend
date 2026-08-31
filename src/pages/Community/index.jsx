@@ -18,7 +18,15 @@ function CommunityPage() {
   const activeTab = COMMUNITY_TABS.find((tab) => tab.id === activeTabId);
   const isLabReview = activeTabId === "LAB_REVIEW";
 
-  const { posts, totalElements, isLoading, error } = useCommunityPosts({
+  const {
+    posts,
+    totalElements,
+    hasNext,
+    isLoading,
+    isLoadingMore,
+    error,
+    loadMore,
+  } = useCommunityPosts({
     category: activeTab.category,
     keyword,
     sort,
@@ -78,6 +86,9 @@ function CommunityPage() {
                     ? `'${keyword}' 검색 결과가 없어요.`
                     : "아직 글이 없어요."
                 }
+                hasNext={hasNext}
+                isLoadingMore={isLoadingMore}
+                onLoadMore={loadMore}
               />
             )}
           </div>

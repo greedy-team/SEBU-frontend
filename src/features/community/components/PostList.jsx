@@ -10,6 +10,9 @@ function PostList({
   sort,
   onSortChange,
   emptyMessage,
+  hasNext,
+  isLoadingMore,
+  onLoadMore,
 }) {
   return (
     <div className="overflow-hidden rounded-card border border-gray-200 bg-white">
@@ -73,6 +76,29 @@ function PostList({
             </li>
           ))}
         </ul>
+      )}
+
+      {!isLoading && !error && posts.length > 0 && (
+        <>
+          <ul className="divide-y divide-gray-100">
+            {posts.map((post) => (
+              <li key={post.id}>
+                <PostRow post={post} />
+              </li>
+            ))}
+          </ul>
+
+          {hasNext && (
+            <button
+              type="button"
+              onClick={onLoadMore}
+              disabled={isLoadingMore}
+              className="w-full border-t border-gray-100 py-4 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900 disabled:text-gray-300"
+            >
+              {isLoadingMore ? "불러오는 중이에요…" : "게시글 더 보기"}
+            </button>
+          )}
+        </>
       )}
     </div>
   );
