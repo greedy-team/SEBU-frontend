@@ -13,14 +13,10 @@ import { useAuthStore } from "../../store/authStore";
 function MyPage() {
   const navigate = useNavigate();
 
-  const accessToken = useAuthStore((state) => state.accessToken);
+  // updateUser만 구독 (accessToken은 인터셉터가 처리)
   const updateUser = useAuthStore((state) => state.updateUser);
 
-  const {
-    data,
-    isLoading: isPageLoading,
-    error: pageError,
-  } = useMyPage(accessToken);
+  const { data, isLoading: isPageLoading, error: pageError } = useMyPage();
   const [pageData, setPageData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -41,22 +37,21 @@ function MyPage() {
   }, [isPageLoading, data, navigate]);
 
   const {
-    handleSubmit,
-    isLoading: isFormLoading,
-    introError,
-    formError,
-  } = useProfileForm(
-    pageData?.profile,
-    accessToken,
-    updateUser,
-    (savedProfile) => {
-      setPageData((prev) => ({
-        ...prev,
-        profile: savedProfile,
-      }));
-      setIsModalOpen(false);
-    },
-  );
+  handleSubmit,
+  isLoading: isFormLoading,
+  introError,
+  formError,
+} = useProfileForm(
+  pageData?.profile,
+  updateUser, // accessToken 없음
+  (savedProfile) => {
+    setPageData((prev) => ({
+      ...prev,
+      profile: savedProfile,
+    }));
+    setIsModalOpen(false); // isEditing 대신 모달 닫기
+  },
+);
 
   if (isPageLoading) {
     return (

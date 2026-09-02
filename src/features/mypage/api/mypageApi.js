@@ -1,33 +1,35 @@
-export const getMyPage = async (accessToken) => {
-  const response = await fetch("/api/v1/users/me/mypage", {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    credentials: "include",
-  });
+import client from "../../../api/client";
 
-  const result = await response.json();
-  return { ok: response.ok, result };
+export const getMyPage = async () => {
+  try {
+    const response = await client.get("/users/me/mypage");
+    return { ok: true, result: response.data };
+  } catch (error) {
+    return {
+      ok: false,
+      result: error.response?.data ?? {
+        error: { message: "네트워크 오류가 발생했습니다." },
+      },
+    };
+  }
 };
 
-export const updateProfile = async (accessToken, profileData) => {
-  const response = await fetch("/api/v1/users/me/profile", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    credentials: "include",
-    body: JSON.stringify({
+export const updateProfile = async (profileData) => {
+  try {
+    const response = await client.put("/users/me/profile", {
       name: profileData.name,
       grade: profileData.grade,
       major: profileData.major,
       gpaBand: profileData.gpaBand,
       introduction: profileData.introduction,
-    }),
-  });
-
-  const result = await response.json();
-  return { ok: response.ok, result };
+    });
+    return { ok: true, result: response.data };
+  } catch (error) {
+    return {
+      ok: false,
+      result: error.response?.data ?? {
+        error: { message: "네트워크 오류가 발생했습니다." },
+      },
+    };
+  }
 };
