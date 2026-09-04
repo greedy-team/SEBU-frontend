@@ -2,8 +2,8 @@ import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
 const client = axios.create({
-  baseURL: "/api/v1",
-  withCredentials: true, // credentials: "include" 대신
+  baseURL: import.meta.env.VITE_API_BASE_URL + "/api/v1",
+  withCredentials: true,
 });
 
 // 요청 인터셉터 - 토큰 자동 첨부
