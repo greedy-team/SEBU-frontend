@@ -46,10 +46,14 @@ function ProfileForm({
 
       {/* 이름 */}
       <div>
-        <label className="text-sm font-medium text-gray-700 flex items-center gap-1 mb-1">
+        <label
+          htmlFor="name"
+          className="text-sm font-medium text-gray-700 flex items-center gap-1 mb-1"
+        >
           이름 <span className="text-blue-500 text-xs">필수</span>
         </label>
         <input
+          id="name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -68,6 +72,7 @@ function ProfileForm({
           {[1, 2, 3, 4].map((g) => (
             <button
               key={g}
+              aria-pressed={grade === g}
               onClick={() => setGrade(g)}
               className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
                 grade === g
@@ -83,10 +88,14 @@ function ProfileForm({
 
       {/* 전공 */}
       <div>
-        <label className="text-sm font-medium text-gray-700 flex items-center gap-1 mb-1">
+        <label
+          htmlFor="major"
+          className="text-sm font-medium text-gray-700 flex items-center gap-1 mb-1"
+        >
           전공 <span className="text-blue-500 text-xs">필수</span>
         </label>
         <input
+          id="major"
           type="text"
           value={major}
           onChange={(e) => setMajor(e.target.value)}
@@ -105,6 +114,7 @@ function ProfileForm({
           {GPA_BAND.map((item) => (
             <button
               key={item.label}
+              aria-pressed={gpaBand === item.value}
               onClick={() => setGpaBand(item.value)}
               className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
                 gpaBand === item.value
@@ -120,13 +130,17 @@ function ProfileForm({
 
       {/* 소개사항 */}
       <div>
-        <label className="text-sm font-medium text-gray-700 mb-1 block">
+        <label
+          htmlFor="introduction"
+          className="text-sm font-medium text-gray-700 mb-1 block"
+        >
           소개사항{" "}
           <span className="text-gray-400 text-xs">
             연구 관심 분야, 보유 기술 등
           </span>
         </label>
         <textarea
+          id="introduction"
           value={introduction}
           onChange={(e) => setIntroduction(e.target.value)}
           placeholder="안녕하세요. 머신러닝과 컴퓨터 비전에 관심이 많은 3학년 학생입니다..."

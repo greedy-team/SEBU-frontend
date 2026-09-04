@@ -44,9 +44,21 @@ function PostRow({ post }) {
       <div className="mt-2 flex items-center text-xs text-gray-400">
         <span className="text-gray-500">{author.nickname}</span>
         <span className="ml-auto flex items-center gap-3">
-          <span>👍 {formatCount(likeCount)}</span>
-          <span>💬 {formatCount(commentCount)}</span>
-          <span>👁 {formatCount(viewCount)}</span>
+          <span>
+            <span aria-hidden="true">👍</span>
+            <span className="sr-only">좋아요</span>
+            {formatCount(likeCount)}
+          </span>
+          <span>
+            <span aria-hidden="true">💬</span>
+            <span className="sr-only">댓글</span>
+            {formatCount(commentCount)}
+          </span>
+          <span>
+            <span aria-hidden="true">👁</span>
+            <span className="sr-only">조회수</span>
+            {formatCount(viewCount)}
+          </span>
           <span>{formatDate(createdAt)}</span>
         </span>
       </div>
