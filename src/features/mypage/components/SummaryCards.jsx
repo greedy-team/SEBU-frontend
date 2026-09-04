@@ -17,6 +17,8 @@ function SummaryCards({ summary }) {
         <div
           key={card.label}
           className="bg-white rounded-xl p-4 flex flex-col items-center gap-1"
+          role="status"
+          aria-label={`${card.label} ${card.count}개`}
         >
           <p className="text-2xl font-bold">{card.count}</p>
           <p className="text-xs text-gray-400">{card.label}</p>

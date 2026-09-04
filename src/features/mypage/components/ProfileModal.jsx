@@ -41,13 +41,20 @@ function ProfileModal({
         if (e.target === e.currentTarget) handleClose();
       }}
     >
-      <div className="bg-white rounded-2xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-        {/* 모달 헤더 */}
+      <div
+        className="bg-white rounded-2xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
         <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
-          <h2 className="font-bold text-base">내 정보</h2>
+          <h2 id="modal-title" className="font-bold text-base">
+            내 정보
+          </h2>
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600"
+            aria-label="닫기"
           >
             ✕
           </button>
