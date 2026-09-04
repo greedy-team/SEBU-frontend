@@ -38,10 +38,13 @@ export const authHandlers = [
           success: false,
           error: {
             code: "LOGIN_RATE_LIMITED",
-            message: "로그인 요청이 너무 많습니다. 잠시 후 다시 시도해주세요.",
+            message: "로그인 요청이 너무 많습니다.",
           },
         },
-        { status: 429 },
+        {
+          status: 429,
+          headers: { "Retry-After": "30" }, 
+        },
       );
     }
 
