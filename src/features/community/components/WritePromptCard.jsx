@@ -43,7 +43,8 @@ function WritePromptCard() {
         to={isAuthenticated ? "/community/write" : "/login"}
         className="mt-4 flex h-11 items-center justify-center rounded-xl bg-brand-500 text-sm font-bold text-white transition-all hover:brightness-95"
       >
-        ✍️ 글쓰기
+        <span aria-hidden="true">✍️</span>
+        글쓰기
       </Link>
     </div>
   );

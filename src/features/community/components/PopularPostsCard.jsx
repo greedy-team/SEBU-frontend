@@ -7,7 +7,9 @@ const rankColor = (index) => (index < 3 ? "text-brand-500" : "text-gray-300");
 function PopularPostsCard({ posts, isLoading }) {
   return (
     <div className="rounded-card border border-gray-200 bg-white p-5">
-      <h3 className="text-sm font-bold text-gray-900">🔥 인기글 TOP 4</h3>
+      <h3 className="text-sm font-bold text-gray-900" aria-hidden="true">
+        🔥 인기글 TOP 4
+      </h3>
 
       {isLoading && (
         <p className="mt-4 text-xs text-gray-400">불러오는 중이에요…</p>
@@ -18,7 +20,7 @@ function PopularPostsCard({ posts, isLoading }) {
       )}
 
       {!isLoading && posts.length > 0 && (
-        <ol className="mt-4 space-y-4">
+        <ol className="mt-4 space-y-4" aria-label="인기글 목록">
           {posts.map((post, index) => (
             <li key={post.id}>
               <Link to={`/community/${post.id}`} className="group flex gap-3">

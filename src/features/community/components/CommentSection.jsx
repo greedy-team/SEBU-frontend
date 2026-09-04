@@ -70,6 +70,7 @@ function CommentItem({ comment, isPostAuthor, onEdit, onDelete }) {
       {isEditing ? (
         <div className="mt-2">
           <textarea
+            aria-label="댓글 수정"
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             maxLength={MAX_LENGTH}
@@ -194,6 +195,7 @@ function CommentForm({ isLoggedIn, onSubmit }) {
   return (
     <form onSubmit={handleSubmit} className="border-t border-gray-100 p-5">
       <textarea
+        aria-label="댓글 입력창"
         value={content}
         onChange={(event) => setContent(event.target.value)}
         maxLength={MAX_LENGTH}
