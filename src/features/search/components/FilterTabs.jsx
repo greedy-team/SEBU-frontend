@@ -5,7 +5,11 @@ function FilterTabs({ activeTab, setActiveTab, filters }) {
   ];
 
   return (
-    <div className="mt-2 flex gap-8 border-b border-gray-200">
+    <div
+      className="mt-2 flex gap-8 border-b border-gray-200"
+      role="tablist"
+      aria-label="검색 필터 탭"
+    >
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
 

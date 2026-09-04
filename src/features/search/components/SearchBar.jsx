@@ -11,6 +11,7 @@ function SearchBar({ value, onChange, onSearch }) {
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="관심 분야, 역량, 연구실 이름을 검색해보세요"
+        aria-label="연구실 검색"
         className="flex-1 outline-none text-sm placeholder:text-gray-400"
       />
       <button
