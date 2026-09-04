@@ -13,6 +13,7 @@ function DepartmentList({ departments }) {
           <button
             key={dept.id}
             onClick={() => setSelectedDeptId(dept.id)}
+            aria-pressed={selectedDeptId === dept.id}
             className={`text-left px-3 py-2 rounded text-sm ${
               selectedDeptId === dept.id
                 ? "bg-blue-50 text-blue-600 font-medium"

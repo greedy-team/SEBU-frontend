@@ -9,6 +9,8 @@ function CollegeAccordionItem({ college }) {
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
       <button
         onClick={() => setIsOpen((prev) => !prev)}
+        aria-expanded={isOpen}
+        aria-label={`${name} ${isOpen ? "접기" : "펼치기"}`}
         className="w-full flex items-center justify-between px-5 py-4 text-left"
       >
         <div>
@@ -22,7 +24,9 @@ function CollegeAccordionItem({ college }) {
             </span>
           </div>
         </div>
-        <span className="text-gray-400 text-xs">{isOpen ? "▲" : "▼"}</span>
+        <span className="text-gray-400 text-xs" aria-hidden="true">
+          {isOpen ? "▲" : "▼"}
+        </span>
       </button>
 
       {isOpen && (
