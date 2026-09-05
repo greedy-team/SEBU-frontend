@@ -9,6 +9,13 @@ import { hoursAgo } from "./mockTime";
  * 변환은 communityHandlers.js가 담당합니다. (COMMUNITY_API.md §1, §2 참고)
  */
 
+/**
+ * 목 로그인 사용자.
+ * 내 글·내 댓글 판별(mine)에 씁니다. mockComments.js도 여기서 가져다 써요
+ * (mockComments가 이미 mockPosts를 import하고 있어서, 반대로 두면 순환 참조가 됩니다).
+ */
+export const MOCK_USER = { id: 17, nickname: "세부러" };
+
 export const mockPosts = [
   {
     id: 101,
@@ -106,7 +113,8 @@ export const mockPosts = [
     category: "FREE",
     title: "대학원 진학 vs 취업, 학부연구생 경험이 도움이 되나요?",
     content: "둘 다 고민 중인데 경험자분들 이야기가 듣고 싶어요.",
-    author: { id: 58, nickname: "진로고민" },
+    // 수정·삭제 버튼을 확인하려면 내가 쓴 글이 하나는 있어야 합니다.
+    author: { ...MOCK_USER },
     likeCount: 67,
     commentCount: 53,
     viewCount: 2341,
