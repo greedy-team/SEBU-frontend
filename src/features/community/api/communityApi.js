@@ -117,3 +117,28 @@ export const updatePost = async (postId, body) =>
 // DELETE /posts/{postId}
 export const deletePost = async (postId) =>
   notImplemented("deletePost", postId);
+
+/* ── 랩실 평가 ── */
+
+/**
+ * 후기 많은 순 연구실 목록.
+ * 연구실 검색 화면이 쓰는 것과 같은 엔드포인트라, 커뮤니티에서는
+ * sort·page·size를 붙여서 정렬·페이징 응답을 받습니다. (명세 §6.4)
+ */
+export const getLabs = async ({ page = 0, size = 20 } = {}) =>
+  request(
+    `/api/v1/laboratories?sort=REVIEW_COUNT_DESC&page=${page}&size=${size}`,
+  );
+
+/** 특정 연구실의 후기 목록. 인증은 선택이며 토큰이 있으면 reviewedByMe가 계산됩니다. */
+export const getLabReviews = async (
+  laboratoryId,
+  { page = 0, size = 20 } = {},
+  accessToken,
+) =>
+  request(
+    `/api/v1/laboratories/${laboratoryId}/reviews?page=${page}&size=${size}`,
+    {
+      accessToken,
+    },
+  );
