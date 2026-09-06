@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 
 /**
@@ -43,6 +43,12 @@ const navItemClass = ({ isActive }) =>
 function Header() {
   const user = useAuthStore((state) => state.user);
 
+  // 랩실 평가는 /community 아래에 있어서 NavLink에 맡기면 두 항목이 같이
+  // 활성화됩니다. 어느 영역에 있는지 직접 계산해서 하나만 켭니다.
+  const { pathname } = useLocation();
+  const isLabArea = pathname.startsWith("/community/labs");
+  const isCommunityArea = pathname.startsWith("/community") && !isLabArea;
+
   return (
     <header
       className="sticky top-0 z-40 bg-white"
@@ -60,9 +66,18 @@ function Header() {
           <NavLink to="/colleges" className={navItemClass}>
             단과대별 보기
           </NavLink>
-          <NavLink to="/community" className={navItemClass}>
+          <Link
+            to="/community"
+            className={navItemClass({ isActive: isCommunityArea })}
+          >
             커뮤니티
-          </NavLink>
+          </Link>
+          <Link
+            to="/community/labs"
+            className={navItemClass({ isActive: isLabArea })}
+          >
+            랩실 평가
+          </Link>
         </nav>
 
         <div className="ml-auto flex items-center gap-1">

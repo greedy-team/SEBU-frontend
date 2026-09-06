@@ -25,7 +25,7 @@ function LabReviewPage() {
       <Header />
       <div className="mx-auto max-w-3xl px-4 py-8">
         <Link
-          to="/community"
+          to="/community/labs"
           className="inline-flex items-center gap-1 text-sm text-gray-500 transition-colors hover:text-gray-900"
         >
           <span aria-hidden="true">‹</span> 랩실 평가로 돌아가기
@@ -108,25 +108,19 @@ function LabReviewPage() {
               )}
             </section>
 
-            {/* 후기 작성 — 화면은 후속 이슈에서 만듭니다 */}
+            {/* 후기 작성 — 한 연구실에 하나만 쓸 수 있습니다. (명세 §6.7) */}
             <div className="mt-4 text-center">
               {reviewedByMe ? (
                 <p className="text-sm text-gray-400">
                   이미 이 연구실에 후기를 남겼어요.
                 </p>
               ) : (
-                <>
-                  <button
-                    type="button"
-                    disabled
-                    className="h-11 rounded-full bg-gray-200 px-6 text-sm font-bold text-gray-400"
-                  >
-                    후기 작성
-                  </button>
-                  <p className="mt-2 text-xs text-gray-400">
-                    후기 작성 화면은 준비 중이에요.
-                  </p>
-                </>
+                <Link
+                  to={`/community/labs/${laboratory.id}/write`}
+                  className="inline-flex h-11 items-center rounded-full bg-brand-500 px-6 text-sm font-bold text-white transition-all hover:brightness-95"
+                >
+                  후기 작성
+                </Link>
               )}
             </div>
           </>
