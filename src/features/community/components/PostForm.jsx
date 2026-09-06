@@ -15,6 +15,9 @@ const categoryChipClass = (isSelected) =>
       : "bg-gray-100 font-medium text-gray-600 hover:bg-gray-200",
   ].join(" ");
 
+const fieldClass =
+  "mt-3 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-brand-500";
+
 /**
  * 게시글 작성·수정 폼.
  *
@@ -78,34 +81,44 @@ function PostForm({ initialValues, submitLabel = "등록", onSubmit, onCancel })
         </div>
       </fieldset>
 
-      <label className="mt-6 block">
-        <span className="text-sm font-bold text-gray-900">제목</span>
+      {/* 글자수는 label 밖에 둡니다. 안에 넣으면 "제목 0 / 100"이 라벨로 읽혀요. */}
+      <div className="mt-6">
+        <label htmlFor="post-title" className="text-sm font-bold text-gray-900">
+          제목
+        </label>
         <input
+          id="post-title"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           maxLength={TITLE_MAX_LENGTH}
           placeholder="제목을 입력해주세요"
-          className="mt-3 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-brand-500"
+          className={fieldClass}
         />
-        <span className="mt-1.5 block text-right text-xs text-gray-300">
+        <p className="mt-1.5 text-right text-xs text-gray-300">
           {title.length} / {TITLE_MAX_LENGTH}
-        </span>
-      </label>
+        </p>
+      </div>
 
-      <label className="mt-4 block">
-        <span className="text-sm font-bold text-gray-900">내용</span>
+      <div className="mt-4">
+        <label
+          htmlFor="post-content"
+          className="text-sm font-bold text-gray-900"
+        >
+          내용
+        </label>
         <textarea
+          id="post-content"
           value={content}
           onChange={(event) => setContent(event.target.value)}
           maxLength={CONTENT_MAX_LENGTH}
           rows={12}
           placeholder="연구실 경험이나 궁금한 점을 자유롭게 나눠주세요."
-          className="mt-3 w-full resize-none rounded-xl border border-gray-200 px-3 py-2 text-sm leading-relaxed outline-none focus:border-brand-500"
+          className={`${fieldClass} resize-none leading-relaxed`}
         />
-        <span className="mt-1.5 block text-right text-xs text-gray-300">
+        <p className="mt-1.5 text-right text-xs text-gray-300">
           {content.length} / {CONTENT_MAX_LENGTH}
-        </span>
-      </label>
+        </p>
+      </div>
 
       <div className="mt-6 flex justify-end gap-2">
         <button
