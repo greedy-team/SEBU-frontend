@@ -3,10 +3,7 @@ import { useAuthStore } from "../store/authStore";
 import { useErrorStore } from "../store/errorStore";
 
 const client = axios.create({
-  baseURL:
-    import.meta.env.VITE_USE_MSW === "true"
-      ? "/api/v1"
-      : import.meta.env.VITE_API_BASE_URL + "/api/v1",
+  baseURL: "/api/v1",
   withCredentials: true,
 });
 
