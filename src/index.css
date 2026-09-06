@@ -1,113 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+/*
+  ============================================================
+  SEBU Design Tokens  (단일 출처 / Single Source of Truth)
+  ============================================================
+  값의 출처: Figma Make 내보내기
+    "세부 와이어프레임 (Community)" / src/index.css + src/App.tsx
+
+  - 이 블록이 실제 CSS 토큰을 정의하는 "유일한" 곳입니다.
+  - 문서(배경·근거·적용 범위)는 저장소 루트의 DESIGN_SYSTEM.md
+  - 화면 확인은 /design-system 라우트
+  - 쇼케이스가 렌더링할 메타데이터는 src/constants/designTokens.js
+
+  Tailwind v4 방식이라 tailwind.config.js가 아니라 CSS 안에서 선언합니다.
+  ============================================================
+*/
+@theme {
+  /* ---------- Font ----------
+     Figma가 Noto Sans KR을 쓰고 있어 동일하게 맞췄습니다. */
+  --font-sans: 'Noto Sans KR', system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  /* ---------- Brand ----------
+     ⚠️ #3182F6은 토스의 브랜드 컬러입니다. Figma 원본이 이 값을 그대로 쓰고
+     토큰 이름도 'toss-blue'였는데, SEBU는 앱인토스가 아닌 독립 서비스라
+     남의 브랜드 컬러를 자사 대표색으로 쓰는 형태가 됩니다.
+     → 토큰 이름은 역할 기반(brand-*)으로 바꿔뒀고,
+       HEX 자체를 SEBU 고유 색으로 옮기는 건 팀 결정이 필요합니다.
+       DESIGN_SYSTEM.md §0 참고. 바꿀 때는 아래 6줄만 고치면 됩니다. */
+  --color-brand-50: #ebf3ff; /* 선택된 칩·활성 탭 배경, hover 배경 */
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe; /* 배지 테두리, 포커스 링 */
+  --color-brand-500: #3182f6; /* Primary — CTA, 로고, 활성 탭 */
+  --color-brand-600: #1d4ed8; /* Hover (진하게) */
+  --color-brand-700: #1e40af; /* Active / Pressed */
+
+  /* ---------- Neutral ----------
+     Tailwind 기본 회색 대신 Figma의 회색 스케일로 덮어씁니다.
+     기존 컴포넌트가 쓰던 gray-* 클래스가 그대로 새 팔레트를 따라갑니다. */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f2f4f6;
+  --color-gray-200: #e5e8eb;
+  --color-gray-300: #d1d6db;
+  --color-gray-400: #b0b8c1;
+  --color-gray-500: #8b95a1;
+  --color-gray-600: #6b7684;
+  --color-gray-700: #4e5968;
+  --color-gray-800: #333d4b;
+  --color-gray-900: #191f28;
+
+  /* ---------- Live (실시간) ---------- */
+  --color-live: #3182f6; /* '실시간' 라벨 텍스트 + 점 (축소 상태) */
+  --color-live-bg: #ebf3ff;
+  --color-live-dot: #ef4444; /* 펼친 상태 제목 옆 빨간 점 */
+
+  /* ---------- Rank (순위 배지) ----------
+     1·2위만 색으로 강조하고 3위 이하는 중립. 테두리까지 한 세트입니다. */
+  --color-rank-first: #e53935;
+  --color-rank-first-bg: #fff1f0;
+  --color-rank-first-line: #ffcdd2;
+  --color-rank-second: #e07b00;
+  --color-rank-second-bg: #fff8e6;
+  --color-rank-second-line: #ffe0b2;
+  --color-rank-third: #6b7280;
+  --color-rank-third-bg: #f3f4f6;
+  --color-rank-third-line: #e5e7eb;
+  --color-rank-rest: #9ca3af;
+  --color-rank-rest-bg: #f9fafb;
+
+  /* 축소된 티커에서 쓰는 순위 색 (배지가 아니라 숫자만 표시) */
+  --color-ticker-first: #ef4444;
+  --color-ticker-second: #f97316;
+  --color-ticker-rest: #9ca3af;
+
+  /* ---------- Status (모집 상태) ---------- */
+  --color-status-open: #3b82f6;
+  --color-status-open-bg: #eff6ff;
+  --color-status-open-line: #bfdbfe;
+  --color-status-open-dot: #60a5fa;
+  --color-status-closed: #9ca3af;
+  --color-status-closed-bg: #f9fafb;
+  --color-status-closed-line: #e5e7eb;
+
+  /* ---------- Surface ---------- */
+  --color-surface-page: #ffffff;
+  --color-surface-field: #f8f9fa; /* 검색 입력창 배경 */
+  --color-surface-mega: #f7f8fa; /* 메가메뉴 featured 항목 (비활성) */
+  --color-line-widget: #f0f0f0; /* 인기 위젯 테두리 */
+
+  /* ---------- Radius ----------
+     Figma 기준: 내비 항목·아이콘 버튼은 12px, 카드/위젯은 16px,
+     CTA·칩·배지는 full, 축소된 티커만 40px. */
+  --radius-field: 8px; /* 태그·배지 (AI, Machine Learning, 단과대 배지) */
+  --radius-control: 12px; /* 내비 항목, 아이콘 버튼, 메가메뉴 항목 */
+  --radius-card: 16px; /* 카드, 위젯 (펼친 상태) */
+  --radius-ticker: 40px; /* 인기 위젯 (축소 상태) */
+
+  /* ---------- Shadow ---------- */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-header: 0 1px 0 #f2f4f6;
+  --shadow-mega: 0 16px 48px rgba(0, 0, 0, 0.08);
+  --shadow-widget: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-cta: 0 2px 8px rgba(49, 130, 246, 0.3);
+
+  /* ---------- Motion ----------
+     Figma가 쓰는 값 그대로입니다. */
+  --ease-ping: cubic-bezier(0, 0, 0.2, 1);
+
+  --animate-ping-slow: ping-slow 1.4s var(--ease-ping) infinite;
+
+  @keyframes ping-slow {
+    75%,
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+}
+
+/*
+  자동으로 움직이는 콘텐츠는 모션 감소를 선호하는 사용자에게 정지해야 합니다.
+  (라이브 점 깜빡임 · 순위 자동 롤링)
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  font-family: var(--font-sans);
+  background-color: #ffffff;
+  color: var(--color-gray-900);
 }
