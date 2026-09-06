@@ -3,10 +3,16 @@ import { useAuthStore } from "../store/authStore";
 import { useErrorStore } from "../store/errorStore";
 
 const client = axios.create({
-  baseURL:
-    import.meta.env.VITE_USE_MSW === "true"
-      ? "/api/v1"
-      : import.meta.env.VITE_API_BASE_URL + "/api/v1",
+  /**
+   * 언제나 상대경로입니다.
+   *   개발  : vite의 server.proxy가 /api 를 백엔드로 넘깁니다
+   *   배포  : vercel.json의 rewrites가 같은 일을 합니다
+   *
+   * 절대 주소를 쓰면 브라우저가 다른 사이트로 보기 때문에
+   * CORS 허용이 필요하고, refresh 토큰 쿠키(SameSite=Lax)도 전송되지 않습니다.
+   * MSW를 쓸 때와 실제 서버를 쓸 때 경로가 같아야 코드도 안 갈립니다.
+   */
+  baseURL: "/api/v1",
   withCredentials: true,
 });
 
