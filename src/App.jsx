@@ -7,7 +7,7 @@ import DesignSystem from "./pages/DesignSystem";
 import CommunityPage from "./pages/Community";
 import PostDetailPage from "./pages/PostDetail";
 import PostWritePage from "./pages/PostWrite";
-import LabReviewPage from "./pages/LabReview";
+import RateLimitToast from "./components/common/RateLimitToast";
 
 function App() {
   return (
