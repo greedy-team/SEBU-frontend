@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import ProfileHeader from "../../features/mypage/components/ProfileHeader";
 import ProfileModal from "../../features/mypage/components/ProfileModal";
@@ -12,46 +12,38 @@ import { useAuthStore } from "../../store/authStore";
 
 function MyPage() {
   const navigate = useNavigate();
-
-  // updateUser만 구독 (accessToken은 인터셉터가 처리)
+  const location = useLocation();
   const updateUser = useAuthStore((state) => state.updateUser);
 
   const { data, isLoading: isPageLoading, error: pageError } = useMyPage();
-  const [pageData, setPageData] = useState(null);
+
+  // data를 초기값으로 사용 (useEffect 제거)
+  const [pageData, setPageData] = useState(data);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    if (data) {
-      setPageData(data);
-      // 최초 로그인이면 모달 자동으로 열기
-      if (!data.profile.profileCompleted) {
-        setIsModalOpen(true);
-      }
-    }
-  }, [data]);
-
-  useEffect(() => {
     if (!isPageLoading && !data) {
-      navigate("/login");
+      navigate("/login", {
+        state: { from: location.pathname },
+      });
     }
-  }, [isPageLoading, data, navigate]);
+  }, [isPageLoading, data, navigate, location.pathname]);
 
   const {
-  handleSubmit,
-  isLoading: isFormLoading,
-  introError,
-  formError,
-} = useProfileForm(
-  pageData?.profile,
-  updateUser, // accessToken 없음
-  (savedProfile) => {
+    handleSubmit,
+    isLoading: isFormLoading,
+    introError,
+    formError,
+  } = useProfileForm(pageData?.profile, updateUser, (savedProfile) => {
     setPageData((prev) => ({
       ...prev,
       profile: savedProfile,
     }));
-    setIsModalOpen(false); // isEditing 대신 모달 닫기
-  },
-);
+    setIsModalOpen(false);
+  });
+
+  // data 받아오면 pageData 업데이트 (useMemo로 대체)
+  const currentData = pageData ?? data;
 
   if (isPageLoading) {
     return (
@@ -75,7 +67,7 @@ function MyPage() {
     );
   }
 
-  if (!pageData) {
+  if (!currentData) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
@@ -86,7 +78,7 @@ function MyPage() {
     );
   }
 
-  const { profile, summary } = pageData;
+  const { profile, summary } = currentData;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -95,14 +87,12 @@ function MyPage() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         <p className="text-xs text-gray-400 mb-4">SEBU &gt; 마이페이지</p>
 
-        {/* 프로필 헤더 */}
         <ProfileHeader
           name={profile.name}
           grade={profile.grade}
           profileCompleted={profile.profileCompleted}
         />
 
-        {/* 한 줄 요약 버튼 */}
         <button
           onClick={() => setIsModalOpen(true)}
           className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition mb-4"
@@ -125,23 +115,19 @@ function MyPage() {
           </span>
         </button>
 
-        {/* 요약 카드 */}
         <SummaryCards summary={summary} />
 
-        {/* 관심 랩실 */}
         <BookmarkedLabs
-          items={pageData.bookmarkedLaboratories.items}
-          hasNext={pageData.bookmarkedLaboratories.hasNext}
+          items={currentData.bookmarkedLaboratories.items}
+          hasNext={currentData.bookmarkedLaboratories.hasNext}
         />
 
-        {/* 북마크 게시글 */}
         <BookmarkedPosts
-          items={pageData.bookmarkedPosts.items}
-          hasNext={pageData.bookmarkedPosts.hasNext}
+          items={currentData.bookmarkedPosts.items}
+          hasNext={currentData.bookmarkedPosts.hasNext}
         />
       </div>
 
-      {/* 프로필 모달 */}
       {isModalOpen && (
         <ProfileModal
           profile={profile}

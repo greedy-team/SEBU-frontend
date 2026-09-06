@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { sejongLogin } from "../api/authApi";
 
 export const useLogin = (setAuth) => {
@@ -7,6 +7,7 @@ export const useLogin = (setAuth) => {
   const [errorInfo, setErrorInfo] = useState({ message: "", field: null });
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const executeLogin = async (studentId, password, onAuthFail) => {
     if (!studentId.trim()) {
@@ -38,10 +39,12 @@ export const useLogin = (setAuth) => {
 
       setAuth(result.data.accessToken, result.data.user);
 
-      if (result.data.user.profileCompleted) {
+      // 이전 페이지로 이동
+      const from = location.state?.from;
+      if (!from || from === "/login") {
         navigate("/");
       } else {
-        navigate("/mypage");
+        navigate(from);
       }
     } catch (error) {
       setErrorInfo({ message: "서버와 연결할 수 없습니다.", field: "global" });
