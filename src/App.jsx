@@ -21,10 +21,10 @@ function App() {
         <Route path="/design-system" element={<DesignSystem />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/community/write" element={<PostWritePage />} />
-        <Route
+        {/* <Route
           path="/community/labs/:laboratoryId"
           element={<LabReviewPage />}
-        />
+        /> */}
         <Route path="/community/:postId/edit" element={<PostWritePage />} />
         <Route path="/community/:postId" element={<PostDetailPage />} />
       </Routes>
