@@ -22,7 +22,9 @@ export const POST_BADGE = {
 /**
  * 커뮤니티 HOME 탭.
  * category가 null이면 조회 시 조건을 생략합니다 (= 전체글).
- * 랩실 평가는 게시글이 아니라 별도 도메인이라 후속 이슈에서 붙입니다.
+ *
+ * 랩실 평가는 게시글이 아니라 별도 도메인이고 검색·정렬·인기글이 모두
+ * 게시글 기준이라, 탭이 아니라 상단 내비게이션(/community/labs)으로 뺐습니다.
  */
 export const COMMUNITY_TABS = [
   { id: "ALL", label: "전체글", listTitle: "전체 게시글", category: null },
@@ -37,12 +39,6 @@ export const COMMUNITY_TABS = [
     label: "Q&A 게시판",
     listTitle: "Q&A 게시판",
     category: "QUESTION",
-  },
-  {
-    id: "LAB_REVIEW",
-    label: "랩실 평가",
-    listTitle: "랩실 평가",
-    category: null,
   },
 ];
 
