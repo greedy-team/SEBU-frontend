@@ -143,3 +143,11 @@ export const getLabReviews = async (
       accessToken,
     },
   );
+
+/** 후기 작성. 응답: 201 { reviewId } (명세 §6.6) */
+export const createLabReview = async (laboratoryId, body, accessToken) =>
+  request(`/api/v1/laboratories/${laboratoryId}/reviews`, {
+    method: "POST",
+    body,
+    accessToken,
+  });
