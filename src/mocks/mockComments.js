@@ -1,4 +1,4 @@
-import { mockPosts } from "./mockPosts";
+import { mockPosts, MOCK_USER } from "./mockPosts";
 import { toApiDateTime } from "./mockTime";
 
 /**
@@ -8,9 +8,6 @@ import { toApiDateTime } from "./mockTime";
  * 숫자를 두 곳에 적어두면 목록의 "💬 62"와 상세의 "댓글 62개"가 어긋나기 때문에,
  * commentCount를 유일한 출처로 두고 댓글을 그 수만큼 만들어 둡니다.
  */
-
-/** MSW 로그인 사용자. 이 사람의 댓글에만 mine=true가 붙습니다. */
-export const MOCK_USER = { id: 17, nickname: "세부러" };
 
 const AUTHORS = [
   { id: 45, nickname: "연구꿈나무" },

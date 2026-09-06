@@ -9,6 +9,7 @@ import PopularPostsCard from "../../features/community/components/PopularPostsCa
 import { useCommunityPosts } from "../../features/community/hooks/useCommunityPosts";
 import { usePopularPosts } from "../../features/community/hooks/usePopularPosts";
 import { useLabList } from "../../features/community/hooks/useLabList";
+import { useScrollRestore } from "../../features/community/hooks/useScrollRestore";
 import { COMMUNITY_TABS } from "../../constants/postCategory";
 
 function CommunityPage() {
@@ -41,6 +42,9 @@ function CommunityPage() {
     isLoading: isLabsLoading,
     error: labsError,
   } = useLabList();
+
+  // 글을 읽고 돌아왔을 때 보던 자리에 그대로 있게 합니다.
+  useScrollRestore("community", !isLoading);
 
   const handleSearch = () => setKeyword(searchInput.trim());
 

@@ -21,8 +21,10 @@ function PencilIcon() {
 }
 
 function WritePromptCard() {
-  const status = useAuthStore((state) => state.status);
-  const isAuthenticated = status === "authenticated";
+  // authStore에는 status가 없고 accessToken만 있습니다.
+  // 다른 화면(PostDetail·PostWrite·LabReview)도 같은 기준을 씁니다.
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const isAuthenticated = Boolean(accessToken);
 
   return (
     <div className="rounded-card border border-gray-200 bg-white p-5">
