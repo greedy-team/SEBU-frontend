@@ -22,10 +22,6 @@ const request = async (path, { method = "GET", body, accessToken } = {}) => {
   return { ok: response.ok, result };
 };
 
-const notImplemented = (name) => {
-  throw new Error(`communityApi.${name}는 아직 구현되지 않았습니다.`);
-};
-
 /* ── 커뮤니티 HOME ── */
 
 export const getPosts = async ({
@@ -105,18 +101,23 @@ export const toggleBookmark = async (postId, bookmarked, accessToken) =>
     accessToken,
   });
 
-/* ── 글 작성 ── */
+/* ── 글 작성·수정·삭제 ── */
 
-// POST /posts
-export const createPost = async (body) => notImplemented("createPost", body);
+/** 글 작성. 응답: 201 { postId } (명세 §4) */
+export const createPost = async (body, accessToken) =>
+  request("/api/v1/posts", { method: "POST", body, accessToken });
 
-// PATCH /posts/{postId}
-export const updatePost = async (postId, body) =>
-  notImplemented("updatePost", postId, body);
+/**
+ * 글 수정. 바로 위 updateComment는 PATCH지만 게시글은 PUT이고,
+ * category·title·content 세 필드를 전부 보냅니다. (명세 §3.6)
+ * 응답: { postId, updatedAt }
+ */
+export const updatePost = async (postId, body, accessToken) =>
+  request(`/api/v1/posts/${postId}`, { method: "PUT", body, accessToken });
 
-// DELETE /posts/{postId}
-export const deletePost = async (postId) =>
-  notImplemented("deletePost", postId);
+/** 글 삭제. 소프트 삭제라 두 번째 요청은 404입니다. 응답: { postId } */
+export const deletePost = async (postId, accessToken) =>
+  request(`/api/v1/posts/${postId}`, { method: "DELETE", accessToken });
 
 /* ── 랩실 평가 ── */
 

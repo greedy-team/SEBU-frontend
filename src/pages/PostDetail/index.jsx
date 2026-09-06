@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import { usePostDetail } from "../../features/community/hooks/usePostDetail";
 import { useComments } from "../../features/community/hooks/useComments";
@@ -7,7 +7,9 @@ import CommentSection from "../../features/community/components/CommentSection";
 import {
   toggleLike,
   toggleBookmark,
+  deletePost,
 } from "../../features/community/api/communityApi";
+import { toPostErrorMessage } from "../../features/community/utils/postError";
 import { useAuthStore } from "../../store/authStore";
 import { POST_CATEGORY, POST_BADGE } from "../../constants/postCategory";
 import { formatDate, formatCount } from "../../features/community/utils/format";
@@ -46,6 +48,7 @@ const reactionButtonClass = (isActive) =>
 
 function PostDetailPage() {
   const { postId } = useParams();
+  const navigate = useNavigate();
   const accessToken = useAuthStore((state) => state.accessToken);
   const { post, setPost, isLoading, errorCode } = usePostDetail(
     postId,
@@ -67,6 +70,12 @@ function PostDetailPage() {
   // 좋아요·북마크 요청이 겹치지 않게 막고, 실패 사유를 한 줄로 보여줍니다.
   const [isReacting, setIsReacting] = useState(false);
   const [reactionMessage, setReactionMessage] = useState("");
+
+  // 삭제는 되돌릴 수 없어서 한 번 더 확인받습니다.
+  // window.confirm 대신 인라인으로 묻습니다. (DESIGN_SYSTEM.md §6)
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState("");
 
   /**
    * 좋아요·북마크는 요청/응답 처리가 같아서 한 함수로 묶었습니다.
@@ -108,6 +117,31 @@ function PostDetailPage() {
       () => toggleBookmark(post.id, !post.bookmarked, accessToken),
       (data) => ({ bookmarked: data.bookmarked }),
     );
+
+  /** 삭제 후에는 목록으로 돌아갑니다. 목록·TOP 4는 그때 다시 조회돼요. (명세 §3.6) */
+  const handleDelete = async () => {
+    if (isDeleting) return;
+
+    setIsDeleting(true);
+    setDeleteMessage("");
+
+    try {
+      const { ok, result } = await deletePost(post.id, accessToken);
+
+      if (!ok || !result.success) {
+        setIsConfirmingDelete(false);
+        setIsDeleting(false);
+        setDeleteMessage(toPostErrorMessage(result.error?.code));
+        return;
+      }
+
+      navigate("/community");
+    } catch {
+      setIsConfirmingDelete(false);
+      setIsDeleting(false);
+      setDeleteMessage(toPostErrorMessage("NETWORK_ERROR"));
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -178,6 +212,54 @@ function PostDetailPage() {
             <p className="mt-6 border-t border-gray-100 pt-6 text-sm leading-relaxed whitespace-pre-line text-gray-800">
               {post.content}
             </p>
+
+            {/* 내 글에만 수정·삭제를 보여줍니다. (명세 §3.1 — mine) */}
+            {post.mine && (
+              <div className="mt-4 flex items-center justify-end gap-2 text-xs">
+                {isConfirmingDelete ? (
+                  <>
+                    <span className="text-gray-500">정말 삭제할까요?</span>
+                    <button
+                      type="button"
+                      onClick={() => setIsConfirmingDelete(false)}
+                      className="text-gray-400 transition-colors hover:text-gray-700"
+                    >
+                      닫기
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      className="font-bold text-red-500 disabled:opacity-40"
+                    >
+                      삭제
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to={`/community/${post.id}/edit`}
+                      className="text-gray-400 transition-colors hover:text-gray-700"
+                    >
+                      수정
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setIsConfirmingDelete(true)}
+                      className="text-gray-400 transition-colors hover:text-gray-700"
+                    >
+                      삭제
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+
+            {deleteMessage && (
+              <p className="mt-2 text-right text-xs text-gray-400">
+                {deleteMessage}
+              </p>
+            )}
 
             {/* 좋아요 · 북마크 */}
             <div className="mt-8 flex justify-center gap-3">
