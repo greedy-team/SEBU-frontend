@@ -128,6 +128,18 @@ export const mockReviews = [
   }),
 ];
 
+/**
+ * 세션 중 후기가 추가되므로 이 배열이 실제 저장소 역할을 합니다.
+ * mockReviews는 초기값으로 두고, 추가는 여기에만 일어나요.
+ *
+ * 후기 핸들러와 연구실 목록 핸들러가 같은 배열을 봐야
+ * 방금 쓴 후기가 reviewCount에도 바로 반영됩니다.
+ */
+export const reviews = [...mockReviews];
+
+/** 새 후기 id. mock 데이터가 쓰고 남은 번호부터 이어집니다. */
+export const issueReviewId = () => nextReviewId++;
+
 /** 특정 랩실의 후기 수. 저장값이 아니라 매번 집계합니다. */
 export const countReviews = (laboratoryId) =>
-  mockReviews.filter((review) => review.laboratoryId === laboratoryId).length;
+  reviews.filter((review) => review.laboratoryId === laboratoryId).length;
