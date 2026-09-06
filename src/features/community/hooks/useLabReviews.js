@@ -37,10 +37,10 @@ export function useLabReviews(laboratoryId, accessToken) {
         }
 
         setLaboratory(result.data.laboratory);
-        setReviews(result.data.reviews);
-        setReviewedByMe(result.data.reviewedByMe);
-        setTotalElements(result.data.totalElements);
-        setHasNext(result.data.hasNext);
+        setReviews(result.data.reviews ?? []);
+        setReviewedByMe(result.data.reviewedByMe ?? false);
+        setTotalElements(result.data.totalElements ?? 0);
+        setHasNext(result.data.hasNext ?? false);
         setPage(0);
       } catch {
         if (requestId === requestIdRef.current) setErrorCode("NETWORK_ERROR");

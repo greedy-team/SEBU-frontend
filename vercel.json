@@ -4,9 +4,6 @@
       "source": "/api/:path*",
       "destination": "https://sebu-dev-api.duckdns.org/api/:path*"
     },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

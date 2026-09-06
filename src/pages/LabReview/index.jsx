@@ -61,12 +61,29 @@ function LabReviewPage() {
               <h1 className="text-xl font-bold text-gray-900">
                 {laboratory.name}
               </h1>
-              <p className="mt-1.5 text-sm text-gray-500">
-                {laboratory.professor.name} 교수 · {laboratory.department.name}
-              </p>
-              <p className="mt-0.5 text-xs text-gray-400">
-                {laboratory.college.name}
-              </p>
+
+              {/*
+                후기 응답의 laboratory에는 id·name만 담겨 올 수 있습니다.
+                명세 §6.5는 professor·college·department도 포함한다고 되어 있지만
+                실서버는 아직 이름만 내려주고 있어, 없을 때를 견디게 둡니다.
+              */}
+              {(laboratory.professor?.name || laboratory.department?.name) && (
+                <p className="mt-1.5 text-sm text-gray-500">
+                  {[
+                    laboratory.professor?.name &&
+                      `${laboratory.professor.name} 교수`,
+                    laboratory.department?.name,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+              )}
+
+              {laboratory.college?.name && (
+                <p className="mt-0.5 text-xs text-gray-400">
+                  {laboratory.college.name}
+                </p>
+              )}
             </section>
 
             <ReviewTagSummary reviews={reviews} />
