@@ -20,13 +20,12 @@ export function useAuthRestore() {
         }
 
         const accessToken = refreshResult.data.accessToken;
-
+        setAuth(accessToken, null);
         const { ok: meOk, result: meResult } = await fetchMe();
         if (!meOk || !meResult.success) {
           clearAuth();
           return;
         }
-
         setAuth(accessToken, meResult.data);
       } catch {
         clearAuth();
