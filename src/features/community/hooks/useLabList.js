@@ -26,8 +26,8 @@ export function useLabList() {
           return;
         }
 
-        setLabs(result.data.laboratories);
-        setTotalElements(result.data.totalElements);
+        setLabs(result.data.laboratories ?? []);
+        setTotalElements(result.data.totalElements ?? 0);
       } catch {
         if (!ignore) setError("서버와 연결할 수 없어요.");
       } finally {
