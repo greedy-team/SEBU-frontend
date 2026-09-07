@@ -33,7 +33,7 @@ export const refreshToken = async () => {
 
 export const fetchMe = async () => {
   try {
-    const response = await client.get("/me");
+    const response = await client.get("/user/me");
     return { ok: true, result: response.data };
   } catch (error) {
     return {
