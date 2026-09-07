@@ -6,6 +6,7 @@ export const authHandlers = [
 
     const body = await request.json();
     const { studentId } = body;
+
     if (studentId === "0000") {
       return HttpResponse.json(
         {
@@ -31,7 +32,6 @@ export const authHandlers = [
         { status: 502 },
       );
     }
-
     if (studentId === "0002") {
       return HttpResponse.json(
         {
@@ -43,11 +43,10 @@ export const authHandlers = [
         },
         {
           status: 429,
-          headers: { "Retry-After": "30" }, 
+          headers: { "Retry-After": "30" },
         },
       );
     }
-
     if (studentId === "0003") {
       return HttpResponse.json(
         {
@@ -71,7 +70,13 @@ export const authHandlers = [
             user: { id: 17, isNewUser: false, profileCompleted: true },
           },
         },
-        { status: 200 },
+        {
+          status: 200,
+          headers: {
+            "Set-Cookie":
+              "refresh-token=fake-refresh-token-completed; Path=/; HttpOnly",
+          },
+        },
       );
     }
 
@@ -85,7 +90,74 @@ export const authHandlers = [
           user: { id: 17, isNewUser: true, profileCompleted: false },
         },
       },
-      { status: 200 },
+      {
+        status: 200,
+        headers: {
+          "Set-Cookie":
+            "refresh-token=fake-refresh-token-12345; Path=/; HttpOnly",
+        },
+      },
     );
+  }),
+
+  http.post("/api/v1/auth/refresh", ({ cookies }) => {
+    const refreshToken = cookies["refresh-token"];
+
+    if (!refreshToken) {
+      return HttpResponse.json(
+        {
+          success: false,
+          error: {
+            code: "REFRESH_TOKEN_NOT_FOUND",
+            message: "로그인이 필요합니다.",
+          },
+        },
+        { status: 401 },
+      );
+    }
+
+    if (refreshToken === "fake-refresh-token-completed") {
+      return HttpResponse.json({
+        success: true,
+        data: {
+          accessToken: "fake-jwt-token-completed",
+          tokenType: "Bearer",
+          expiresIn: 1800,
+        },
+      });
+    }
+
+    return HttpResponse.json({
+      success: true,
+      data: {
+        accessToken: "fake-jwt-token-12345",
+        tokenType: "Bearer",
+        expiresIn: 1800,
+      },
+    });
+  }),
+
+  http.get("/api/v1/me", ({ request }) => {
+    const token = request.headers.get("Authorization");
+
+    if (token === "Bearer fake-jwt-token-completed") {
+      return HttpResponse.json({
+        success: true,
+        data: {
+          id: 17,
+          nickname: "김세종",
+          profileCompleted: true,
+        },
+      });
+    }
+
+    return HttpResponse.json({
+      success: true,
+      data: {
+        id: 17,
+        nickname: null,
+        profileCompleted: false,
+      },
+    });
   }),
 ];
