@@ -58,24 +58,8 @@ function PostList({
 
       {!isLoading && !error && posts.length === 0 && (
         <p className="px-5 py-16 text-center text-sm text-gray-400">
-          아직 글이 없어요.
+          {emptyMessage || "아직 글이 없어요."}
         </p>
-      )}
-
-      {!isLoading && !error && posts.length === 0 && (
-        <p className="px-5 py-16 text-center text-sm text-gray-400">
-          {emptyMessage}
-        </p>
-      )}
-
-      {!isLoading && !error && posts.length > 0 && (
-        <ul className="divide-y divide-gray-100">
-          {posts.map((post) => (
-            <li key={post.id}>
-              <PostRow post={post} />
-            </li>
-          ))}
-        </ul>
       )}
 
       {!isLoading && !error && posts.length > 0 && (
