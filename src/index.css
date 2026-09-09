@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
-
 /*
   ============================================================
   SEBU Design Tokens  (단일 출처 / Single Source of Truth)
@@ -19,7 +17,7 @@
 @theme {
   /* ---------- Font ----------
      Figma가 Noto Sans KR을 쓰고 있어 동일하게 맞췄습니다. */
-  --font-sans: 'Noto Sans KR', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: "Noto Sans KR", system-ui, "Segoe UI", Roboto, sans-serif;
 
   /* ---------- Brand ----------
      ⚠️ #3182F6은 토스의 브랜드 컬러입니다. Figma 원본이 이 값을 그대로 쓰고
