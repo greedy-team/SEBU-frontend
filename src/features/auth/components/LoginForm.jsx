@@ -1,12 +1,5 @@
 import { useState, useRef } from "react";
 import { useLogin } from "../hooks/useLogin";
-import { useAuthStore } from "../../../store/authStore";
-/**
- * 로그인 폼 카드.
- *
- * 스타일은 Figma를 따르고, 로직(검증·포커스 이동·에러 처리·로딩)은 기존 그대로예요.
- * 화면에 새로 추가된 건 비밀번호 표시 토글 하나입니다.
- */
 
 function EyeIcon({ off }) {
   return (
@@ -36,13 +29,12 @@ function LoginForm() {
   const studentIdRef = useRef(null);
   const passwordRef = useRef(null);
 
-  const setAuth = useAuthStore((state) => state.setAuth);
-  const { executeLogin, isLoading, errorInfo, clearError } = useLogin(setAuth);
+  // setAuth 구독 제거
+  const { executeLogin, isLoading, errorInfo, clearError } = useLogin();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (isLoading) return;
-
     executeLogin(studentId, password, (failType) => {
       if (failType === "studentId") studentIdRef.current.focus();
       if (failType === "password") passwordRef.current.focus();
