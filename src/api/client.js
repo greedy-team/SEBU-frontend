@@ -4,7 +4,9 @@ import { useErrorStore } from "../store/errorStore";
 
 const client = axios.create({
   baseURL: "/api/v1",
-  withCredentials: true, // 쿠키 자동 전송
+  withCredentials: true,
+  xsrfCookieName: "XSRF-TOKEN", // 쿠키에서 읽을 이름
+  xsrfHeaderName: "X-XSRF-TOKEN", // 헤더에 붙일 이름
 });
 
 let rateLimitedUntil = null;
