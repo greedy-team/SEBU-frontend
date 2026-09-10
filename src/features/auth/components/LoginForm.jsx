@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useLogin } from "../hooks/useLogin";
-
+import PrivacyConsentModal from "./PrivacyConsentModal";
+import { useNavigate, useLocation } from "react-router-dom";
 function EyeIcon({ off }) {
   return (
     <svg
@@ -22,15 +23,19 @@ function EyeIcon({ off }) {
 }
 
 function LoginForm() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [studentId, setStudentId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConsent, setShowConsent] = useState(false);
 
   const studentIdRef = useRef(null);
   const passwordRef = useRef(null);
 
-  // setAuth 구독 제거
-  const { executeLogin, isLoading, errorInfo, clearError } = useLogin();
+  const { executeLogin, isLoading, errorInfo, clearError } = useLogin({
+    onNewUser: () => setShowConsent(true), // 신규 유저면 모달 표시
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -58,86 +63,98 @@ function LoginForm() {
     errorInfo.field === "studentId" || errorInfo.field === "global";
   const pwError =
     errorInfo.field === "password" || errorInfo.field === "global";
-
+  const handleConsentConfirm = () => {
+    setShowConsent(false);
+    const from = location.state?.from;
+    if (!from || from === "/login") {
+      navigate("/"); // 신규 유저는 마이페이지로
+    } else {
+      navigate(from);
+    }
+  };
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="rounded-card border border-gray-100 bg-white p-6"
-      style={{ boxShadow: "var(--shadow-widget)" }}
-    >
-      <div className="mb-5">
-        <label
-          htmlFor="studentId"
-          className="mb-2 block text-[13px] font-bold text-gray-800"
-        >
-          포털 아이디 (학번)
-        </label>
-        <input
-          id="studentId"
-          ref={studentIdRef}
-          type="text"
-          autoComplete="username"
-          placeholder="세종대 포털 아이디를 입력해주세요"
-          value={studentId}
-          onChange={(e) => {
-            setStudentId(e.target.value);
-            clearError("studentId");
-          }}
-          className={fieldClass(idError)}
-        />
-      </div>
-
-      <div className="mb-5">
-        <label
-          htmlFor="password"
-          className="mb-2 block text-[13px] font-bold text-gray-800"
-        >
-          비밀번호
-        </label>
-        <div className="relative">
-          <input
-            id="password"
-            ref={passwordRef}
-            type={showPassword ? "text" : "password"}
-            autoComplete="current-password"
-            placeholder="비밀번호를 입력해주세요"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              clearError("password");
-            }}
-            className={`${fieldClass(pwError)} pr-12`}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full p-1.5 text-gray-400 transition-colors hover:text-gray-700"
-            aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-          >
-            <EyeIcon off={showPassword} />
-          </button>
-        </div>
-      </div>
-
-      {errorInfo.message && (
-        <p className="mb-4 px-1 text-[13px] font-medium text-red-500">
-          {errorInfo.message}
-        </p>
-      )}
-
-      <button
-        type="submit"
-        disabled={isLoading}
-        className={[
-          "w-full rounded-control py-3.5 text-[14px] font-bold transition-all",
-          isLoading
-            ? "cursor-not-allowed bg-gray-300 text-white"
-            : "bg-brand-500 text-white hover:brightness-95",
-        ].join(" ")}
+    <>
+      <form
+        onSubmit={handleSubmit}
+        className="rounded-card border border-gray-100 bg-white p-6"
+        style={{ boxShadow: "var(--shadow-widget)" }}
       >
-        {isLoading ? "로그인 중..." : "로그인"}
-      </button>
-    </form>
+        <div className="mb-5">
+          <label
+            htmlFor="studentId"
+            className="mb-2 block text-[13px] font-bold text-gray-800"
+          >
+            포털 아이디 (학번)
+          </label>
+          <input
+            id="studentId"
+            ref={studentIdRef}
+            type="text"
+            autoComplete="username"
+            placeholder="세종대 포털 아이디를 입력해주세요"
+            value={studentId}
+            onChange={(e) => {
+              setStudentId(e.target.value);
+              clearError("studentId");
+            }}
+            className={fieldClass(idError)}
+          />
+        </div>
+
+        <div className="mb-5">
+          <label
+            htmlFor="password"
+            className="mb-2 block text-[13px] font-bold text-gray-800"
+          >
+            비밀번호
+          </label>
+          <div className="relative">
+            <input
+              id="password"
+              ref={passwordRef}
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              placeholder="비밀번호를 입력해주세요"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                clearError("password");
+              }}
+              className={`${fieldClass(pwError)} pr-12`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full p-1.5 text-gray-400 transition-colors hover:text-gray-700"
+              aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+            >
+              <EyeIcon off={showPassword} />
+            </button>
+          </div>
+        </div>
+
+        {errorInfo.message && (
+          <p className="mb-4 px-1 text-[13px] font-medium text-red-500">
+            {errorInfo.message}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={[
+            "w-full rounded-control py-3.5 text-[14px] font-bold transition-all",
+            isLoading
+              ? "cursor-not-allowed bg-gray-300 text-white"
+              : "bg-brand-500 text-white hover:brightness-95",
+          ].join(" ")}
+        >
+          {isLoading ? "로그인 중..." : "로그인"}
+        </button>
+      </form>
+
+      {showConsent && <PrivacyConsentModal onConfirm={handleConsentConfirm} />}
+    </>
   );
 }
 
