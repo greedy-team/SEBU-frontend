@@ -17,6 +17,7 @@ function SearchPage() {
     rawLabs,
     searchInput,
     setSearchInput,
+    searchTerm,
     handleSearch,
     filters,
     handleFilterChange,
@@ -61,7 +62,7 @@ function SearchPage() {
             <LabListHeader
               totalCount={filteredLabs.length}
               hasFilters={
-                searchInput.trim() !== "" ||
+                searchTerm.trim() !== "" || // searchInput → searchTerm으로 변경
                 filters.colleges.length > 0 ||
                 filters.recruitmentStatus !== null
               }
