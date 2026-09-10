@@ -66,18 +66,18 @@ function Header() {
           <NavLink to="/colleges" className={navItemClass}>
             단과대별 보기
           </NavLink>
-          <Link
+          {/* <Link
             to="/community"
             className={navItemClass({ isActive: isCommunityArea })}
           >
             커뮤니티
-          </Link>
-          <Link
+          </Link> */}
+          {/* <Link
             to="/community/labs"
             className={navItemClass({ isActive: isLabArea })}
           >
             랩실 평가
-          </Link>
+          </Link> */}
         </nav>
 
         <div className="ml-auto flex items-center gap-1">
