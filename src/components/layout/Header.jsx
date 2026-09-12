@@ -1,8 +1,18 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
-import { logout } from "../../features/auth/api/authApi";
-import { initCsrf } from "../../features/auth/api/authApi";
+
+/**
+ * 상단 내비게이션.
+ *
+ * 스타일·인터랙션은 Figma(세부 와이어프레임 / App.tsx의 Navbar)를 따릅니다.
+ *   - 높이 56px, max-w-6xl 중앙 정렬
+ *   - 항목 hover 시 brand-50 배경 + brand-500 글자 + bold, 150ms 전환
+ *   - CTA는 pill + shadow-cta
+ *
+ * 항목은 라우트가 있는 것만 넣습니다 (DESIGN_SYSTEM.md §1 "범위는 코드 기준").
+ * Figma에는 '튜토리얼'과 메가메뉴, 그리고 우측 아이콘(검색·알림·북마크)이
+ * 더 있어요. 해당 페이지/기능이 생기면 그때 추가합니다.
+ */
 
 function ArrowRightIcon() {
   return (
@@ -32,21 +42,12 @@ const navItemClass = ({ isActive }) =>
 
 function Header() {
   const user = useAuthStore((state) => state.user);
-  const clearAuth = useAuthStore((state) => state.clearAuth);
-  const navigate = useNavigate();
 
+  // 랩실 평가는 /community 아래에 있어서 NavLink에 맡기면 두 항목이 같이
+  // 활성화됩니다. 어느 영역에 있는지 직접 계산해서 하나만 켭니다.
   const { pathname } = useLocation();
   const isLabArea = pathname.startsWith("/community/labs");
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } finally {
-      clearAuth();
-      await initCsrf(); // 로그아웃 후 CSRF 재초기화
-      navigate("/login");
-    }
-  };
+  const isCommunityArea = pathname.startsWith("/community") && !isLabArea;
 
   return (
     <header
@@ -65,10 +66,12 @@ function Header() {
           <NavLink to="/colleges" className={navItemClass}>
             단과대별 보기
           </NavLink>
-          {/* 커뮤니티는 MVP 범위에서 제외 */}
-          {/* <Link to="/community" className={navItemClass}>
+          <Link
+            to="/community"
+            className={navItemClass({ isActive: isCommunityArea })}
+          >
             커뮤니티
-          </Link> */}
+          </Link>
           <Link
             to="/community/labs"
             className={navItemClass({ isActive: isLabArea })}
@@ -79,20 +82,12 @@ function Header() {
 
         <div className="ml-auto flex items-center gap-1">
           {user ? (
-            <>
-              <Link
-                to="/mypage"
-                className="px-2 text-[13px] font-medium whitespace-nowrap text-gray-600 transition-colors hover:text-gray-900"
-              >
-                마이페이지
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="px-2 text-[13px] font-medium whitespace-nowrap text-gray-400 transition-colors hover:text-gray-700"
-              >
-                로그아웃
-              </button>
-            </>
+            <Link
+              to="/mypage"
+              className="px-2 text-[13px] font-medium whitespace-nowrap text-gray-600 transition-colors hover:text-gray-900"
+            >
+              마이페이지
+            </Link>
           ) : (
             <Link
               to="/login"

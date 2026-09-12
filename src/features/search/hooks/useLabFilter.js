@@ -50,7 +50,6 @@ export function useLabFilter() {
     rawLabs,
     searchInput,
     setSearchInput,
-    searchTerm,
     handleSearch,
     filters,
     handleFilterChange,

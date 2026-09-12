@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { sejongLogin } from "../api/authApi";
-import { useAuthStore } from "../../../store/authStore";
 
-export const useLogin = () => {
-  // setAuth 파라미터 제거
-  const setAuth = useAuthStore((state) => state.setAuth); // 내부에서 구독
+export const useLogin = (setAuth) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState({ message: "", field: null });
 
@@ -40,8 +37,9 @@ export const useLogin = () => {
         return;
       }
 
-      setAuth(result.data.user); // accessToken 제거
+      setAuth(result.data.accessToken, result.data.user);
 
+      // 이전 페이지로 이동
       const from = location.state?.from;
       if (!from || from === "/login") {
         navigate("/");

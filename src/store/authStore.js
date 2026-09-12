@@ -1,13 +1,14 @@
 import { create } from "zustand";
 
 export const useAuthStore = create((set) => ({
-  // accessToken 제거 (쿠키로 관리)
+  accessToken: null,
   user: null,
-  status: "loading",
+  status: "loading", // loading | authenticated | anonymous
 
-  setAuth: (user) => set({ user, status: "authenticated" }), // accessToken 파라미터 제거
+  setAuth: (accessToken, user) =>
+    set({ accessToken, user, status: "authenticated" }),
 
-  clearAuth: () => set({ user: null, status: "anonymous" }),
+  clearAuth: () => set({ accessToken: null, user: null, status: "anonymous" }),
 
   updateUser: (updatedUser) =>
     set((state) => ({
