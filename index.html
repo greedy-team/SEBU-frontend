@@ -1,13 +1,31 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>sebu-frontend</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+      폰트 서버에 미리 연결해둡니다.
+      CSS를 받은 뒤에 연결을 시작하면 그만큼 폰트 다운로드가 늦어집니다.
+    -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!--
+      가변 폰트(400..900) 하나로 모든 굵기를 처리합니다.
+      굵기를 400;500;600;700;800;900으로 나열하면
+      한글 조각 하나당 굵기 수만큼 파일이 생깁니다.
+    -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400..900&display=swap" />
+
+  <title>sebu-frontend</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>
