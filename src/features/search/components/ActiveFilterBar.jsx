@@ -1,10 +1,23 @@
-function ActiveFilterBar({ filters, onFilterChange, colleges }) {
-  const hasActiveColleges = filters.colleges.length > 0;
-  const hasActiveStatus = filters.recruitmentStatus !== null;
+function ActiveFilterBar({
+  filters,
+  onFilterChange,
+  colleges,
+  researchCategories = [],
+  researchFields = [],
+}) {
+  const hasActive =
+    filters.colleges.length > 0 ||
+    filters.categoryIds.length > 0 ||
+    filters.fieldIds.length > 0 ||
+    filters.recruitmentStatus !== null;
 
-  if (!hasActiveColleges && !hasActiveStatus) return null;
+  if (!hasActive) return null;
 
   const getCollegeName = (id) => colleges.find((c) => c.id === id)?.name || "";
+  const getCategoryName = (id) =>
+    researchCategories.find((c) => c.id === id)?.name || "";
+  const getFieldName = (id) =>
+    researchFields.find((f) => f.researchFieldId === id)?.name || "";
   const getStatusName = (status) => {
     if (status === "RECRUITING") return "모집중";
     if (status === "ALWAYS_OPEN") return "상시모집";
@@ -37,12 +50,36 @@ function ActiveFilterBar({ filters, onFilterChange, colleges }) {
       <div className="flex flex-wrap gap-2">
         {filters.colleges.map((collegeId) => (
           <button
-            key={collegeId}
+            key={`college-${collegeId}`}
             onClick={() => onFilterChange("colleges", collegeId)}
             className={chipClass}
             aria-label={`${getCollegeName(collegeId)} 필터 제거`}
           >
             {getCollegeName(collegeId)}
+            <RemoveIcon />
+          </button>
+        ))}
+
+        {filters.categoryIds.map((categoryId) => (
+          <button
+            key={`category-${categoryId}`}
+            onClick={() => onFilterChange("categoryIds", categoryId)}
+            className={chipClass}
+            aria-label={`${getCategoryName(categoryId)} 필터 제거`}
+          >
+            {getCategoryName(categoryId)}
+            <RemoveIcon />
+          </button>
+        ))}
+
+        {filters.fieldIds.map((fieldId) => (
+          <button
+            key={`field-${fieldId}`}
+            onClick={() => onFilterChange("fieldIds", fieldId)}
+            className={chipClass}
+            aria-label={`${getFieldName(fieldId)} 필터 제거`}
+          >
+            {getFieldName(fieldId)}
             <RemoveIcon />
           </button>
         ))}
@@ -63,6 +100,8 @@ function ActiveFilterBar({ filters, onFilterChange, colleges }) {
         onClick={() => {
           onFilterChange("colleges", []);
           onFilterChange("recruitmentStatus", null);
+          // categoryIds를 비우면 fieldIds도 함께 비워집니다.
+          onFilterChange("categoryIds", []);
         }}
         className="ml-4 flex shrink-0 items-center gap-1.5 text-sm font-medium whitespace-nowrap text-gray-400 transition-colors hover:text-gray-700"
       >

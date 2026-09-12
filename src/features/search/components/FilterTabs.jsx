@@ -1,6 +1,7 @@
 function FilterTabs({ activeTab, setActiveTab, filters }) {
   const tabs = [
     { id: "college", label: "단과대/학과", filterKey: "colleges" },
+    { id: "research", label: "연구 분야", filterKey: "research" },
     // { id: "status", label: "모집 상태", filterKey: "recruitmentStatus" },
   ];
 
@@ -16,6 +17,8 @@ function FilterTabs({ activeTab, setActiveTab, filters }) {
         let activeCount = 0;
         if (tab.filterKey === "colleges") {
           activeCount = filters.colleges.length;
+        } else if (tab.filterKey === "research") {
+          activeCount = filters.categoryIds.length + filters.fieldIds.length;
         } else if (filters[tab.filterKey]) {
           activeCount = 1;
         }
