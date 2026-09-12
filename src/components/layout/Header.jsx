@@ -37,7 +37,6 @@ function Header() {
 
   const { pathname } = useLocation();
   const isLabArea = pathname.startsWith("/community/labs");
-  const isCommunityArea = pathname.startsWith("/community") && !isLabArea;
 
   const handleLogout = async () => {
     try {
@@ -66,18 +65,16 @@ function Header() {
           <NavLink to="/colleges" className={navItemClass}>
             단과대별 보기
           </NavLink>
-          {/* <Link
-            to="/community"
-            className={navItemClass({ isActive: isCommunityArea })}
-          >
+          {/* 커뮤니티는 MVP 범위에서 제외 */}
+          {/* <Link to="/community" className={navItemClass}>
             커뮤니티
           </Link> */}
-          {/* <Link
+          <Link
             to="/community/labs"
             className={navItemClass({ isActive: isLabArea })}
           >
             랩실 평가
-          </Link> */}
+          </Link>
         </nav>
 
         <div className="ml-auto flex items-center gap-1">
