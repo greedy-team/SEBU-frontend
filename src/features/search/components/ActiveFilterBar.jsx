@@ -1,3 +1,32 @@
+// 컴포넌트 안에서 정의하면 렌더할 때마다 새 컴포넌트가 만들어집니다.
+// 그러면 React가 매번 다른 컴포넌트로 보고 DOM을 새로 그리게 됩니다.
+const RemoveIcon = () => (
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="text-brand-500/60 transition-colors group-hover:text-brand-600"
+    aria-hidden="true"
+  >
+    <path d="M18 6 6 18M6 6l12 12" />
+  </svg>
+);
+
+const chipClass =
+  "group flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3.5 py-1.5 text-sm font-semibold text-brand-600 transition-colors hover:border-brand-500 hover:bg-brand-100";
+
+const getStatusName = (status) => {
+  if (status === "RECRUITING") return "모집중";
+  if (status === "ALWAYS_OPEN") return "상시모집";
+  if (status === "CLOSED") return "마감";
+  return "";
+};
+
 function ActiveFilterBar({
   filters,
   onFilterChange,
@@ -18,32 +47,6 @@ function ActiveFilterBar({
     researchCategories.find((c) => c.id === id)?.name || "";
   const getFieldName = (id) =>
     researchFields.find((f) => f.researchFieldId === id)?.name || "";
-  const getStatusName = (status) => {
-    if (status === "RECRUITING") return "모집중";
-    if (status === "ALWAYS_OPEN") return "상시모집";
-    if (status === "CLOSED") return "마감";
-    return "";
-  };
-
-  const chipClass =
-    "group flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3.5 py-1.5 text-sm font-semibold text-brand-600 transition-colors hover:border-brand-500 hover:bg-brand-100";
-
-  const RemoveIcon = () => (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="text-brand-500/60 transition-colors group-hover:text-brand-600"
-      aria-hidden="true"
-    >
-      <path d="M18 6 6 18M6 6l12 12" />
-    </svg>
-  );
 
   return (
     <div className="mt-4 flex items-center justify-between border-t border-gray-200 py-4">
