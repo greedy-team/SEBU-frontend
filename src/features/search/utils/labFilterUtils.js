@@ -21,12 +21,27 @@ const matchStatus = (lab, status) => {
   return lab.recruitmentStatus === status;
 };
 
+const matchResearch = (lab, categoryIds, fieldIds) => {
+  if (fieldIds.length > 0) {
+    const labFieldIds = (lab.researchFieldDetails ?? []).map(
+      (f) => f.researchFieldId,
+    );
+    return fieldIds.some((id) => labFieldIds.includes(id));
+  }
+  if (categoryIds.length > 0) {
+    const labCategoryIds = lab.researchFieldCategoryIds ?? [];
+    return categoryIds.some((id) => labCategoryIds.includes(id));
+  }
+  return true;
+};
+
 export const applyFilters = (labs, filters, searchTerm) => {
   return labs.filter(
     (lab) =>
       matchSearchTerm(lab, searchTerm) &&
       matchColleges(lab, filters.colleges) &&
-      matchStatus(lab, filters.recruitmentStatus),
+      matchStatus(lab, filters.recruitmentStatus) &&
+      matchResearch(lab, filters.categoryIds ?? [], filters.fieldIds ?? []),
   );
 };
 
