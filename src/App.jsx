@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import MainPage from "./pages/Main";
 import SearchPage from "./pages/Search";
 import CollegeView from "./pages/CollegeView";
 import LoginPage from "./pages/Login";
@@ -20,7 +21,8 @@ function App() {
     <>
       <RateLimitToast />
       <Routes>
-        <Route path="/" element={<SearchPage />} />
+        <Route path="/" element={<MainPage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/colleges" element={<CollegeView />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/mypage" element={<MyPage />} />
