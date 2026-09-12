@@ -5,7 +5,6 @@ import ProfileHeader from "../../features/mypage/components/ProfileHeader";
 import ProfileModal from "../../features/mypage/components/ProfileModal";
 import SummaryCards from "../../features/mypage/components/SummaryCards";
 import BookmarkedLabs from "../../features/mypage/components/BookmarkedLabs";
-import BookmarkedPosts from "../../features/mypage/components/BookmarkedPosts";
 import { useMyPage } from "../../features/mypage/hooks/useMyPage";
 import { useProfileForm } from "../../features/mypage/hooks/useProfileForm";
 import { useAuthStore } from "../../store/authStore";
@@ -120,11 +119,6 @@ function MyPage() {
         <BookmarkedLabs
           items={currentData.bookmarkedLaboratories.items}
           hasNext={currentData.bookmarkedLaboratories.hasNext}
-        />
-
-        <BookmarkedPosts
-          items={currentData.bookmarkedPosts.items}
-          hasNext={currentData.bookmarkedPosts.hasNext}
         />
       </div>
 
