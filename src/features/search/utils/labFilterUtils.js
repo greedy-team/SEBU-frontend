@@ -1,6 +1,13 @@
 const matchSearchTerm = (lab, term) => {
-  if (!term) return true;
-  return lab.name.includes(term) || lab.professor.name.includes(term);
+  const keyword = (term ?? "").trim().toLowerCase();
+  if (!keyword) return true;
+  return (
+    lab.name.toLowerCase().includes(keyword) ||
+    lab.professor.name.toLowerCase().includes(keyword) ||
+    (lab.researchFields ?? []).some((field) =>
+      field.toLowerCase().includes(keyword),
+    )
+  );
 };
 
 const matchColleges = (lab, collegeIds) => {
