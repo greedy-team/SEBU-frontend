@@ -22,6 +22,8 @@ function SearchPage() {
     filters,
     handleFilterChange,
     colleges,
+    researchCategories,
+    researchFields,
     filteredLabs,
     sortType,
     setSortType,
@@ -48,6 +50,8 @@ function SearchPage() {
           filters={filters}
           onFilterChange={handleFilterChange}
           colleges={colleges}
+          researchCategories={researchCategories}
+          researchFields={researchFields}
         />
 
         {/* 2. 💡 방금 새로 만든, 선택된 칩들이 모여있는 엑티브 바 영역! */}
@@ -55,6 +59,8 @@ function SearchPage() {
           filters={filters}
           onFilterChange={handleFilterChange}
           colleges={colleges}
+          researchCategories={researchCategories}
+          researchFields={researchFields}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mt-6">
@@ -62,8 +68,10 @@ function SearchPage() {
             <LabListHeader
               totalCount={filteredLabs.length}
               hasFilters={
-                searchTerm.trim() !== "" || // searchInput → searchTerm으로 변경
+                searchTerm.trim() !== "" ||
                 filters.colleges.length > 0 ||
+                filters.categoryIds.length > 0 ||
+                filters.fieldIds.length > 0 ||
                 filters.recruitmentStatus !== null
               }
               sortType={sortType}

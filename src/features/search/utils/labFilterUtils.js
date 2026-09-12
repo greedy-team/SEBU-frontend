@@ -1,6 +1,13 @@
 const matchSearchTerm = (lab, term) => {
-  if (!term) return true;
-  return lab.name.includes(term) || lab.professor.name.includes(term);
+  const keyword = (term ?? "").trim().toLowerCase();
+  if (!keyword) return true;
+  return (
+    lab.name.toLowerCase().includes(keyword) ||
+    lab.professor.name.toLowerCase().includes(keyword) ||
+    (lab.researchFields ?? []).some((field) =>
+      field.toLowerCase().includes(keyword),
+    )
+  );
 };
 
 const matchColleges = (lab, collegeIds) => {
@@ -21,12 +28,27 @@ const matchStatus = (lab, status) => {
   return lab.recruitmentStatus === status;
 };
 
+const matchResearch = (lab, categoryIds, fieldIds) => {
+  if (fieldIds.length > 0) {
+    const labFieldIds = (lab.researchFieldDetails ?? []).map(
+      (f) => f.researchFieldId,
+    );
+    return fieldIds.some((id) => labFieldIds.includes(id));
+  }
+  if (categoryIds.length > 0) {
+    const labCategoryIds = lab.researchFieldCategoryIds ?? [];
+    return categoryIds.some((id) => labCategoryIds.includes(id));
+  }
+  return true;
+};
+
 export const applyFilters = (labs, filters, searchTerm) => {
   return labs.filter(
     (lab) =>
       matchSearchTerm(lab, searchTerm) &&
       matchColleges(lab, filters.colleges) &&
-      matchStatus(lab, filters.recruitmentStatus),
+      matchStatus(lab, filters.recruitmentStatus) &&
+      matchResearch(lab, filters.categoryIds ?? [], filters.fieldIds ?? []),
   );
 };
 

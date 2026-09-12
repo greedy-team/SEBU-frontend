@@ -1,6 +1,6 @@
 import FilterTabs from "./FilterTabs";
 import CollegeChips from "./CollegeChips";
-import StatusChips from "./StatusChips";
+import ResearchFieldChips from "./ResearchFieldChips";
 
 function DetailedFilterPanel({
   activeTab,
@@ -8,6 +8,8 @@ function DetailedFilterPanel({
   filters,
   onFilterChange,
   colleges,
+  researchCategories,
+  researchFields,
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -26,12 +28,16 @@ function DetailedFilterPanel({
           />
         )}
 
-        {/* {activeTab === "status" && (
-          <StatusChips
-            selected={filters.recruitmentStatus}
-            onSelect={(status) => onFilterChange("recruitmentStatus", status)}
+        {activeTab === "research" && (
+          <ResearchFieldChips
+            categories={researchCategories}
+            fields={researchFields}
+            selectedCategoryIds={filters.categoryIds}
+            selectedFieldIds={filters.fieldIds}
+            onSelectCategory={(id) => onFilterChange("categoryIds", id)}
+            onSelectField={(id) => onFilterChange("fieldIds", id)}
           />
-        )} */}
+        )}
       </div>
     </div>
   );
