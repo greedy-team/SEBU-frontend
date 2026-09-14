@@ -90,20 +90,12 @@ function ProfileForm({
 
       {/* 전공 */}
       <div>
-        <label
-          htmlFor="major"
-          className="text-sm font-medium text-gray-700 flex items-center gap-1 mb-1"
-        >
-          전공 <span className="text-blue-500 text-xs">필수</span>
+        <label className="text-sm font-medium text-gray-700 flex items-center gap-1 mb-1">
+          전공
         </label>
-        <input
-          id="major"
-          type="text"
-          value={major}
-          onChange={(e) => setMajor(e.target.value)}
-          placeholder="스마트기기공학전공"
-          className="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl outline-none focus:border-blue-500 focus:bg-white transition-colors text-sm"
-        />
+        <div className="w-full px-4 py-3 bg-gray-100 border border-transparent rounded-xl text-sm text-gray-400 cursor-not-allowed select-none">
+          {major || "-"}
+        </div>
       </div>
 
       {/* 성적 (GPA) */}
