@@ -16,7 +16,9 @@ function ProfileForm({
 }) {
   const [name, setName] = useState(initialData.name || "");
   const [grade, setGrade] = useState(initialData.grade || null);
-  const [major, setMajor] = useState(initialData.major?.name || "");
+  // 응답은 department로 오고, 저장 요청 본문은 아직 major를 씁니다.
+  // 학사정보에서 오는 값이라 사용자가 고칠 일은 없습니다.
+  const [major, setMajor] = useState(initialData.department?.name || "");
   const [gpaBand, setGpaBand] = useState(initialData.gpaBand || null);
   const [introduction, setIntroduction] = useState(
     initialData.introduction || "",

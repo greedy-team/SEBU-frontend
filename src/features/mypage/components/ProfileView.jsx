@@ -5,7 +5,7 @@ const GPA_BAND_LABEL = {
 };
 
 function ProfileView({ profile, onEdit }) {
-  const { name, grade, major, gpaBand, introduction } = profile;
+  const { name, grade, department, gpaBand, introduction } = profile;
 
   return (
     <div className="bg-white rounded-xl p-6 flex flex-col gap-4">
@@ -20,7 +20,7 @@ function ProfileView({ profile, onEdit }) {
       {/* 학년 */}
       <div>
         <p className="text-xs text-gray-400 mb-1">학년</p>
-        <p className="font-medium">{grade}학년</p>
+        <p className="font-medium">{grade ? `${grade}학년` : "미입력"}</p>
       </div>
 
       <hr className="border-gray-100" />
@@ -28,7 +28,7 @@ function ProfileView({ profile, onEdit }) {
       {/* 전공 */}
       <div>
         <p className="text-xs text-gray-400 mb-1">전공</p>
-        <p className="font-medium">{major?.name}</p>
+        <p className="font-medium">{department?.name || "미입력"}</p>
       </div>
 
       <hr className="border-gray-100" />
