@@ -4,7 +4,7 @@ import { getLabReviews } from "../api/communityApi";
 const PAGE_SIZE = 20;
 
 /** 특정 연구실의 후기 목록. 랩실 정보와 reviewedByMe를 함께 받습니다. */
-export function useLabReviews(laboratoryId, accessToken) {
+export function useLabReviews(laboratoryId) {
   const [laboratory, setLaboratory] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [reviewedByMe, setReviewedByMe] = useState(false);
@@ -24,11 +24,10 @@ export function useLabReviews(laboratoryId, accessToken) {
       setErrorCode(null);
 
       try {
-        const { ok, result } = await getLabReviews(
-          laboratoryId,
-          { page: 0, size: PAGE_SIZE },
-          accessToken,
-        );
+        const { ok, result } = await getLabReviews(laboratoryId, {
+          page: 0,
+          size: PAGE_SIZE,
+        });
         if (requestId !== requestIdRef.current) return;
 
         if (!ok || !result.success) {
@@ -50,7 +49,7 @@ export function useLabReviews(laboratoryId, accessToken) {
     };
 
     fetchFirstPage();
-  }, [laboratoryId, accessToken]);
+  }, [laboratoryId]);
 
   const loadMore = async () => {
     if (!hasNext) return;
@@ -58,11 +57,10 @@ export function useLabReviews(laboratoryId, accessToken) {
     const requestId = requestIdRef.current;
     const nextPage = page + 1;
 
-    const { ok, result } = await getLabReviews(
-      laboratoryId,
-      { page: nextPage, size: PAGE_SIZE },
-      accessToken,
-    );
+    const { ok, result } = await getLabReviews(laboratoryId, {
+      page: nextPage,
+      size: PAGE_SIZE,
+    });
     if (requestId !== requestIdRef.current) return;
     if (!ok || !result.success) return;
 
