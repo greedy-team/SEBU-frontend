@@ -3,11 +3,9 @@ import Header from "../../components/layout/Header";
 import ReviewCard from "../../features/community/components/ReviewCard";
 import ReviewTagSummary from "../../features/community/components/ReviewTagSummary";
 import { useLabReviews } from "../../features/community/hooks/useLabReviews";
-import { useAuthStore } from "../../store/authStore";
 
 function LabReviewPage() {
   const { laboratoryId } = useParams();
-  const accessToken = useAuthStore((state) => state.accessToken);
 
   const {
     laboratory,
@@ -18,7 +16,7 @@ function LabReviewPage() {
     isLoading,
     errorCode,
     loadMore,
-  } = useLabReviews(laboratoryId, accessToken);
+  } = useLabReviews(laboratoryId); 
 
   return (
     <div className="min-h-screen bg-gray-50">
