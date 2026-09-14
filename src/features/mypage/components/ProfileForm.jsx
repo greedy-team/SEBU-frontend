@@ -106,29 +106,7 @@ function ProfileForm({
         </div>
       </div>
 
-      {/* 자기소개 */}
-      <div>
-        <label
-          htmlFor="introduction"
-          className="text-sm font-medium text-gray-700 flex items-center gap-1 mb-1"
-        >
-          자기소개{" "}
-          <span className="text-gray-400 text-xs">선택 · 최대 500자</span>
-        </label>
-        <textarea
-          id="introduction"
-          value={introduction}
-          onChange={(e) => setIntroduction(e.target.value)}
-          placeholder="간단한 자기소개를 입력해주세요"
-          maxLength={500}
-          rows={4}
-          className="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl outline-none focus:border-blue-500 focus:bg-white transition-colors text-sm resize-none"
-          aria-label="자기소개"
-        />
-        {introError && (
-          <p className="text-xs text-red-500 mt-1">{introError}</p>
-        )}
-      </div>
+    
 
       {/* 저장하기 버튼 */}
       <button
