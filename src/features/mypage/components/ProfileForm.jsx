@@ -31,7 +31,7 @@ function ProfileForm({
     onSubmit({
       name: name.trim(),
       grade,
-      major: major.trim(),
+      departmentName: major.trim(), // ← major → departmentName
       gpaBand,
       introduction: introduction.trim(),
     });

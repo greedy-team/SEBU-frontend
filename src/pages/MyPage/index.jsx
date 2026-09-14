@@ -16,9 +16,12 @@ function MyPage() {
 
   const { data, isLoading: isPageLoading, error: pageError } = useMyPage();
 
-  // data를 초기값으로 사용 (useEffect 제거)
-  const [pageData, setPageData] = useState(data);
+  const [pageData, setPageData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (data) setPageData(data);
+  }, [data]);
 
   useEffect(() => {
     if (!isPageLoading && !data) {
@@ -35,13 +38,12 @@ function MyPage() {
     formError,
   } = useProfileForm(pageData?.profile, updateUser, (savedProfile) => {
     setPageData((prev) => ({
-      ...prev,
+      ...(prev ?? data),
       profile: savedProfile,
     }));
     setIsModalOpen(false);
   });
 
-  // data 받아오면 pageData 업데이트 (useMemo로 대체)
   const currentData = pageData ?? data;
 
   if (isPageLoading) {
@@ -103,7 +105,7 @@ function MyPage() {
                 <span className="text-gray-300">·</span>
                 <span>{profile.grade}학년</span>
                 <span className="text-gray-300">·</span>
-                <span>{profile.major?.name}</span>
+                <span>{profile.department?.name}</span>
               </>
             ) : (
               <span className="text-gray-400">내 정보를 입력해주세요</span>
@@ -117,8 +119,8 @@ function MyPage() {
         <SummaryCards summary={summary} />
 
         <BookmarkedLabs
-          items={currentData.bookmarkedLaboratories.items}
-          hasNext={currentData.bookmarkedLaboratories.hasNext}
+          items={currentData.bookmarkedLaboratories?.items ?? []}
+          hasNext={currentData.bookmarkedLaboratories?.hasNext ?? false}
         />
       </div>
 
