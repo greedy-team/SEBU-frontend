@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import LabCard from "../../../components/common/LabCard";
 
-function BookmarkedLabs({ items = [], hasNext = false }) {
+function BookmarkedLabs({ items = [] }) {
   const navigate = useNavigate();
 
   return (
@@ -10,7 +10,6 @@ function BookmarkedLabs({ items = [], hasNext = false }) {
       <p className="text-xs text-gray-400 mb-3">북마크한 연구실 목록</p>
 
       {items.length === 0 ? (
-        // 빈 화면
         <div className="bg-white rounded-xl p-8 flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
             <span className="text-gray-400 text-xl">🔖</span>
@@ -31,16 +30,10 @@ function BookmarkedLabs({ items = [], hasNext = false }) {
           </button>
         </div>
       ) : (
-        // 랩실 목록
         <div className="flex flex-col gap-3">
           {items.map((item) => (
             <LabCard key={item.laboratory.id} lab={item.laboratory} />
           ))}
-          {hasNext && (
-            <button className="w-full py-3 text-sm text-blue-600 font-medium bg-white rounded-xl border border-gray-200 hover:bg-blue-50 transition-colors">
-              더보기
-            </button>
-          )}
         </div>
       )}
     </div>

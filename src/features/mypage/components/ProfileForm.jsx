@@ -14,24 +14,18 @@ function ProfileForm({
   introError,
   formError,
 }) {
-  const [name, setName] = useState(initialData.name || "");
   const [grade, setGrade] = useState(initialData.grade || null);
-  // 응답은 department로 오고, 저장 요청 본문은 아직 major를 씁니다.
-  // 학사정보에서 오는 값이라 사용자가 고칠 일은 없습니다.
-  const [major, setMajor] = useState(initialData.department?.name || "");
+  const [major] = useState(initialData.department?.name || "");
   const [gpaBand, setGpaBand] = useState(initialData.gpaBand || null);
   const [introduction, setIntroduction] = useState(
     initialData.introduction || "",
   );
 
-  // 필수값 모두 입력됐는지 확인
-  const isValid = name.trim() && grade && major.trim();
+  const isValid = grade;
 
   const handleSubmit = () => {
     onSubmit({
-      name: name.trim(),
       grade,
-      departmentName: major.trim(), // ← major → departmentName
       gpaBand,
       introduction: introduction.trim(),
     });
@@ -39,30 +33,20 @@ function ProfileForm({
 
   return (
     <div className="bg-white rounded-xl p-6 flex flex-col gap-5">
-      {/* 폼 전체 에러 (429, 503) - props로 받음 */}
       {formError && (
         <p className="text-sm text-red-500 bg-red-50 px-4 py-3 rounded-lg">
           {formError}
         </p>
       )}
 
-      {/* 이름 */}
+      {/* 이름 - 읽기 전용 */}
       <div>
-        <label
-          htmlFor="name"
-          className="text-sm font-medium text-gray-700 flex items-center gap-1 mb-1"
-        >
-          이름 <span className="text-blue-500 text-xs">필수</span>
+        <label className="text-sm font-medium text-gray-700 flex items-center gap-1 mb-1">
+          이름
         </label>
-        <input
-          id="name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="홍길동"
-          maxLength={30}
-          className="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl outline-none focus:border-blue-500 focus:bg-white transition-colors text-sm"
-        />
+        <div className="w-full px-4 py-3 bg-gray-100 border border-transparent rounded-xl text-sm text-gray-400 cursor-not-allowed select-none">
+          {initialData.name || "-"}
+        </div>
       </div>
 
       {/* 학년 */}
@@ -88,7 +72,7 @@ function ProfileForm({
         </div>
       </div>
 
-      {/* 전공 */}
+      {/* 전공 - 읽기 전용 */}
       <div>
         <label className="text-sm font-medium text-gray-700 flex items-center gap-1 mb-1">
           전공
@@ -122,6 +106,8 @@ function ProfileForm({
         </div>
       </div>
 
+    
+
       {/* 저장하기 버튼 */}
       <button
         onClick={handleSubmit}
@@ -136,7 +122,7 @@ function ProfileForm({
       </button>
       {!isValid && (
         <p className="text-xs text-gray-400 text-center -mt-3">
-          이름, 학년, 전공은 필수 입력입니다.
+          학년은 필수 입력입니다.
         </p>
       )}
     </div>

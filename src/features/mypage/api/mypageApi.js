@@ -17,9 +17,7 @@ export const getMyPage = async () => {
 export const updateProfile = async (profileData) => {
   try {
     const response = await client.put("/users/me/profile", {
-      name: profileData.name,
-      grade: profileData.grade,
-      major: profileData.major,
+      grade: profileData.grade, // name, major 제거
       gpaBand: profileData.gpaBand,
       introduction: profileData.introduction,
     });

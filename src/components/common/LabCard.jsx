@@ -1,14 +1,7 @@
 import { useState } from "react";
-//import { RECRUITMENT_STATUS } from "../../constants/recruitmentStatus";
 import LabDetailModal from "./LabDetailModal";
-
-/* 모집 상태 배지 - 추후 표시 여부 논의 후 주석 해제
-const STATUS_STYLE = {
-  RECRUITING: { chip: "border-green-200 bg-green-50 text-green-600", dot: "bg-green-500" },
-  ALWAYS_OPEN: { chip: "border-brand-200 bg-brand-50 text-brand-600", dot: "bg-brand-500" },
-  CLOSED: { chip: "border-gray-200 bg-gray-50 text-gray-400", dot: "bg-gray-300" },
-};
-*/
+import { addLabBookmark, removeLabBookmark } from "../../api/bookmarkApi";
+import { useAuthStore } from "../../store/authStore";
 
 function BookmarkIcon({ filled }) {
   return (
@@ -30,6 +23,10 @@ function BookmarkIcon({ filled }) {
 
 function LabCard({ lab }) {
   const [showModal, setShowModal] = useState(false);
+  const [bookmarked, setBookmarked] = useState(lab.bookmarked ?? false);
+  const [bookmarkCount, setBookmarkCount] = useState(lab.bookmarkCount ?? 0);
+  const user = useAuthStore((state) => state.user);
+
   const {
     name,
     professor,
@@ -37,11 +34,29 @@ function LabCard({ lab }) {
     department,
     researchFields,
     recruitmentStatus,
-    bookmarkCount,
-    bookmarked,
   } = lab;
-  //const status = RECRUITMENT_STATUS[recruitmentStatus];
-  //const statusStyle = STATUS_STYLE[recruitmentStatus] ?? STATUS_STYLE.CLOSED;
+
+  const handleBookmark = async (e) => {
+    e.stopPropagation();
+
+    // 비로그인 시 무시
+    if (!user) return;
+
+    // Optimistic Update
+    const nextBookmarked = !bookmarked;
+    setBookmarked(nextBookmarked);
+    setBookmarkCount((prev) => (nextBookmarked ? prev + 1 : prev - 1));
+
+    const { ok } = nextBookmarked
+      ? await addLabBookmark(lab.id)
+      : await removeLabBookmark(lab.id);
+
+    // 실패 시 롤백
+    if (!ok) {
+      setBookmarked(!nextBookmarked);
+      setBookmarkCount((prev) => (nextBookmarked ? prev - 1 : prev + 1));
+    }
+  };
 
   return (
     <>
@@ -49,33 +64,22 @@ function LabCard({ lab }) {
         onClick={() => setShowModal(true)}
         className="group relative cursor-pointer overflow-hidden rounded-card border border-gray-200 bg-white p-5 transition-all duration-150 hover:border-brand-500 hover:shadow-widget"
       >
-        {/* 좌측 세로 액센트 바 — 테두리에서 살짝 띄운 옅은 기둥, hover 시 진해집니다 */}
         <span className="absolute top-5 bottom-5 left-3 w-1 rounded-full bg-brand-100 transition-colors duration-150 group-hover:bg-brand-500" />
 
         <div className="pl-4">
-          {/* 상단: 단과대 배지 · 학과 */}
           <div className="mb-2 flex items-start gap-2">
             <span className="rounded-field bg-brand-50 px-2 py-1 text-xs font-bold text-brand-600">
               {college.name}
             </span>
             <span className="mt-1 text-xs text-gray-400">·</span>
-            <span className="mt-1 text-xs text-gray-500">{department.name}</span>
-
-            {/* 모집 상태 배지 - 추후 표시 여부 논의 후 주석 해제
-            <span
-              className={`ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold whitespace-nowrap ${statusStyle.chip}`}
-            >
-              <span className={`h-1.5 w-1.5 rounded-full ${statusStyle.dot}`} />
-              {status.label}
+            <span className="mt-1 text-xs text-gray-500">
+              {department.name}
             </span>
-            */}
           </div>
 
-          {/* 연구실명 · 교수 */}
           <h3 className="text-base font-bold text-gray-900">{name}</h3>
           <p className="mt-1 text-sm text-gray-500">{professor.name} 교수</p>
 
-          {/* 하단: 연구 분야 태그 / 오른쪽 북마크 */}
           <div className="mt-3 flex items-end gap-2">
             <div className="flex flex-wrap items-center gap-2">
               {researchFields?.map((field) => (
@@ -89,8 +93,8 @@ function LabCard({ lab }) {
             </div>
 
             <button
-              aria-label="북마크"
-              onClick={(e) => e.stopPropagation()}
+              aria-label={bookmarked ? "북마크 해제" : "북마크"}
+              onClick={handleBookmark}
               className={`ml-auto flex shrink-0 items-center gap-1.5 text-xs transition-colors ${
                 bookmarked
                   ? "text-brand-500"

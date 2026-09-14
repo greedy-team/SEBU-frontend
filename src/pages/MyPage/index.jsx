@@ -120,7 +120,6 @@ function MyPage() {
 
         <BookmarkedLabs
           items={currentData.bookmarkedLaboratories?.items ?? []}
-          hasNext={currentData.bookmarkedLaboratories?.hasNext ?? false}
         />
       </div>
 
