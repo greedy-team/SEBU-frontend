@@ -1,14 +1,39 @@
 import { RECRUITMENT_STATUS } from "../../constants/recruitmentStatus";
 import { useState } from "react";
+import { addLabBookmark, removeLabBookmark } from "../../api/bookmarkApi";
+import { useAuthStore } from "../../store/authStore";
 
 function LabDetailModal({ lab, onClose }) {
   const status = RECRUITMENT_STATUS[lab.recruitmentStatus];
   const [copied, setCopied] = useState(false);
+  const [bookmarked, setBookmarked] = useState(lab.bookmarked ?? false);
+  const [bookmarkCount, setBookmarkCount] = useState(lab.bookmarkCount ?? 0);
+  const user = useAuthStore((state) => state.user);
+
   const handleCopyEmail = (email) => {
     navigator.clipboard.writeText(email).then(() => {
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // 2초 후 원래대로
+      setTimeout(() => setCopied(false), 2000);
     });
+  };
+
+  const handleBookmark = async () => {
+    if (!user) return;
+
+    // Optimistic Update
+    const nextBookmarked = !bookmarked;
+    setBookmarked(nextBookmarked);
+    setBookmarkCount((prev) => (nextBookmarked ? prev + 1 : prev - 1));
+
+    const { ok } = nextBookmarked
+      ? await addLabBookmark(lab.id)
+      : await removeLabBookmark(lab.id);
+
+    // 실패 시 롤백
+    if (!ok) {
+      setBookmarked(!nextBookmarked);
+      setBookmarkCount((prev) => (nextBookmarked ? prev - 1 : prev + 1));
+    }
   };
   return (
     <div
@@ -125,9 +150,31 @@ function LabDetailModal({ lab, onClose }) {
 
         {/* 8. 하단 고정 - 북마크 */}
         <div className="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-4 flex items-center justify-center gap-2">
-          <button className="flex items-center gap-2 text-gray-500 hover:text-blue-600">
-            <span className="text-xl">{lab.bookmarked ? "🔖" : "🔖"}</span>
-            <span className="text-sm">북마크 · {lab.bookmarkCount}</span>
+          <button
+            onClick={handleBookmark}
+            aria-label={bookmarked ? "북마크 해제" : "북마크"}
+            className={`flex items-center gap-2 transition-colors ${
+              bookmarked
+                ? "text-brand-500 font-medium"
+                : "text-gray-400 hover:text-brand-500"
+            }`}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill={bookmarked ? "currentColor" : "none"}
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+            </svg>
+            <span className="text-sm">
+              {bookmarked ? "북마크됨" : "북마크"} · {bookmarkCount}
+            </span>
           </button>
         </div>
       </div>
