@@ -1,18 +1,30 @@
 import axios from "axios";
 import { useErrorStore } from "../store/errorStore";
-// useAuthStore import 제거 ← 토큰 직접 관리 안 하니까
+import { useAuthStore } from "../store/authStore";
 
 const client = axios.create({
   baseURL: "/api/v1",
   withCredentials: true,
-  xsrfCookieName: "XSRF-TOKEN", // 쿠키에서 읽을 이름
-  xsrfHeaderName: "X-XSRF-TOKEN", // 헤더에 붙일 이름
+  xsrfCookieName: "XSRF-TOKEN",
+  xsrfHeaderName: "X-XSRF-TOKEN",
 });
 
 let rateLimitedUntil = null;
+let isRefreshing = false;
+let failedQueue = [];
 
-// 요청 인터셉터 - Rate Limit 체크만
-// Authorization 헤더 붙이는 로직 제거 ← 브라우저가 쿠키 자동으로 붙여줌
+const processQueue = (error) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve();
+    }
+  });
+  failedQueue = [];
+};
+
+// 요청 인터셉터 - Rate Limit 체크
 client.interceptors.request.use((config) => {
   if (rateLimitedUntil && Date.now() < rateLimitedUntil) {
     const retryAfter = Math.ceil((rateLimitedUntil - Date.now()) / 1000);
@@ -26,15 +38,79 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
-// 응답 인터셉터 - 429면 errorStore에 저장
 client.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+
+    // 429 처리
     if (error.response?.status === 429) {
       const retryAfter = Number(error.response.headers["retry-after"] ?? 30);
       rateLimitedUntil = Date.now() + retryAfter * 1000;
       useErrorStore.getState().setRateLimitError(retryAfter);
+      return Promise.reject(error);
     }
+
+    // 403 CSRF 실패 처리
+    if (error.response?.status === 403) {
+      const errorCode = error.response?.data?.error?.code;
+      if (errorCode === "CSRF_TOKEN_INVALID" && !originalRequest._csrfRetry) {
+        originalRequest._csrfRetry = true;
+        try {
+          await client.get("/auth/csrf");
+          return client(originalRequest);
+        } catch {
+          return Promise.reject(error);
+        }
+      }
+    }
+
+    // 401 처리
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      const errorCode = error.response?.data?.error?.code;
+
+      // ACCESS_TOKEN_INVALID → 탈퇴 계정 or 인증 버전 불일치
+      // refresh 호출 없이 바로 clearAuth
+      if (errorCode === "ACCESS_TOKEN_INVALID") {
+        useAuthStore.getState().clearAuth();
+        return Promise.reject(error);
+      }
+
+      // refresh, csrf, me, recovery 요청은 재시도 안 함
+      if (
+        originalRequest.url.includes("/auth/refresh") ||
+        originalRequest.url.includes("/auth/csrf") ||
+        originalRequest.url.includes("/auth/recovery") ||
+        originalRequest.url.includes("/me")
+      ) {
+        return Promise.reject(error);
+      }
+
+      // ACCESS_TOKEN_EXPIRED → refresh 시도
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(() => client(originalRequest))
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        await client.post("/auth/refresh");
+        processQueue(null);
+        return client(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError);
+        useAuthStore.getState().clearAuth();
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
     return Promise.reject(error);
   },
 );
