@@ -140,11 +140,27 @@ function MyPage() {
         />
 
         {/* 회원 탈퇴 버튼 */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
+        <div className="mt-8 pt-6 border-t border-gray-200 flex justify-end">
           <button
             onClick={() => setIsDeleteModalOpen(true)}
-            className="text-xs text-gray-400 hover:text-red-500 transition-colors"
+            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-500 transition-colors group"
           >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              className="group-hover:stroke-red-500 transition-colors"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
             회원 탈퇴
           </button>
         </div>
