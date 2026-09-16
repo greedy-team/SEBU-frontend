@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { SORT_OPTIONS } from "../hooks/useLabList";
 
 function ChevronRight() {
   return (
@@ -24,7 +25,14 @@ function ChevronRight() {
  * 피그마에는 별점(★ 4.5)과 "평점 높은 순"이 있지만 랩실 평가 v2에서
  * 별점이 폐기되어 후기 수만 표시하고 정렬도 "후기 많은 순"입니다.
  */
-function LabReviewList({ labs, totalElements, isLoading, error }) {
+function LabReviewList({
+  labs,
+  totalElements,
+  isLoading,
+  error,
+  sortType,
+  onSortChange,
+}) {
   return (
     <div className="overflow-hidden rounded-card border border-gray-200 bg-white">
       <div className="flex items-center border-b border-gray-100 px-5 py-4">
@@ -34,9 +42,17 @@ function LabReviewList({ labs, totalElements, isLoading, error }) {
             {totalElements}개 연구실
           </span>
         </h2>
-        <span className="ml-auto text-xs font-bold text-gray-900">
-          후기 많은 순
-        </span>
+        <select
+          value={sortType}
+          onChange={(e) => onSortChange(e.target.value)}
+          className="ml-auto text-xs font-bold text-gray-900 bg-transparent"
+        >
+          {Object.entries(SORT_OPTIONS).map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
       </div>
 
       {isLoading && (
