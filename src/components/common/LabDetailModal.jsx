@@ -17,6 +17,18 @@ function LabDetailModal({ lab, onClose }) {
     });
   };
 
+  const buildGmailUrl = (email) => {
+    const subject = encodeURIComponent(
+      "[학부연구생 문의] 연구실 지원 관련 문의드립니다",
+    );
+    return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${subject}`;
+  };
+
+  // 네이버 URL 확인 후 채택 여부 결정 — 확인 전까지는 주석 처리하거나 생략
+  const buildNaverUrl = (email) => {
+    return `https://mail.naver.com/v2/new?to=${encodeURIComponent(email)}`;
+  };
+
   const handleBookmark = async () => {
     if (!user) return;
 
@@ -108,28 +120,51 @@ function LabDetailModal({ lab, onClose }) {
           <div>
             <p className="text-xs text-gray-400 mb-2">컨택 이메일</p>
             {lab.professor.email ? (
-              <div className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
-                <span className="text-sm font-medium">
-                  {lab.professor.email}
-                </span>
-                <button
-                  onClick={() => handleCopyEmail(lab.professor.email)}
-                  className={`text-xs flex items-center gap-1 transition ${
-                    copied
-                      ? "text-green-500"
-                      : "text-gray-400 hover:text-gray-600"
-                  }`}
-                >
-                  {copied ? "✓ 복사됨" : "🗒 복사"}
-                </button>
-              </div>
+              <>
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                  <span className="text-sm font-medium">
+                    {lab.professor.email}
+                  </span>
+                  <button
+                    onClick={() => handleCopyEmail(lab.professor.email)}
+                    className={`text-xs flex items-center gap-1 transition ${
+                      copied
+                        ? "text-green-500"
+                        : "text-gray-400 hover:text-gray-600"
+                    }`}
+                  >
+                    {copied ? "✓ 복사됨" : "🗒 복사"}
+                  </button>
+                </div>
+
+                <div className="flex gap-2 mt-2">
+                  <a
+                    href={buildGmailUrl(lab.professor.email)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 text-center text-xs font-medium bg-blue-50 text-blue-600 rounded-lg px-3 py-2 hover:bg-blue-100"
+                  >
+                    Gmail로 보내기
+                  </a>
+                  {
+                    // 네이버 채택 시 아래 주석 해제
+                    <a
+                      href={buildNaverUrl(lab.professor.email)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 text-center text-xs font-medium bg-green-50 text-green-600 rounded-lg px-3 py-2 hover:bg-green-100"
+                    >
+                      네이버 메일로 보내기
+                    </a>
+                  }
+                </div>
+              </>
             ) : (
               <p className="text-sm text-gray-500">
                 컨택 이메일이 없습니다 직접 문의 부탁드립니다.
               </p>
             )}
           </div>
-
           {/* 7. 연구실 홈페이지 */}
           <div>
             <p className="text-xs text-gray-400 mb-2">연구실 홈페이지</p>
