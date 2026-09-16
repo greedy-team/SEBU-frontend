@@ -31,3 +31,18 @@ export const updateProfile = async (profileData) => {
     };
   }
 };
+
+export const deleteAccount = async () => {
+  try {
+    await client.delete("/users/me");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      result: error.response?.data ?? {
+        error: { message: "네트워크 오류가 발생했습니다." },
+      },
+    };
+  }
+};
+

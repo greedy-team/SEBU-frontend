@@ -8,16 +8,20 @@ import BookmarkedLabs from "../../features/mypage/components/BookmarkedLabs";
 import { useMyPage } from "../../features/mypage/hooks/useMyPage";
 import { useProfileForm } from "../../features/mypage/hooks/useProfileForm";
 import { useAuthStore } from "../../store/authStore";
+import { deleteAccount } from "../../features/mypage/api/mypageApi";
 
 function MyPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const updateUser = useAuthStore((state) => state.updateUser);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   const { data, isLoading: isPageLoading, error: pageError } = useMyPage();
 
   const [pageData, setPageData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (data) setPageData(data);
@@ -43,6 +47,19 @@ function MyPage() {
     }));
     setIsModalOpen(false);
   });
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    try {
+      const { ok } = await deleteAccount();
+      if (ok) {
+        clearAuth();
+        navigate("/login");
+      }
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const currentData = pageData ?? data;
 
@@ -121,8 +138,19 @@ function MyPage() {
         <BookmarkedLabs
           items={currentData.bookmarkedLaboratories?.items ?? []}
         />
+
+        {/* 회원 탈퇴 버튼 */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <button
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="text-xs text-gray-400 hover:text-red-500 transition-colors"
+          >
+            회원 탈퇴
+          </button>
+        </div>
       </div>
 
+      {/* 프로필 모달 */}
       {isModalOpen && (
         <ProfileModal
           profile={profile}
@@ -132,6 +160,36 @@ function MyPage() {
           introError={introError}
           formError={formError}
         />
+      )}
+
+      {/* 회원 탈퇴 확인 모달 */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl w-full max-w-sm mx-4 p-6">
+            <h2 className="font-bold text-base mb-2">정말 탈퇴하시겠어요?</h2>
+            <p className="text-sm text-gray-500 mb-1">
+              탈퇴 후 30일 이내에 재로그인하면 계정을 복구할 수 있어요.
+            </p>
+            <p className="text-sm text-gray-500 mb-6">
+              30일이 지나면 모든 데이터가 삭제됩니다.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={isDeleting}
+                className="flex-1 py-3 rounded-xl bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:bg-gray-200 disabled:text-gray-400"
+              >
+                {isDeleting ? "탈퇴 중..." : "탈퇴하기"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
