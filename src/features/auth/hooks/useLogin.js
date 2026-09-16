@@ -3,9 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { sejongLogin } from "../api/authApi";
 import { useAuthStore } from "../../../store/authStore";
 
-export const useLogin = ({ onNewUser } = {}) => {
-  // setAuth 파라미터 제거
-  const setAuth = useAuthStore((state) => state.setAuth); // 내부에서 구독
+export const useLogin = ({ onNewUser, onRecoveryRequired } = {}) => {
+  const setAuth = useAuthStore((state) => state.setAuth);
   const [isLoading, setIsLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState({ message: "", field: null });
 
@@ -32,6 +31,18 @@ export const useLogin = ({ onNewUser } = {}) => {
 
       if (!ok || !result.success) {
         const errorCode = result.error?.code;
+
+        // 탈퇴 후 복구 대기시간 미경과
+        if (errorCode === "ACCOUNT_RECOVERY_COOLDOWN") {
+          setErrorInfo({
+            message:
+              result.error?.message ||
+              "아직 계정 복구 대기 시간이 지나지 않았습니다. 잠시 후 다시 시도해주세요.",
+            field: "global",
+          });
+          return;
+        }
+
         setErrorInfo({
           message: result.error?.message || "로그인에 실패했습니다.",
           field: "global",
@@ -40,11 +51,23 @@ export const useLogin = ({ onNewUser } = {}) => {
         return;
       }
 
-      setAuth(result.data.user); // accessToken 제거
-      if (result.data.user.isNewUser) {
-        onNewUser?.();
-        return; // 페이지 이동 안 함
+      const { loginStatus, user, recoveryExpiresIn, recoverableUntil } =
+        result.data;
+
+      // 복구 가능 상태
+      if (loginStatus === "RECOVERY_REQUIRED") {
+        onRecoveryRequired?.({ recoveryExpiresIn, recoverableUntil });
+        return;
       }
+
+      // 정상 로그인 (AUTHENTICATED)
+      setAuth(user);
+
+      if (user.isNewUser) {
+        onNewUser?.();
+        return;
+      }
+
       const from = location.state?.from;
       if (!from || from === "/login") {
         navigate("/");
