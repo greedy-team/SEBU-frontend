@@ -1,7 +1,9 @@
 import { useState, useRef } from "react";
 import { useLogin } from "../hooks/useLogin";
 import PrivacyConsentModal from "./PrivacyConsentModal";
+import RecoveryModal from "./RecoveryModal";
 import { useNavigate, useLocation } from "react-router-dom";
+
 function EyeIcon({ off }) {
   return (
     <svg
@@ -29,12 +31,16 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConsent, setShowConsent] = useState(false);
+  const [recoveryInfo, setRecoveryInfo] = useState(null); // 복구 모달 정보
 
   const studentIdRef = useRef(null);
   const passwordRef = useRef(null);
 
   const { executeLogin, isLoading, errorInfo, clearError } = useLogin({
-    onNewUser: () => setShowConsent(true), // 신규 유저면 모달 표시
+    onNewUser: () => setShowConsent(true),
+    onRecoveryRequired: ({ recoveryExpiresIn, recoverableUntil }) => {
+      setRecoveryInfo({ recoveryExpiresIn, recoverableUntil });
+    },
   });
 
   const handleSubmit = (e) => {
@@ -63,15 +69,17 @@ function LoginForm() {
     errorInfo.field === "studentId" || errorInfo.field === "global";
   const pwError =
     errorInfo.field === "password" || errorInfo.field === "global";
+
   const handleConsentConfirm = () => {
     setShowConsent(false);
     const from = location.state?.from;
     if (!from || from === "/login") {
-      navigate("/"); // 신규 유저는 마이페이지로
+      navigate("/");
     } else {
       navigate(from);
     }
   };
+
   return (
     <>
       <form
@@ -154,6 +162,14 @@ function LoginForm() {
       </form>
 
       {showConsent && <PrivacyConsentModal onConfirm={handleConsentConfirm} />}
+
+      {recoveryInfo && (
+        <RecoveryModal
+          recoveryExpiresIn={recoveryInfo.recoveryExpiresIn}
+          recoverableUntil={recoveryInfo.recoverableUntil}
+          onCancel={() => setRecoveryInfo(null)}
+        />
+      )}
     </>
   );
 }
