@@ -44,7 +44,7 @@ export const fetchMe = async () => {
     };
   }
 };
-// CSRF 초기화
+
 export const initCsrf = async () => {
   try {
     await client.get("/auth/csrf");
@@ -53,10 +53,24 @@ export const initCsrf = async () => {
   }
 };
 
-// 로그아웃
 export const logout = async () => {
   try {
     const response = await client.post("/auth/logout");
+    return { ok: true, result: response.data };
+  } catch (error) {
+    return {
+      ok: false,
+      result: error.response?.data ?? {
+        error: { message: "네트워크 오류가 발생했습니다." },
+      },
+    };
+  }
+};
+
+// 계정 복구
+export const recoverAccount = async () => {
+  try {
+    const response = await client.post("/auth/recovery");
     return { ok: true, result: response.data };
   } catch (error) {
     return {
