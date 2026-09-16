@@ -14,3 +14,4 @@ export const useAuthStore = create((set) => ({
       user: { ...state.user, ...updatedUser },
     })),
 }));
+
