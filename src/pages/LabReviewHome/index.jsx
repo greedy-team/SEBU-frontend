@@ -1,6 +1,7 @@
 import Header from "../../components/layout/Header";
 import LabReviewList from "../../features/community/components/LabReviewList";
 import { useLabList } from "../../features/community/hooks/useLabList";
+import SearchBar from "../../features/search/components/SearchBar";
 
 /**
  * 랩실 평가 홈 — 후기가 많은 순으로 연구실을 보여줍니다.
@@ -9,7 +10,17 @@ import { useLabList } from "../../features/community/hooks/useLabList";
  * (검색·정렬·인기글이 모두 게시글 기준) 상단 내비게이션으로 분리했습니다.
  */
 function LabReviewHomePage() {
-  const { labs, totalElements, isLoading, error } = useLabList();
+  const {
+    labs,
+    totalElements,
+    isLoading,
+    error,
+    searchInput,
+    setSearchInput,
+    handleSearch,
+    sortType,
+    setSortType,
+  } = useLabList();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -20,12 +31,23 @@ function LabReviewHomePage() {
           연구실별 학부연구생 후기를 확인해보세요.
         </p>
 
+        <div className="mt-4">
+          <SearchBar
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={handleSearch}
+            placeholder="연구실 이름으로 검색"
+          />
+        </div>
+
         <div className="mt-6">
           <LabReviewList
             labs={labs}
             totalElements={totalElements}
             isLoading={isLoading}
             error={error}
+            sortType={sortType}
+            onSortChange={setSortType}
           />
         </div>
       </div>
