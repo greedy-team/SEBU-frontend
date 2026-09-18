@@ -1,0 +1,17 @@
+# SEBU - 세종대학교 연구실 탐색 플랫폼
+
+SEBU는 세종대학교 학생들이 관심 연구실을 탐색하고 북마크할 수 있는 플랫폼입니다.
+
+## 주요 기능
+
+- [연구실 탐색](https://sebu-frontend.vercel.app/search)
+- [단과대별 보기](https://sebu-frontend.vercel.app/colleges)
+- [커뮤니티](https://sebu-frontend.vercel.app/community)
+- [랩실 평가](https://sebu-frontend.vercel.app/community/labs)
+- [마이페이지](https://sebu-frontend.vercel.app/mypage)
+
+## 서비스 정보
+
+- 대상: 세종대학교 재학생
+- 인증: 세종대학교 포털 계정으로 로그인
+- 운영: 세종대학교 학생 개발팀 GREEDY 4기 2팀
