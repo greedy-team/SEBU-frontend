@@ -4,18 +4,13 @@ import CollegeAccordionList from "../../features/collegeView/components/CollegeA
 import { useCollegeStats } from "../../features/collegeView/hooks/useCollegeStats";
 
 function CollegeView() {
-  const { colleges, totalColleges, totalLabs, totalRecruiting } =
-    useCollegeStats(); // colleges 추가
+  const { colleges, totalColleges, totalLabs } = useCollegeStats(); // colleges 추가
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <PageHeader
-          totalColleges={totalColleges}
-          totalLabs={totalLabs}
-          totalRecruiting={totalRecruiting}
-        />
+        <PageHeader totalColleges={totalColleges} totalLabs={totalLabs} />
         <div className="mt-6">
           <CollegeAccordionList colleges={colleges} /> {/* props로 내려주기 */}
         </div>

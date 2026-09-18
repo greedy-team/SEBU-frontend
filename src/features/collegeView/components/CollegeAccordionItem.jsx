@@ -3,7 +3,7 @@ import DepartmentList from "./DepartmentList";
 
 function CollegeAccordionItem({ college }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { name, totalLabs, recruitingCount, departments } = college;
+  const { name, totalLabs, departments } = college;
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
@@ -18,9 +18,6 @@ function CollegeAccordionItem({ college }) {
             <h3 className="font-bold">{name}</h3>
             <span className="text-xs text-gray-500">
               학과 {departments.length}개 · 연구실 {totalLabs}개
-            </span>
-            <span className="text-xs text-green-600 font-medium">
-              ● 모집중 {recruitingCount}개
             </span>
           </div>
         </div>
