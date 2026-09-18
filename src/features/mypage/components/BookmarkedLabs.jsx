@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import LabCard from "../../../components/common/LabCard";
 
-function BookmarkedLabs({ items = [] }) {
+function BookmarkedLabs({ items = [], onUnbookmark, undoTarget, onUndo }) {
   const navigate = useNavigate();
 
   return (
@@ -32,8 +32,26 @@ function BookmarkedLabs({ items = [] }) {
       ) : (
         <div className="flex flex-col gap-3">
           {items.map((item) => (
-            <LabCard key={item.laboratory.id} lab={item.laboratory} />
+            <LabCard
+              key={item.laboratory.id}
+              lab={item.laboratory}
+              onUnbookmark={onUnbookmark}
+            />
           ))}
+        </div>
+      )}
+
+      {undoTarget && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg">
+          <p className="text-sm">
+            {undoTarget.item.laboratory.name}을(를) 북마크에서 해제했어요
+          </p>
+          <button
+            onClick={onUndo}
+            className="text-sm font-bold text-brand-300 hover:text-brand-200"
+          >
+            실행취소
+          </button>
         </div>
       )}
     </div>

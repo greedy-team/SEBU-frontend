@@ -21,7 +21,7 @@ function BookmarkIcon({ filled }) {
   );
 }
 
-function LabCard({ lab }) {
+function LabCard({ lab, onUnbookmark }) {
   const [showModal, setShowModal] = useState(false);
   const [bookmarked, setBookmarked] = useState(lab.bookmarked ?? false);
   const [bookmarkCount, setBookmarkCount] = useState(lab.bookmarkCount ?? 0);
@@ -55,6 +55,12 @@ function LabCard({ lab }) {
     if (!ok) {
       setBookmarked(!nextBookmarked);
       setBookmarkCount((prev) => (nextBookmarked ? prev - 1 : prev + 1));
+      return;
+    }
+
+    // 해제 성공 시 상위(마이페이지 목록 등)에 알림
+    if (!nextBookmarked) {
+      onUnbookmark?.(lab.id);
     }
   };
 
