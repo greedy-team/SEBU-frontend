@@ -1,25 +1,8 @@
-function SummaryCards({ summary }) {
-  const { bookmarkedLaboratoryCount = 0, receivedRecommendationCount = 0 } =
-    summary || {};
-
-  const cards = [
-    { label: "관심 랩실", count: bookmarkedLaboratoryCount },
-    { label: "받은 추천", count: receivedRecommendationCount },
-  ];
-
+function SummaryCards({ bookmarkedLaboratoryCount = 0 }) {
   return (
-    <div className="grid grid-cols-2 gap-3 mt-4">
-      {cards.map((card) => (
-        <div
-          key={card.label}
-          className="bg-white rounded-xl p-4 flex flex-col items-center gap-1"
-          role="status"
-          aria-label={`${card.label} ${card.count}개`}
-        >
-          <p className="text-2xl font-bold">{card.count}</p>
-          <p className="text-xs text-gray-400">{card.label}</p>
-        </div>
-      ))}
+    <div className="bg-white rounded-xl p-4 flex flex-col items-center gap-1 mt-4">
+      <p className="text-2xl font-bold">{bookmarkedLaboratoryCount}</p>
+      <p className="text-xs text-gray-400">관심 랩실</p>
     </div>
   );
 }

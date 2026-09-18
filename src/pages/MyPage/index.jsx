@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import ProfileHeader from "../../features/mypage/components/ProfileHeader";
@@ -9,6 +9,7 @@ import { useMyPage } from "../../features/mypage/hooks/useMyPage";
 import { useProfileForm } from "../../features/mypage/hooks/useProfileForm";
 import { useAuthStore } from "../../store/authStore";
 import { deleteAccount } from "../../features/mypage/api/mypageApi";
+import { addLabBookmark } from "../../api/bookmarkApi";
 
 function MyPage() {
   const navigate = useNavigate();
@@ -22,10 +23,17 @@ function MyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [removedLabIds, setRemovedLabIds] = useState(() => new Set());
+  const [undoTarget, setUndoTarget] = useState(null); // { item }
+  const undoTimerRef = useRef(null);
 
   useEffect(() => {
     if (data) setPageData(data);
   }, [data]);
+
+  useEffect(() => {
+    return () => clearTimeout(undoTimerRef.current);
+  }, []);
 
   useEffect(() => {
     if (!isPageLoading && !data) {
@@ -96,7 +104,38 @@ function MyPage() {
     );
   }
 
-  const { profile, summary } = currentData;
+  const { profile } = currentData;
+  const bookmarkedItems = currentData.bookmarkedLaboratories?.items ?? [];
+  const visibleBookmarkedItems = bookmarkedItems.filter(
+    (item) => !removedLabIds.has(item.laboratory.id),
+  );
+
+  const handleUnbookmark = (labId) => {
+    const item = bookmarkedItems.find((i) => i.laboratory.id === labId);
+    if (!item) return;
+
+    setRemovedLabIds((prev) => new Set(prev).add(labId));
+    setUndoTarget({ item });
+
+    clearTimeout(undoTimerRef.current);
+    undoTimerRef.current = setTimeout(() => setUndoTarget(null), 4000);
+  };
+
+  const handleUndo = async () => {
+    if (!undoTarget) return;
+    clearTimeout(undoTimerRef.current);
+    const labId = undoTarget.item.laboratory.id;
+    setUndoTarget(null);
+
+    const { ok } = await addLabBookmark(labId);
+    if (!ok) return;
+
+    setRemovedLabIds((prev) => {
+      const next = new Set(prev);
+      next.delete(labId);
+      return next;
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -133,10 +172,15 @@ function MyPage() {
           </span>
         </button>
 
-        <SummaryCards summary={summary} />
+        <SummaryCards
+          bookmarkedLaboratoryCount={visibleBookmarkedItems.length}
+        />
 
         <BookmarkedLabs
-          items={currentData.bookmarkedLaboratories?.items ?? []}
+          items={visibleBookmarkedItems}
+          onUnbookmark={handleUnbookmark}
+          undoTarget={undoTarget}
+          onUndo={handleUndo}
         />
 
         {/* 회원 탈퇴 버튼 */}
