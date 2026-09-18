@@ -62,10 +62,6 @@ export function useCollegeStats() {
   // 전체 통계
   const totalColleges = colleges.length;
   const totalLabs = colleges.reduce((sum, c) => sum + c.totalLabs, 0);
-  const totalRecruiting = colleges.reduce(
-    (sum, c) => sum + c.recruitingCount,
-    0,
-  );
 
-  return { colleges, totalColleges, totalLabs, totalRecruiting };
+  return { colleges, totalColleges, totalLabs };
 }

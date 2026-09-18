@@ -1,4 +1,4 @@
-function PageHeader({ totalColleges, totalLabs, totalRecruiting }) {
+function PageHeader({ totalColleges, totalLabs }) {
   return (
     <div className="flex items-end justify-between">
       <div>
@@ -14,9 +14,6 @@ function PageHeader({ totalColleges, totalLabs, totalRecruiting }) {
         </span>
         <span>
           <b className="text-lg text-black">{totalLabs}</b>개 전체 연구실
-        </span>
-        <span>
-          <b className="text-lg text-green-600">{totalRecruiting}</b>개 모집중
         </span>
       </div>
     </div>
