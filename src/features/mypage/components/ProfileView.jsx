@@ -43,14 +43,6 @@ function ProfileView({ profile, onEdit }) {
 
       <hr className="border-gray-100" />
 
-      {/* 소개사항 */}
-      <div>
-        <p className="text-xs text-gray-400 mb-1">소개사항</p>
-        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-          {introduction || "미입력"}
-        </p>
-      </div>
-
       {/* 수정하기 버튼 */}
       <button
         onClick={onEdit}
