@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { fetchLaboratories } from "../../../api/labApi";
 import { applyFilters, applySorting } from "../utils/labFilterUtils";
 
@@ -6,9 +7,13 @@ import { applyFilters, applySorting } from "../utils/labFilterUtils";
 const MULTI_SELECT_KEYS = ["colleges", "categoryIds", "fieldIds"];
 
 export function useLabFilter() {
+  // 메인 히어로 검색바에서 ?keyword=로 넘어온 검색어를 최초 1회만 반영합니다.
+  const [searchParams] = useSearchParams();
+  const initialKeyword = searchParams.get("keyword") ?? "";
+
   const [rawLabs, setRawLabs] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchInput, setSearchInput] = useState(initialKeyword);
+  const [searchTerm, setSearchTerm] = useState(initialKeyword);
   const [sortType, setSortType] = useState("RECENT");
 
   const [filters, setFilters] = useState({
