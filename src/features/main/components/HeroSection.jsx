@@ -31,7 +31,7 @@ function HeroSection() {
       </p>
 
       <div
-        className="mt-9 flex h-14 max-w-lg items-center gap-2 rounded-full border border-gray-200 bg-white py-2 pr-2 pl-6 transition-shadow focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-200"
+        className="mt-9 flex h-14 max-w-lg items-center gap-2 rounded-full border border-gray-200 bg-gray-50 py-2 pr-2 pl-6 transition-shadow focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-200"
         style={{ boxShadow: "var(--shadow-cta)" }}
       >
         <input
