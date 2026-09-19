@@ -9,6 +9,7 @@ import CommunityPage from "./pages/Community";
 import PostDetailPage from "./pages/PostDetail";
 import PostWritePage from "./pages/PostWrite";
 import RateLimitToast from "./components/common/RateLimitToast";
+import Footer from "./components/layout/Footer";
 import LabReviewHomePage from "./pages/LabReviewHome";
 import LabReviewPage from "./pages/LabReview";
 import LabReviewWritePage from "./pages/LabReviewWrite";
@@ -41,6 +42,7 @@ function App() {
         />
         <Route path="/community/:postId/edit" element={<PostWritePage />} />
       </Routes>
+      <Footer />
     </>
   );
 }
