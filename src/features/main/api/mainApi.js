@@ -17,14 +17,6 @@ const getPublic = async (url, config = {}) => {
   }
 };
 
-/** 메인보드 최신글 5개. (명세 1절) */
-export async function fetchLatestPosts() {
-  const response = await getPublic("/posts", {
-    params: { sort: "LATEST", page: 0, size: 5 },
-  });
-  return response.data.data.posts ?? [];
-}
-
 /** 단과대학 목록. (명세 2절) */
 export async function fetchColleges() {
   const response = await getPublic("/colleges");
