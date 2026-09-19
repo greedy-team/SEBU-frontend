@@ -103,9 +103,9 @@ function ActiveFilterBar({
           <button
             onClick={() => onFilterChange("hasWebsite", false)}
             className={chipClass}
-            aria-label="홈페이지 있는 연구실만 필터 제거"
+            aria-label="홈페이지 등록된 연구실 필터 제거"
           >
-            홈페이지 있는 연구실만
+            🔗 홈페이지 등록된 연구실
             <RemoveIcon />
           </button>
         )}
