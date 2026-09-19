@@ -21,6 +21,7 @@ export function useLabFilter() {
     recruitmentStatus: null,
     categoryIds: [], // 1단계: 연구 분야 카테고리
     fieldIds: [], // 2단계: 세부 연구 분야
+    hasWebsite: false,
   });
 
   useEffect(() => {

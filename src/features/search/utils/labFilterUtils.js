@@ -42,13 +42,19 @@ const matchResearch = (lab, categoryIds, fieldIds) => {
   return true;
 };
 
+const matchWebsite = (lab, hasWebsite) => {
+  if (!hasWebsite) return true;
+  return Boolean(lab.websiteUrl);
+};
+
 export const applyFilters = (labs, filters, searchTerm) => {
   return labs.filter(
     (lab) =>
       matchSearchTerm(lab, searchTerm) &&
       matchColleges(lab, filters.colleges) &&
       matchStatus(lab, filters.recruitmentStatus) &&
-      matchResearch(lab, filters.categoryIds ?? [], filters.fieldIds ?? []),
+      matchResearch(lab, filters.categoryIds ?? [], filters.fieldIds ?? []) &&
+      matchWebsite(lab, filters.hasWebsite),
   );
 };
 
