@@ -66,9 +66,9 @@ function Header() {
             단과대별 보기
           </NavLink>
           {/* 커뮤니티는 MVP 범위에서 제외 */}
-          {/* <Link to="/community" className={navItemClass}>
+          <Link to="/community" className={navItemClass}>
             커뮤니티
-          </Link> */}
+          </Link>
           <Link
             to="/community/labs"
             className={navItemClass({ isActive: isLabArea })}
