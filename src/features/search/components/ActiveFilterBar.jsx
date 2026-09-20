@@ -38,7 +38,8 @@ function ActiveFilterBar({
     filters.colleges.length > 0 ||
     filters.categoryIds.length > 0 ||
     filters.fieldIds.length > 0 ||
-    filters.recruitmentStatus !== null;
+    filters.recruitmentStatus !== null ||
+    filters.hasWebsite;
 
   if (!hasActive) return null;
 
@@ -97,12 +98,24 @@ function ActiveFilterBar({
             <RemoveIcon />
           </button>
         )}
+
+        {filters.hasWebsite && (
+          <button
+            onClick={() => onFilterChange("hasWebsite", false)}
+            className={chipClass}
+            aria-label="홈페이지 등록된 연구실 필터 제거"
+          >
+            🔗 홈페이지 등록된 연구실
+            <RemoveIcon />
+          </button>
+        )}
       </div>
 
       <button
         onClick={() => {
           onFilterChange("colleges", []);
           onFilterChange("recruitmentStatus", null);
+          onFilterChange("hasWebsite", false);
           // categoryIds를 비우면 fieldIds도 함께 비워집니다.
           onFilterChange("categoryIds", []);
         }}

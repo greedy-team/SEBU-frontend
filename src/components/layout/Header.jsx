@@ -44,7 +44,12 @@ function Header() {
     } finally {
       clearAuth();
       await initCsrf(); // 로그아웃 후 CSRF 재초기화
-      navigate("/login");
+
+      // 로그인 필수 페이지(마이페이지)에 있었을 때만 홈으로 이동.
+      // 그 외 페이지는 비로그인 상태로도 볼 수 있으니 그대로 유지한다.
+      if (pathname === "/mypage") {
+        navigate("/");
+      }
     }
   };
 

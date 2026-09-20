@@ -72,7 +72,8 @@ function SearchPage() {
                 filters.colleges.length > 0 ||
                 filters.categoryIds.length > 0 ||
                 filters.fieldIds.length > 0 ||
-                filters.recruitmentStatus !== null
+                filters.recruitmentStatus !== null ||
+                filters.hasWebsite
               }
               sortType={sortType}
               onSortChange={setSortType}
