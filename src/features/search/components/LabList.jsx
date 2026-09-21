@@ -11,7 +11,7 @@ function LabList({ labs }) {
 
   return (
     <div className="flex flex-col gap-3">
-      {labs.map((lab) => (
+      {labs.slice(0, 10).map((lab) => (
         <LabCard key={lab.id} lab={lab} />
       ))}
     </div>
