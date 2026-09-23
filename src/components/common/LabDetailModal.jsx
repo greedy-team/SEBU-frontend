@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import { RECRUITMENT_STATUS } from "../../constants/recruitmentStatus";
+//import { RECRUITMENT_STATUS } from "../../constants/recruitmentStatus";
 import { useState } from "react";
 import { addLabBookmark, removeLabBookmark } from "../../api/bookmarkApi";
 import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
 
 function LabDetailModal({ lab, onClose }) {
-  const status = RECRUITMENT_STATUS[lab.recruitmentStatus];
+  //const status = RECRUITMENT_STATUS[lab.recruitmentStatus];
   const [copied, setCopied] = useState(false);
   const [bookmarked, setBookmarked] = useState(lab.bookmarked ?? false);
   const [bookmarkCount, setBookmarkCount] = useState(lab.bookmarkCount ?? 0);

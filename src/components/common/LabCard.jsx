@@ -35,7 +35,7 @@ function LabCard({ lab, onUnbookmark }) {
     college,
     department,
     researchFields,
-    recruitmentStatus,
+    //recruitmentStatus,
   } = lab;
 
   const handleBookmark = async (e) => {
