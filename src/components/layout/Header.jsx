@@ -38,7 +38,7 @@ function Header() {
 
   const { pathname } = useLocation();
   const isLabArea = pathname.startsWith("/community/labs");
-
+  const isCommunityArea = pathname.startsWith("/community") && !isLabArea;
   const handleLogout = async () => {
     try {
       await logout();
@@ -74,7 +74,7 @@ function Header() {
           {/* 커뮤니티는 MVP 범위에서 제외 */}
           <NavLink
             to="/community"
-            className={navItemClass}
+            className={navItemClass({ isActive: isCommunityArea })}
           >
             커뮤니티
           </NavLink>
