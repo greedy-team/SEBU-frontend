@@ -3,6 +3,7 @@ import { RECRUITMENT_STATUS } from "../../constants/recruitmentStatus";
 import { useState } from "react";
 import { addLabBookmark, removeLabBookmark } from "../../api/bookmarkApi";
 import { useAuthStore } from "../../store/authStore";
+import { useNavigate } from "react-router-dom";
 
 function LabDetailModal({ lab, onClose }) {
   const status = RECRUITMENT_STATUS[lab.recruitmentStatus];
@@ -10,7 +11,7 @@ function LabDetailModal({ lab, onClose }) {
   const [bookmarked, setBookmarked] = useState(lab.bookmarked ?? false);
   const [bookmarkCount, setBookmarkCount] = useState(lab.bookmarkCount ?? 0);
   const user = useAuthStore((state) => state.user);
-
+  const navigate = useNavigate();
   const handleCopyEmail = (email) => {
     navigator.clipboard.writeText(email).then(() => {
       setCopied(true);
@@ -31,7 +32,10 @@ function LabDetailModal({ lab, onClose }) {
   };
 
   const handleBookmark = async () => {
-    if (!user) return;
+    if (!user) {
+      navigate("/login", { state: { from: window.location.pathname } });
+      return;
+    }
 
     // Optimistic Update
     const nextBookmarked = !bookmarked;
