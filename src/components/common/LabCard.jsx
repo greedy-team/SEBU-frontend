@@ -2,6 +2,7 @@ import { useState } from "react";
 import LabDetailModal from "./LabDetailModal";
 import { addLabBookmark, removeLabBookmark } from "../../api/bookmarkApi";
 import { useAuthStore } from "../../store/authStore";
+import { useNavigate } from "react-router-dom";
 
 function BookmarkIcon({ filled }) {
   return (
@@ -26,6 +27,7 @@ function LabCard({ lab, onUnbookmark }) {
   const [bookmarked, setBookmarked] = useState(lab.bookmarked ?? false);
   const [bookmarkCount, setBookmarkCount] = useState(lab.bookmarkCount ?? 0);
   const user = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
 
   const {
     name,
@@ -40,7 +42,10 @@ function LabCard({ lab, onUnbookmark }) {
     e.stopPropagation();
 
     // 비로그인 시 무시
-    if (!user) return;
+    if (!user) {
+      navigate("/login", { state: { from: window.location.pathname } });
+      return;
+    }
 
     // Optimistic Update
     const nextBookmarked = !bookmarked;
