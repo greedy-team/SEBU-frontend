@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import Header from "../../components/layout/Header";
 import ProfileHeader from "../../features/mypage/components/ProfileHeader";
 import ProfileModal from "../../features/mypage/components/ProfileModal";
@@ -10,6 +11,7 @@ import { useProfileForm } from "../../features/mypage/hooks/useProfileForm";
 import { useAuthStore } from "../../store/authStore";
 import { deleteAccount } from "../../features/mypage/api/mypageApi";
 import { addLabBookmark } from "../../api/bookmarkApi";
+import { queryClient } from "../../api/queryClient";
 
 function MyPage() {
   const navigate = useNavigate();
@@ -19,57 +21,61 @@ function MyPage() {
 
   const { data, isLoading: isPageLoading, error: pageError } = useMyPage();
 
-  const [pageData, setPageData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [removedLabIds, setRemovedLabIds] = useState(() => new Set());
-  const [undoTarget, setUndoTarget] = useState(null); // { item }
+  const [undoTarget, setUndoTarget] = useState(null);
   const undoTimerRef = useRef(null);
-
-  useEffect(() => {
-    if (data) setPageData(data);
-  }, [data]);
 
   useEffect(() => {
     return () => clearTimeout(undoTimerRef.current);
   }, []);
 
   useEffect(() => {
-    if (!isPageLoading && !data) {
-      navigate("/login", {
-        state: { from: location.pathname },
-      });
+    if (!isPageLoading && !data && !pageError) {
+      navigate("/login", { state: { from: location.pathname } });
     }
-  }, [isPageLoading, data, navigate, location.pathname]);
+  }, [isPageLoading, data, pageError, navigate, location.pathname]);
 
+  // 프로필 저장 → 캐시 갱신은 useProfileForm 안에서 setQueryData로 처리
   const {
     handleSubmit,
     isLoading: isFormLoading,
     introError,
     formError,
-  } = useProfileForm(pageData?.profile, updateUser, (savedProfile) => {
-    setPageData((prev) => ({
-      ...(prev ?? data),
-      profile: savedProfile,
-    }));
-    setIsModalOpen(false);
+  } = useProfileForm(data?.profile, updateUser, () => setIsModalOpen(false));
+
+  // 회원 탈퇴
+  const { mutate: withdraw, isPending: isDeleting } = useMutation({
+    mutationFn: deleteAccount,
+    onSuccess: () => {
+      clearAuth();
+      queryClient.removeQueries({ queryKey: ["mypage"] });
+      // 연구실 목록의 bookmarked 값이 내 기준이라 다시 받아옴
+      queryClient.invalidateQueries({ queryKey: ["laboratories"] });
+      navigate("/login");
+    },
   });
 
-  const handleDeleteAccount = async () => {
-    setIsDeleting(true);
-    try {
-      const { ok } = await deleteAccount();
-      if (ok) {
-        clearAuth();
-        navigate("/login");
-      }
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const currentData = pageData ?? data;
+  // 북마크 해제 되돌리기
+  const { mutate: undoUnbookmark } = useMutation({
+    mutationFn: (labId) => addLabBookmark(labId),
+    onSuccess: (_, labId) => {
+      queryClient.setQueryData(["laboratories"], (old) =>
+        old?.map((l) =>
+          l.id === labId
+            ? { ...l, bookmarked: true, bookmarkCount: l.bookmarkCount + 1 }
+            : l,
+        ),
+      );
+      queryClient.invalidateQueries({ queryKey: ["mypage"] });
+      setRemovedLabIds((prev) => {
+        const next = new Set(prev);
+        next.delete(labId);
+        return next;
+      });
+    },
+  });
 
   if (isPageLoading) {
     return (
@@ -87,25 +93,18 @@ function MyPage() {
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="max-w-2xl mx-auto px-4 py-8 flex items-center justify-center">
-          <p className="text-red-400 text-sm">{pageError}</p>
+          <p className="text-red-400 text-sm">
+            {pageError.message || "마이페이지를 불러오지 못했어요."}
+          </p>
         </div>
       </div>
     );
   }
 
-  if (!currentData) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="max-w-2xl mx-auto px-4 py-8 flex items-center justify-center">
-          <p className="text-gray-400 text-sm">불러오는 중...</p>
-        </div>
-      </div>
-    );
-  }
+  if (!data) return null;
 
-  const { profile } = currentData;
-  const bookmarkedItems = currentData.bookmarkedLaboratories?.items ?? [];
+  const { profile } = data;
+  const bookmarkedItems = data.bookmarkedLaboratories?.items ?? [];
   const visibleBookmarkedItems = bookmarkedItems.filter(
     (item) => !removedLabIds.has(item.laboratory.id),
   );
@@ -121,20 +120,12 @@ function MyPage() {
     undoTimerRef.current = setTimeout(() => setUndoTarget(null), 4000);
   };
 
-  const handleUndo = async () => {
+  const handleUndo = () => {
     if (!undoTarget) return;
     clearTimeout(undoTimerRef.current);
     const labId = undoTarget.item.laboratory.id;
     setUndoTarget(null);
-
-    const { ok } = await addLabBookmark(labId);
-    if (!ok) return;
-
-    setRemovedLabIds((prev) => {
-      const next = new Set(prev);
-      next.delete(labId);
-      return next;
-    });
+    undoUnbookmark(labId);
   };
 
   return (
@@ -241,7 +232,7 @@ function MyPage() {
                 취소
               </button>
               <button
-                onClick={handleDeleteAccount}
+                onClick={() => withdraw()}
                 disabled={isDeleting}
                 className="flex-1 py-3 rounded-xl bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:bg-gray-200 disabled:text-gray-400"
               >
