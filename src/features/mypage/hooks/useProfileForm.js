@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { updateProfile } from "../api/mypageApi";
 
-export function useProfileForm(initialData = {}, updateUser, onSuccess) {
+export function useProfileForm(updateUser, onSuccess) {
   const [introError, setIntroError] = useState("");
   const [formError, setFormError] = useState("");
 

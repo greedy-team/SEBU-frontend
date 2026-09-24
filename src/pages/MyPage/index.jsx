@@ -12,6 +12,10 @@ import { useAuthStore } from "../../store/authStore";
 import { deleteAccount } from "../../features/mypage/api/mypageApi";
 import { addLabBookmark } from "../../api/bookmarkApi";
 import { queryClient } from "../../api/queryClient";
+import {
+  updateLabBookmarkCache,
+  LABORATORIES_KEY,
+} from "../../api/queries/laboratories";
 
 function MyPage() {
   const navigate = useNavigate();
@@ -51,7 +55,6 @@ function MyPage() {
     onSuccess: () => {
       clearAuth();
       queryClient.removeQueries({ queryKey: ["mypage"] });
-      // 연구실 목록의 bookmarked 값이 내 기준이라 다시 받아옴
       queryClient.invalidateQueries({ queryKey: ["laboratories"] });
       navigate("/login");
     },
@@ -61,13 +64,7 @@ function MyPage() {
   const { mutate: undoUnbookmark } = useMutation({
     mutationFn: (labId) => addLabBookmark(labId),
     onSuccess: (_, labId) => {
-      queryClient.setQueryData(["laboratories"], (old) =>
-        old?.map((l) =>
-          String(l.id) === String(labId)
-            ? { ...l, bookmarked: true, bookmarkCount: l.bookmarkCount + 1 }
-            : l,
-        ),
-      );
+      updateLabBookmarkCache(labId, true);
       queryClient.invalidateQueries({ queryKey: ["mypage"] });
       setRemovedLabIds((prev) => {
         const next = new Set(prev);
