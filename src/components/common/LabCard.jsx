@@ -65,6 +65,9 @@ function LabCard({ lab, onUnbookmark }) {
             : l,
         ),
       );
+      if (isBookmarked) {
+        onUnbookmark?.(lab.id);
+      }
       queryClient.invalidateQueries({ queryKey: ["mypage"] });
     },
 
