@@ -54,11 +54,18 @@ function LabCard({ lab, onUnbookmark }) {
 
     // 성공 시 MyPage 캐시 무효화
     onSuccess: (_, isBookmarked) => {
-      const nextBookmarked = !isBookmarked;
-      if (!nextBookmarked) {
-        onUnbookmark?.(lab.id);
-      }
-      queryClient.invalidateQueries({ queryKey: ["laboratories"] });
+      queryClient.setQueryData(["laboratories"], (old) =>
+        old?.map((l) =>
+          l.id === lab.id
+            ? {
+                ...l,
+                bookmarked: !isBookmarked,
+                bookmarkCount: l.bookmarkCount + (isBookmarked ? -1 : 1),
+              }
+            : l,
+        ),
+      );
+      queryClient.invalidateQueries({ queryKey: ["mypage"] });
     },
 
     // 실패 시 롤백

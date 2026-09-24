@@ -4,6 +4,8 @@ import { useState } from "react";
 import { addLabBookmark, removeLabBookmark } from "../../api/bookmarkApi";
 import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "../../api/queryClient";
 
 function LabDetailModal({ lab, onClose }) {
   //const status = RECRUITMENT_STATUS[lab.recruitmentStatus];
@@ -31,26 +33,49 @@ function LabDetailModal({ lab, onClose }) {
     return `https://mail.naver.com/v2/new?to=${encodeURIComponent(email)}`;
   };
 
-  const handleBookmark = async () => {
+  const { mutate: toggleBookmark } = useMutation({
+    mutationFn: (isBookmarked) =>
+      isBookmarked ? removeLabBookmark(lab.id) : addLabBookmark(lab.id),
+
+    // API 호출 전 낙관적 업데이트
+    onMutate: (isBookmarked) => {
+      const nextBookmarked = !isBookmarked;
+      setBookmarked(nextBookmarked);
+      setBookmarkCount((prev) => (nextBookmarked ? prev + 1 : prev - 1));
+    },
+
+    // 성공 시 MyPage 캐시 무효화
+    onSuccess: (_, isBookmarked) => {
+      const nextBookmarked = !isBookmarked;
+
+      // laboratories 캐시에서 해당 연구실만 수정 (재요청 없음)
+      queryClient.setQueryData(["laboratories"], (old) =>
+        old?.map((l) =>
+          l.id === lab.id
+            ? {
+                ...l,
+                bookmarked: nextBookmarked,
+                bookmarkCount: l.bookmarkCount + (nextBookmarked ? 1 : -1),
+              }
+            : l,
+        ),
+      );
+      queryClient.invalidateQueries({ queryKey: ["mypage"] });
+    },
+
+    // 실패 시 롤백
+    onError: (_, isBookmarked) => {
+      setBookmarked(isBookmarked);
+      setBookmarkCount((prev) => (isBookmarked ? prev + 1 : prev - 1));
+    },
+  });
+
+  const handleBookmark = () => {
     if (!user) {
       navigate("/login", { state: { from: window.location.pathname } });
       return;
     }
-
-    // Optimistic Update
-    const nextBookmarked = !bookmarked;
-    setBookmarked(nextBookmarked);
-    setBookmarkCount((prev) => (nextBookmarked ? prev + 1 : prev - 1));
-
-    const { ok } = nextBookmarked
-      ? await addLabBookmark(lab.id)
-      : await removeLabBookmark(lab.id);
-
-    // 실패 시 롤백
-    if (!ok) {
-      setBookmarked(!nextBookmarked);
-      setBookmarkCount((prev) => (nextBookmarked ? prev - 1 : prev + 1));
-    }
+    toggleBookmark(bookmarked);
   };
   return (
     <div
