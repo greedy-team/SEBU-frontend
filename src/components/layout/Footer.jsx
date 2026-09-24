@@ -22,14 +22,14 @@ function Footer() {
                 단과대별 보기
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 to="/community"
                 className="transition-colors hover:text-white"
               >
                 커뮤니티
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
 
@@ -37,8 +37,8 @@ function Footer() {
 
         <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500">
           <p>
-            <span className="font-bold text-white">SEBU</span> ·
-            세종대학교 학부연구생 플랫폼
+            <span className="font-bold text-white">SEBU</span> · 세종대학교
+            학부연구생 플랫폼
           </p>
           <p>© 2026 SEBU. All rights reserved.</p>
         </div>
