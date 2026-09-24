@@ -1,19 +1,15 @@
-import { Link } from "react-router-dom";
-//import { RECRUITMENT_STATUS } from "../../constants/recruitmentStatus";
 import { useState } from "react";
-import { addLabBookmark, removeLabBookmark } from "../../api/bookmarkApi";
-import { useAuthStore } from "../../store/authStore";
-import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "../../api/queryClient";
+import { Link } from "react-router-dom";
 
-function LabDetailModal({ lab, onClose }) {
-  //const status = RECRUITMENT_STATUS[lab.recruitmentStatus];
+function LabDetailModal({
+  lab,
+  bookmarked,
+  bookmarkCount,
+  onToggleBookmark,
+  onClose,
+}) {
   const [copied, setCopied] = useState(false);
-  const [bookmarked, setBookmarked] = useState(lab.bookmarked ?? false);
-  const [bookmarkCount, setBookmarkCount] = useState(lab.bookmarkCount ?? 0);
-  const user = useAuthStore((state) => state.user);
-  const navigate = useNavigate();
+
   const handleCopyEmail = (email) => {
     navigator.clipboard.writeText(email).then(() => {
       setCopied(true);
@@ -28,55 +24,9 @@ function LabDetailModal({ lab, onClose }) {
     return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${subject}`;
   };
 
-  // 네이버 URL 확인 후 채택 여부 결정 — 확인 전까지는 주석 처리하거나 생략
-  const buildNaverUrl = (email) => {
-    return `https://mail.naver.com/v2/new?to=${encodeURIComponent(email)}`;
-  };
+  const buildNaverUrl = (email) =>
+    `https://mail.naver.com/v2/new?to=${encodeURIComponent(email)}`;
 
-  const { mutate: toggleBookmark } = useMutation({
-    mutationFn: (isBookmarked) =>
-      isBookmarked ? removeLabBookmark(lab.id) : addLabBookmark(lab.id),
-
-    // API 호출 전 낙관적 업데이트
-    onMutate: (isBookmarked) => {
-      const nextBookmarked = !isBookmarked;
-      setBookmarked(nextBookmarked);
-      setBookmarkCount((prev) => (nextBookmarked ? prev + 1 : prev - 1));
-    },
-
-    // 성공 시 MyPage 캐시 무효화
-    onSuccess: (_, isBookmarked) => {
-      const nextBookmarked = !isBookmarked;
-
-      // laboratories 캐시에서 해당 연구실만 수정 (재요청 없음)
-      queryClient.setQueryData(["laboratories"], (old) =>
-        old?.map((l) =>
-          String(l.id) === String(lab.id)
-            ? {
-                ...l,
-                bookmarked: nextBookmarked,
-                bookmarkCount: l.bookmarkCount + (nextBookmarked ? 1 : -1),
-              }
-            : l,
-        ),
-      );
-      queryClient.invalidateQueries({ queryKey: ["mypage"] });
-    },
-
-    // 실패 시 롤백
-    onError: (_, isBookmarked) => {
-      setBookmarked(isBookmarked);
-      setBookmarkCount((prev) => (isBookmarked ? prev + 1 : prev - 1));
-    },
-  });
-
-  const handleBookmark = () => {
-    if (!user) {
-      navigate("/login", { state: { from: window.location.pathname } });
-      return;
-    }
-    toggleBookmark(bookmarked);
-  };
   return (
     <div
       className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
@@ -87,15 +37,11 @@ function LabDetailModal({ lab, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex-1 overflow-y-auto">
-          {/* 1. 헤더 - 모집상태 + 닫기 */}
+          {/* 1. 헤더 - 닫기 */}
           <div className="flex items-center justify-end px-6 pt-6 pb-4">
-            {/* <span
-              className={`text-sm font-medium flex items-center gap-1.5 ${status.color}`}
-            >
-              ● {status.label}
-            </span> */}
             <button
               onClick={onClose}
+              aria-label="닫기"
               className="text-gray-400 hover:text-gray-600 text-lg"
             >
               ✕
@@ -103,7 +49,7 @@ function LabDetailModal({ lab, onClose }) {
           </div>
 
           <div className="px-6 flex flex-col gap-5 pb-6">
-            {/* 2. 타이틀 - 연구실명 + 소속 */}
+            {/* 2. 타이틀 */}
             <div>
               <h2 className="text-2xl font-bold">{lab.name}</h2>
               <p className="text-sm text-gray-400 mt-1">
@@ -119,20 +65,9 @@ function LabDetailModal({ lab, onClose }) {
               <p className="font-bold">{lab.professor.name} 교수</p>
             </div>
 
-            {/* 연구원 구성 - 데이터 없어서 주석 처리 */}
-            {/* <p className="text-sm text-gray-500">
-              박사과정 {lab.phdCount}명 · 석사과정 {lab.masterCount}명
-            </p> */}
-
             <hr className="border-gray-100" />
 
-            {/* 4. 연구실 소개 - 데이터 없어서 주석 처리 */}
-            {/* <div>
-              <p className="text-xs text-gray-400 mb-1">연구실 소개</p>
-              <p className="text-sm text-gray-700 leading-relaxed">{lab.description}</p>
-            </div> */}
-
-            {/* 5. 키워드 (researchFields) */}
+            {/* 4. 키워드 */}
             <div>
               <p className="text-xs text-gray-400 mb-2">키워드</p>
               <div className="flex flex-wrap gap-2">
@@ -148,6 +83,8 @@ function LabDetailModal({ lab, onClose }) {
             </div>
 
             <hr className="border-gray-100" />
+
+            {/* 5. 컨택 이메일 */}
             <div>
               <p className="text-xs text-gray-400 mb-2">컨택 이메일</p>
               {lab.professor.email ? (
@@ -177,17 +114,14 @@ function LabDetailModal({ lab, onClose }) {
                     >
                       Gmail로 보내기
                     </a>
-                    {
-                      // 네이버 채택 시 아래 주석 해제
-                      <a
-                        href={buildNaverUrl(lab.professor.email)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 text-center text-xs font-medium bg-green-50 text-green-600 rounded-lg px-3 py-2 hover:bg-green-100"
-                      >
-                        네이버 메일로 보내기
-                      </a>
-                    }
+                    <a
+                      href={buildNaverUrl(lab.professor.email)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 text-center text-xs font-medium bg-green-50 text-green-600 rounded-lg px-3 py-2 hover:bg-green-100"
+                    >
+                      네이버 메일로 보내기
+                    </a>
                   </div>
                 </>
               ) : (
@@ -196,7 +130,8 @@ function LabDetailModal({ lab, onClose }) {
                 </p>
               )}
             </div>
-            {/* 7. 연구실 홈페이지 */}
+
+            {/* 6. 연구실 홈페이지 */}
             <div>
               <p className="text-xs text-gray-400 mb-2">연구실 홈페이지</p>
               {lab.websiteUrl ? (
@@ -217,7 +152,7 @@ function LabDetailModal({ lab, onClose }) {
           </div>
         </div>
 
-        {/* 8. 하단 고정 - 랩실평가 + 북마크 */}
+        {/* 7. 하단 고정 - 랩실평가 + 북마크 */}
         <div className="bg-white px-6 pt-3 pb-4 flex flex-col gap-3">
           <Link
             to={`/community/labs/${lab.id}`}
@@ -227,7 +162,7 @@ function LabDetailModal({ lab, onClose }) {
           </Link>
 
           <button
-            onClick={handleBookmark}
+            onClick={onToggleBookmark}
             aria-label={bookmarked ? "북마크 해제" : "북마크"}
             className={`flex items-center justify-center gap-2 transition-colors ${
               bookmarked

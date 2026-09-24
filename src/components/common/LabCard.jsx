@@ -135,7 +135,13 @@ function LabCard({ lab, onUnbookmark }) {
       </div>
 
       {showModal && (
-        <LabDetailModal lab={lab} onClose={() => setShowModal(false)} />
+        <LabDetailModal
+          lab={lab}
+          bookmarked={bookmarked}
+          bookmarkCount={bookmarkCount}
+          onToggleBookmark={handleBookmark}
+          onClose={() => setShowModal(false)}
+        />
       )}
     </>
   );
