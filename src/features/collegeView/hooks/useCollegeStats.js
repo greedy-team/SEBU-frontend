@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useLaboratoriesQuery } from "../../../api/queries/laboratories";
-const { data: labs = [] } = useLaboratoriesQuery();
+export function useCollegeStats() {
+  const { data: labs = [] } = useLaboratoriesQuery();
 
   const colleges = useMemo(() => {
     const collegeMap = new Map();
