@@ -51,7 +51,7 @@ function LabDetailModal({ lab, onClose }) {
       // laboratories 캐시에서 해당 연구실만 수정 (재요청 없음)
       queryClient.setQueryData(["laboratories"], (old) =>
         old?.map((l) =>
-          l.id === lab.id
+          String(l.id) === String(lab.id)
             ? {
                 ...l,
                 bookmarked: nextBookmarked,

@@ -63,7 +63,7 @@ function MyPage() {
     onSuccess: (_, labId) => {
       queryClient.setQueryData(["laboratories"], (old) =>
         old?.map((l) =>
-          l.id === labId
+          String(l.id) === String(labId)
             ? { ...l, bookmarked: true, bookmarkCount: l.bookmarkCount + 1 }
             : l,
         ),

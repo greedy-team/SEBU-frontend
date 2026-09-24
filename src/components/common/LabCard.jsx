@@ -56,7 +56,7 @@ function LabCard({ lab, onUnbookmark }) {
     onSuccess: (_, isBookmarked) => {
       queryClient.setQueryData(["laboratories"], (old) =>
         old?.map((l) =>
-          l.id === lab.id
+          String(l.id) === String(lab.id)
             ? {
                 ...l,
                 bookmarked: !isBookmarked,
