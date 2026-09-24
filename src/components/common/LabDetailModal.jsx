@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import BookmarkIcon from "./BookmarkIcon";
 function LabDetailModal({
   lab,
   bookmarked,
@@ -170,19 +170,7 @@ function LabDetailModal({
                 : "text-gray-400 hover:text-brand-500"
             }`}
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill={bookmarked ? "currentColor" : "none"}
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
-            </svg>
+            <BookmarkIcon filled={bookmarked} size={18} />
             <span className="text-sm">
               {bookmarked ? "북마크됨" : "북마크"} · {bookmarkCount}
             </span>

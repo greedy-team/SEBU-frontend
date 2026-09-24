@@ -6,28 +6,22 @@ import { addLabBookmark, removeLabBookmark } from "../../api/bookmarkApi";
 import { useAuthStore } from "../../store/authStore";
 import { queryClient } from "../../api/queryClient";
 import { updateLabBookmarkCache } from "../../api/queries/laboratories";
-function BookmarkIcon({ filled }) {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
-    </svg>
-  );
-}
+import BookmarkIcon from "./BookmarkIcon";
 
 function LabCard({ lab, onUnbookmark }) {
   const [showModal, setShowModal] = useState(false);
   const [bookmarked, setBookmarked] = useState(lab.bookmarked ?? false);
   const [bookmarkCount, setBookmarkCount] = useState(lab.bookmarkCount ?? 0);
+
+  // 캐시(props)가 새로 바뀌면 로컬 state도 맞춰줌
+  // (로그인/로그아웃 후 재요청, 다른 화면에서 북마크 변경 등)
+  const [prevLab, setPrevLab] = useState(lab);
+  if (lab !== prevLab) {
+    setPrevLab(lab);
+    setBookmarked(lab.bookmarked ?? false);
+    setBookmarkCount(lab.bookmarkCount ?? 0);
+  }
+
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
 
@@ -72,7 +66,7 @@ function LabCard({ lab, onUnbookmark }) {
   });
 
   const handleBookmark = (e) => {
-    e.stopPropagation();
+    e?.stopPropagation();
     if (!user) {
       navigate("/login", { state: { from: window.location.pathname } });
       return;
