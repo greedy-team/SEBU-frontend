@@ -9,7 +9,7 @@ import RecommendedLabs from "../../features/search/components/RecommendedLabs";
 // import PopularPostsCard from "../../features/community/components/PopularPostsCard";
 // import { usePopularPosts } from "../../features/community/hooks/usePopularPosts";
 import { useLabFilter } from "../../features/search/hooks/useLabFilter";
-import ScrollToTopButton from "../../features/search/components/ScrollToTopButton";
+import ScrollToTopButton from "../../components/common/ScrollToTopButton";
 
 function SearchPage() {
   const [activeTab, setActiveTab] = useState("college");
