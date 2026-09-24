@@ -58,7 +58,7 @@ function LabCard({ lab, onUnbookmark }) {
       if (!nextBookmarked) {
         onUnbookmark?.(lab.id);
       }
-      queryClient.invalidateQueries({ queryKey: ["mypage"] });
+      queryClient.invalidateQueries({ queryKey: ["laboratories"] });
     },
 
     // 실패 시 롤백
