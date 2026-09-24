@@ -13,29 +13,14 @@ export function useProfileForm(initialData = {}, updateUser, onSuccess) {
       onSuccess(data);
     },
     onError: (error) => {
-      const errorCode = error.response?.data?.error?.code;
-
-      if (errorCode === "CONTENT_POLICY_VIOLATION") {
+      if (error.code === "CONTENT_POLICY_VIOLATION") {
         setIntroError(
-          error.response?.data?.error?.fieldErrors?.[0]?.message ||
+          error.fieldErrors?.[0]?.message ||
             "자기소개에 사용할 수 없는 표현이 포함되어 있습니다.",
         );
         return;
       }
-
-      if (
-        errorCode === "RATE_LIMITED" ||
-        errorCode === "CONTENT_MODERATION_UNAVAILABLE"
-      ) {
-        setFormError(
-          error.response?.data?.error?.message || "잠시 후 다시 시도해주세요.",
-        );
-        return;
-      }
-
-      setFormError(
-        error.response?.data?.error?.message || "저장에 실패했습니다.",
-      );
+      setFormError(error.message);
     },
   });
 
