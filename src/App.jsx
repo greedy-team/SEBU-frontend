@@ -17,7 +17,7 @@ import LabReviewWritePage from "./pages/LabReviewWrite";
 import { useAuthRestore } from "./features/auth/hooks/useAuthRestore";
 import NotFoundPage from "./pages/NotFound";
 import ScrollToTop from "./components/common/ScrollToTop";
-
+import FetchingIndicator from "./components/common/FetchingIndicator";
 function App() {
   useAuthRestore();
 
@@ -25,6 +25,7 @@ function App() {
     <>
       <ScrollToTop />
       <RateLimitToast />
+      <FetchingIndicator />
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/search" element={<SearchPage />} />
