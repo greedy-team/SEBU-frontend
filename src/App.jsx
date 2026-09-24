@@ -14,6 +14,7 @@ import LabReviewHomePage from "./pages/LabReviewHome";
 import LabReviewPage from "./pages/LabReview";
 import LabReviewWritePage from "./pages/LabReviewWrite";
 import { useAuthRestore } from "./features/auth/hooks/useAuthRestore";
+import NotFoundPage from "./pages/NotFound";
 
 function App() {
   useAuthRestore();
@@ -41,6 +42,7 @@ function App() {
           element={<LabReviewPage />}
         />
         <Route path="/community/:postId/edit" element={<PostWritePage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />
     </>
