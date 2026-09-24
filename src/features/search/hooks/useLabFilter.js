@@ -30,6 +30,7 @@ export function useLabFilter() {
   } = useQuery({
     queryKey: ["laboratories"],
     queryFn: fetchLaboratories,
+    staleTime: 1000 * 60 * 60, 
   });
 
   const colleges = useMemo(() => {
