@@ -5,9 +5,9 @@ import CollegeView from "./pages/CollegeView";
 import LoginPage from "./pages/Login";
 import MyPage from "./pages/MyPage";
 import DesignSystem from "./pages/DesignSystem";
-import CommunityPage from "./pages/Community";
-import PostDetailPage from "./pages/PostDetail";
-import PostWritePage from "./pages/PostWrite";
+// import CommunityPage from "./pages/Community";
+// import PostDetailPage from "./pages/PostDetail";
+// import PostWritePage from "./pages/PostWrite";
 import RateLimitToast from "./components/common/RateLimitToast";
 import Footer from "./components/layout/Footer";
 import LabReviewHomePage from "./pages/LabReviewHome";
@@ -29,19 +29,21 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/design-system" element={<DesignSystem />} />
-        <Route path="/community" element={<CommunityPage />} />
+
+        {/* <Route path="/community" element={<CommunityPage />} />
         <Route path="/community/write" element={<PostWritePage />} />
         <Route path="/community/:postId" element={<PostDetailPage />} />
+        <Route path="/community/:postId/edit" element={<PostWritePage />} /> */}
+
         <Route path="/community/labs" element={<LabReviewHomePage />} />
-        <Route
-          path="/community/labs/:laboratoryId/write"
-          element={<LabReviewWritePage />}
-        />
         <Route
           path="/community/labs/:laboratoryId"
           element={<LabReviewPage />}
         />
-        <Route path="/community/:postId/edit" element={<PostWritePage />} />
+        <Route
+          path="/community/labs/:laboratoryId/write"
+          element={<LabReviewWritePage />}
+        />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />
