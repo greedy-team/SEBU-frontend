@@ -16,6 +16,8 @@ function SearchPage() {
 
   const {
     rawLabs,
+    isLoading, // 추가
+    error, // 추가
     searchInput,
     setSearchInput,
     searchTerm,
@@ -43,52 +45,67 @@ function SearchPage() {
           onChange={setSearchInput}
           onSearch={handleSearch}
         />
-
-        {/* 1. 카테고리 탭과 칩 선택 영역 */}
-        <DetailedFilterPanel
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          colleges={colleges}
-          researchCategories={researchCategories}
-          researchFields={researchFields}
-        />
-
-        {/* 2. 💡 방금 새로 만든, 선택된 칩들이 모여있는 엑티브 바 영역! */}
-        <ActiveFilterBar
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          colleges={colleges}
-          researchCategories={researchCategories}
-          researchFields={researchFields}
-        />
-
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mt-6">
-          <div className="flex flex-col">
-            <LabListHeader
-              totalCount={filteredLabs.length}
-              hasFilters={
-                searchTerm.trim() !== "" ||
-                filters.colleges.length > 0 ||
-                filters.categoryIds.length > 0 ||
-                filters.fieldIds.length > 0 ||
-                filters.recruitmentStatus !== null ||
-                filters.hasWebsite
-              }
-              sortType={sortType}
-              onSortChange={setSortType}
-            />
-            <LabList labs={filteredLabs} />
+        {isLoading && (
+          <div className="flex items-center justify-center py-32">
+            <p className="text-sm text-gray-400">불러오는 중이에요…</p>
           </div>
-          <div className="flex flex-col gap-4">
-            <RecommendedLabs labs={rawLabs} />
-            {/* <PopularPostsCard
+        )}
+        {error && (
+          <div className="flex items-center justify-center py-32">
+            <p className="text-sm text-gray-500">
+              연구실 목록을 불러오지 못했어요.
+            </p>
+          </div>
+        )}
+        {!isLoading && !error && (
+          <>
+            {/* 1. 카테고리 탭과 칩 선택 영역 */}
+            <DetailedFilterPanel
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              colleges={colleges}
+              researchCategories={researchCategories}
+              researchFields={researchFields}
+            />
+
+            {/* 2. 💡 방금 새로 만든, 선택된 칩들이 모여있는 엑티브 바 영역! */}
+            <ActiveFilterBar
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              colleges={colleges}
+              researchCategories={researchCategories}
+              researchFields={researchFields}
+            />
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mt-6">
+              <div className="flex flex-col">
+                <LabListHeader
+                  totalCount={filteredLabs.length}
+                  hasFilters={
+                    searchTerm.trim() !== "" ||
+                    filters.colleges.length > 0 ||
+                    filters.categoryIds.length > 0 ||
+                    filters.fieldIds.length > 0 ||
+                    filters.recruitmentStatus !== null ||
+                    filters.hasWebsite
+                  }
+                  sortType={sortType}
+                  onSortChange={setSortType}
+                />
+                <LabList labs={filteredLabs} />
+              </div>
+              <div className="flex flex-col gap-4">
+                <RecommendedLabs labs={rawLabs} />
+                {/* <PopularPostsCard
               posts={popularPosts}
               isLoading={isPopularLoading}
             /> */}
-          </div>
-        </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
       <ScrollToTopButton />
     </div>

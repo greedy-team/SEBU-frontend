@@ -1,17 +1,15 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { fetchLaboratories } from "../../../api/labApi";
 import { applyFilters, applySorting } from "../utils/labFilterUtils";
 
-// 여러 개를 동시에 고를 수 있는 필터들입니다. (칩을 누르면 토글)
 const MULTI_SELECT_KEYS = ["colleges", "categoryIds", "fieldIds"];
 
 export function useLabFilter() {
-  // 메인 히어로 검색바에서 ?keyword=로 넘어온 검색어를 최초 1회만 반영합니다.
   const [searchParams] = useSearchParams();
   const initialKeyword = searchParams.get("keyword") ?? "";
 
-  const [rawLabs, setRawLabs] = useState([]);
   const [searchInput, setSearchInput] = useState(initialKeyword);
   const [searchTerm, setSearchTerm] = useState(initialKeyword);
   const [sortType, setSortType] = useState("RECENT");
@@ -19,14 +17,20 @@ export function useLabFilter() {
   const [filters, setFilters] = useState({
     colleges: [],
     recruitmentStatus: null,
-    categoryIds: [], // 1단계: 연구 분야 카테고리
-    fieldIds: [], // 2단계: 세부 연구 분야
+    categoryIds: [],
+    fieldIds: [],
     hasWebsite: false,
   });
 
-  useEffect(() => {
-    fetchLaboratories().then(setRawLabs).catch(console.error);
-  }, []);
+  // useEffect + useState → useQuery로 전환
+  const {
+    data: rawLabs = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["laboratories"],
+    queryFn: fetchLaboratories,
+  });
 
   const colleges = useMemo(() => {
     const map = new Map();
@@ -34,7 +38,6 @@ export function useLabFilter() {
     return [...map.values()];
   }, [rawLabs]);
 
-  // 1단계 칩: 모든 랩실의 카테고리를 id 기준으로 중복 제거합니다.
   const researchCategories = useMemo(() => {
     const map = new Map();
     rawLabs.forEach((lab) =>
@@ -43,9 +46,6 @@ export function useLabFilter() {
     return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
   }, [rawLabs]);
 
-  // 2단계 칩: 고른 카테고리에 속한 세부 분야를 모읍니다.
-  // researchFieldDetails가 아직 배포 전이라 지금은 항상 비어 있고,
-  // 그동안 2단계 영역 자체가 화면에 나타나지 않습니다.
   const researchFields = useMemo(() => {
     if (filters.categoryIds.length === 0) return [];
     const map = new Map();
@@ -68,7 +68,6 @@ export function useLabFilter() {
         return { ...prev, [key]: value };
       }
 
-      // 빈 배열이 오면 해당 필터를 통째로 비웁니다. (초기화 버튼)
       if (Array.isArray(value) && value.length === 0) {
         return key === "categoryIds"
           ? { ...prev, categoryIds: [], fieldIds: [] }
@@ -80,8 +79,6 @@ export function useLabFilter() {
         ? current.filter((id) => id !== value)
         : [...current, value];
 
-      // 카테고리를 바꾸면 2단계 칩 목록 자체가 달라지므로
-      // 이전에 고른 세부 분야는 비웁니다. (없어진 칩이 선택된 채 남는 걸 막음)
       if (key === "categoryIds") {
         return { ...prev, categoryIds: next, fieldIds: [] };
       }
@@ -98,6 +95,8 @@ export function useLabFilter() {
 
   return {
     rawLabs,
+    isLoading,
+    error,
     searchInput,
     setSearchInput,
     searchTerm,
