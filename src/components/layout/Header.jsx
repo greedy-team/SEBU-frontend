@@ -29,7 +29,6 @@ const navItemClass = ({ isActive }) =>
       ? "bg-brand-50 font-bold text-brand-500"
       : "font-medium text-gray-700 hover:bg-brand-50 hover:text-brand-500",
   ].join(" ");
-// const isCommunityArea = pathname.startsWith("/community") && !isLabArea;
 
 function Header() {
   const user = useAuthStore((state) => state.user);
@@ -38,7 +37,7 @@ function Header() {
 
   const { pathname } = useLocation();
   const isLabArea = pathname.startsWith("/community/labs");
-  const isCommunityArea = pathname.startsWith("/community") && !isLabArea;
+  // const isCommunityArea = pathname.startsWith("/community") && !isLabArea;
   const handleLogout = async () => {
     try {
       await logout();
@@ -72,12 +71,12 @@ function Header() {
             단과대별 보기
           </NavLink>
           {/* 커뮤니티는 MVP 범위에서 제외 */}
-          <NavLink
+          {/* <NavLink
             to="/community"
             className={navItemClass({ isActive: isCommunityArea })}
           >
             커뮤니티
-          </NavLink>
+          </NavLink> */}
           <Link
             to="/community/labs"
             className={navItemClass({ isActive: isLabArea })}
