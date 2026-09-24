@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchLaboratories } from "../../../api/labApi";
 
 export const SORT_OPTIONS = {
@@ -6,33 +7,20 @@ export const SORT_OPTIONS = {
   NAME_ASC: "이름순",
 };
 
-/** 후기 많은 순 연구실 목록. 전체 로드 후 클라이언트에서 검색·정렬. */
 export function useLabList() {
-  const [rawLabs, setRawLabs] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortType, setSortType] = useState("REVIEW_COUNT_DESC");
 
-  useEffect(() => {
-    let ignore = false;
-
-    fetchLaboratories()
-      .then((data) => {
-        if (!ignore) setRawLabs(data ?? []);
-      })
-      .catch(() => {
-        if (!ignore) setError("연구실 목록을 불러오지 못했어요.");
-      })
-      .finally(() => {
-        if (!ignore) setIsLoading(false);
-      });
-
-    return () => {
-      ignore = true;
-    };
-  }, []);
+  const {
+    data: rawLabs = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["laboratories"], // useLabFilter, useCollegeStats와 같은 키!
+    queryFn: fetchLaboratories,
+    staleTime: 1000 * 60 * 60, // 1시간 캐싱
+  });
 
   const handleSearch = () => setSearchTerm(searchInput.trim());
 

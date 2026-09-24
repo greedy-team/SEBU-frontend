@@ -2,6 +2,7 @@ import Header from "../../components/layout/Header";
 import LabReviewList from "../../features/community/components/LabReviewList";
 import { useLabList } from "../../features/community/hooks/useLabList";
 import SearchBar from "../../features/search/components/SearchBar";
+import ScrollToTopButton from "../../components/common/ScrollToTopButton";
 
 /**
  * 랩실 평가 홈 — 후기가 많은 순으로 연구실을 보여줍니다.
@@ -51,6 +52,7 @@ function LabReviewHomePage() {
           />
         </div>
       </div>
+      <ScrollToTopButton />
     </div>
   );
 }

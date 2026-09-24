@@ -15,12 +15,13 @@ import LabReviewPage from "./pages/LabReview";
 import LabReviewWritePage from "./pages/LabReviewWrite";
 import { useAuthRestore } from "./features/auth/hooks/useAuthRestore";
 import NotFoundPage from "./pages/NotFound";
-
+import ScrollToTop from "./components/common/ScrollToTop";
 function App() {
   useAuthRestore();
 
   return (
     <>
+      <ScrollToTop />
       <RateLimitToast />
       <Routes>
         <Route path="/" element={<MainPage />} />
