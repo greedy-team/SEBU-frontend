@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import LabDetailModal from "./LabDetailModal";
 import { addLabBookmark, removeLabBookmark } from "../../api/bookmarkApi";
 import { useAuthStore } from "../../store/authStore";
-import { useNavigate } from "react-router-dom";
+import { queryClient } from "../../api/queryClient";
 
 function BookmarkIcon({ filled }) {
   return (
@@ -35,38 +37,44 @@ function LabCard({ lab, onUnbookmark }) {
     college,
     department,
     researchFields,
-    //recruitmentStatus,
+    // recruitmentStatus,
   } = lab;
 
-  const handleBookmark = async (e) => {
-    e.stopPropagation();
+  const { mutate: toggleBookmark } = useMutation({
+    mutationFn: (isBookmarked) =>
+      isBookmarked ? removeLabBookmark(lab.id) : addLabBookmark(lab.id),
 
-    // 비로그인 시 무시
+    // API 호출 전 낙관적 업데이트
+    onMutate: (isBookmarked) => {
+      const nextBookmarked = !isBookmarked;
+      setBookmarked(nextBookmarked);
+      setBookmarkCount((prev) => (nextBookmarked ? prev + 1 : prev - 1));
+      //return { isBookmarked }; // 롤백용 이전 상태 저장 constext안써서 주석처리
+    },
+
+    // 성공 시 MyPage 캐시 무효화
+    onSuccess: (_, isBookmarked) => {
+      const nextBookmarked = !isBookmarked;
+      if (!nextBookmarked) {
+        onUnbookmark?.(lab.id);
+      }
+      queryClient.invalidateQueries({ queryKey: ["mypage"] });
+    },
+
+    // 실패 시 롤백
+    onError: (_, isBookmarked) => {
+      setBookmarked(isBookmarked);
+      setBookmarkCount((prev) => (isBookmarked ? prev + 1 : prev - 1));
+    },
+  });
+
+  const handleBookmark = (e) => {
+    e.stopPropagation();
     if (!user) {
       navigate("/login", { state: { from: window.location.pathname } });
       return;
     }
-
-    // Optimistic Update
-    const nextBookmarked = !bookmarked;
-    setBookmarked(nextBookmarked);
-    setBookmarkCount((prev) => (nextBookmarked ? prev + 1 : prev - 1));
-
-    const { ok } = nextBookmarked
-      ? await addLabBookmark(lab.id)
-      : await removeLabBookmark(lab.id);
-
-    // 실패 시 롤백
-    if (!ok) {
-      setBookmarked(!nextBookmarked);
-      setBookmarkCount((prev) => (nextBookmarked ? prev - 1 : prev + 1));
-      return;
-    }
-
-    // 해제 성공 시 상위(마이페이지 목록 등)에 알림
-    if (!nextBookmarked) {
-      onUnbookmark?.(lab.id);
-    }
+    toggleBookmark(bookmarked);
   };
 
   return (

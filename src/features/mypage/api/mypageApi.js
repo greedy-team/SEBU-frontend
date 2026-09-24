@@ -1,48 +1,28 @@
 import client from "../../../api/client";
 
 export const getMyPage = async () => {
-  try {
-    const response = await client.get("/users/me/mypage");
-    return { ok: true, result: response.data };
-  } catch (error) {
-    return {
-      ok: false,
-      result: error.response?.data ?? {
-        error: { message: "네트워크 오류가 발생했습니다." },
-      },
-    };
-  }
+  const response = await client.get("/users/me/mypage");
+  return response.data.data; // throw 방식으로 변경
 };
 
 export const updateProfile = async (profileData) => {
   try {
     const response = await client.put("/users/me/profile", {
-      grade: profileData.grade, // name, major 제거
+      grade: profileData.grade,
       gpaBand: profileData.gpaBand,
       introduction: profileData.introduction,
     });
-    return { ok: true, result: response.data };
+    return response.data.data;
   } catch (error) {
-    return {
-      ok: false,
-      result: error.response?.data ?? {
-        error: { message: "네트워크 오류가 발생했습니다." },
-      },
-    };
+    const err = new Error(
+      error.response?.data?.error?.message || "저장에 실패했습니다.",
+    );
+    err.code = error.response?.data?.error?.code;
+    err.fieldErrors = error.response?.data?.error?.fieldErrors;
+    throw err;
   }
 };
 
 export const deleteAccount = async () => {
-  try {
-    await client.delete("/users/me");
-    return { ok: true };
-  } catch (error) {
-    return {
-      ok: false,
-      result: error.response?.data ?? {
-        error: { message: "네트워크 오류가 발생했습니다." },
-      },
-    };
-  }
+  await client.delete("/users/me");
 };
-
