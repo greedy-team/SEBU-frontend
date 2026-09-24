@@ -5,7 +5,7 @@ import LabDetailModal from "./LabDetailModal";
 import { addLabBookmark, removeLabBookmark } from "../../api/bookmarkApi";
 import { useAuthStore } from "../../store/authStore";
 import { queryClient } from "../../api/queryClient";
-
+import { updateLabBookmarkCache } from "../../api/queries/laboratories";
 function BookmarkIcon({ filled }) {
   return (
     <svg
@@ -54,20 +54,13 @@ function LabCard({ lab, onUnbookmark }) {
 
     // 성공 시 MyPage 캐시 무효화
     onSuccess: (_, isBookmarked) => {
-      queryClient.setQueryData(["laboratories"], (old) =>
-        old?.map((l) =>
-          String(l.id) === String(lab.id)
-            ? {
-                ...l,
-                bookmarked: !isBookmarked,
-                bookmarkCount: l.bookmarkCount + (isBookmarked ? -1 : 1),
-              }
-            : l,
-        ),
-      );
+      updateLabBookmarkCache(lab.id, !isBookmarked);
+
+      // isBookmarked = 클릭 전 상태 → true면 이번 요청은 "해제"
       if (isBookmarked) {
         onUnbookmark?.(lab.id);
       }
+
       queryClient.invalidateQueries({ queryKey: ["mypage"] });
     },
 

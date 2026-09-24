@@ -1,9 +1,7 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { fetchLaboratories } from "../../../api/labApi";
 import { applyFilters, applySorting } from "../utils/labFilterUtils";
-
+import { useLaboratoriesQuery } from "../../../api/queries/laboratories";
 const MULTI_SELECT_KEYS = ["colleges", "categoryIds", "fieldIds"];
 
 export function useLabFilter() {
@@ -23,15 +21,7 @@ export function useLabFilter() {
   });
 
   // useEffect + useState → useQuery로 전환
-  const {
-    data: rawLabs = [],
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["laboratories"],
-    queryFn: fetchLaboratories,
-    staleTime: 1000 * 60 * 60, 
-  });
+  const { data: rawLabs = [], isLoading, error } = useLaboratoriesQuery();
 
   const colleges = useMemo(() => {
     const map = new Map();

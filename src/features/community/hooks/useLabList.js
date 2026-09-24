@@ -1,7 +1,5 @@
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchLaboratories } from "../../../api/labApi";
-
+import { useLaboratoriesQuery } from "../../../api/queries/laboratories";
 export const SORT_OPTIONS = {
   REVIEW_COUNT_DESC: "후기 많은 순",
   NAME_ASC: "이름순",
@@ -12,15 +10,7 @@ export function useLabList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortType, setSortType] = useState("REVIEW_COUNT_DESC");
 
-  const {
-    data: rawLabs = [],
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["laboratories"], // useLabFilter, useCollegeStats와 같은 키!
-    queryFn: fetchLaboratories,
-    staleTime: 1000 * 60 * 60, // 1시간 캐싱
-  });
+  const { data: rawLabs = [], isLoading, error } = useLaboratoriesQuery();
 
   const handleSearch = () => setSearchTerm(searchInput.trim());
 

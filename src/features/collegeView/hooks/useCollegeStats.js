@@ -1,13 +1,6 @@
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchLaboratories } from "../../../api/labApi";
-
-export function useCollegeStats() {
-  const { data: labs = [] } = useQuery({
-    queryKey: ["laboratories"], // useLabFilter랑 같은 키!
-    queryFn: fetchLaboratories,
-    staleTime: 1000 * 60 * 60, // 1시간
-  });
+import { useLaboratoriesQuery } from "../../../api/queries/laboratories";
+const { data: labs = [] } = useLaboratoriesQuery();
 
   const colleges = useMemo(() => {
     const collegeMap = new Map();
