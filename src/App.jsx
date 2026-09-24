@@ -17,29 +17,9 @@ import LabReviewWritePage from "./pages/LabReviewWrite";
 import { useAuthRestore } from "./features/auth/hooks/useAuthRestore";
 import NotFoundPage from "./pages/NotFound";
 import ScrollToTop from "./components/common/ScrollToTop";
-import { useAuthStore } from "./store/authStore";
-import { queryClient } from "./api/queryClient";
 
 function App() {
   useAuthRestore();
-
-  // 로그인 사용자가 바뀌면 사용자별 캐시 정리
-  // (로그인, 로그아웃, 계정 복구, 탈퇴, 새로고침 복원 전부 여기서 처리)
-  const userId = useAuthStore((state) => state.user?.id);
-  const prevUserIdRef = useRef(userId);
-
-  useEffect(() => {
-    if (prevUserIdRef.current === userId) return;
-    prevUserIdRef.current = userId;
-
-    // 이전 사용자의 마이페이지 데이터 삭제
-    queryClient.removeQueries({ queryKey: ["mypage"] });
-    // bookmarked가 사용자 기준 값이라 연구실 목록 다시 받기
-    queryClient.invalidateQueries({
-      queryKey: ["laboratories"],
-      refetchType: "all",
-    });
-  }, [userId]);
 
   return (
     <>
