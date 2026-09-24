@@ -2,66 +2,56 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import LabDetailModal from "./LabDetailModal";
+import BookmarkIcon from "./BookmarkIcon";
 import { addLabBookmark, removeLabBookmark } from "../../api/bookmarkApi";
 import { useAuthStore } from "../../store/authStore";
 import { queryClient } from "../../api/queryClient";
-import { updateLabBookmarkCache } from "../../api/queries/laboratories";
-import BookmarkIcon from "./BookmarkIcon";
+import {
+  LABORATORIES_KEY,
+  updateLabBookmarkCache,
+} from "../../api/queries/laboratories";
 
 function LabCard({ lab, onUnbookmark }) {
   const [showModal, setShowModal] = useState(false);
-  const [bookmarked, setBookmarked] = useState(lab.bookmarked ?? false);
-  const [bookmarkCount, setBookmarkCount] = useState(lab.bookmarkCount ?? 0);
-
-  // 캐시(props)가 새로 바뀌면 로컬 state도 맞춰줌
-  // (로그인/로그아웃 후 재요청, 다른 화면에서 북마크 변경 등)
-  const [prevLab, setPrevLab] = useState(lab);
-  if (lab !== prevLab) {
-    setPrevLab(lab);
-    setBookmarked(lab.bookmarked ?? false);
-    setBookmarkCount(lab.bookmarkCount ?? 0);
-  }
-
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
 
-  const {
-    name,
-    professor,
-    college,
-    department,
-    researchFields,
-    // recruitmentStatus,
-  } = lab;
+  // 로컬 state 없이 캐시(props)를 그대로 사용
+  const bookmarked = lab.bookmarked ?? false;
+  const bookmarkCount = lab.bookmarkCount ?? 0;
+
+  const { name, professor, college, department, researchFields } = lab;
 
   const { mutate: toggleBookmark } = useMutation({
     mutationFn: (isBookmarked) =>
       isBookmarked ? removeLabBookmark(lab.id) : addLabBookmark(lab.id),
 
-    // API 호출 전 낙관적 업데이트
-    onMutate: (isBookmarked) => {
-      const nextBookmarked = !isBookmarked;
-      setBookmarked(nextBookmarked);
-      setBookmarkCount((prev) => (nextBookmarked ? prev + 1 : prev - 1));
-      //return { isBookmarked }; // 롤백용 이전 상태 저장 constext안써서 주석처리
-    },
+    // 낙관적 업데이트 - 캐시를 먼저 수정
+    onMutate: async (isBookmarked) => {
+      // 진행 중인 재요청이 내 수정을 덮어쓰지 않도록 멈춤
+      await queryClient.cancelQueries({ queryKey: LABORATORIES_KEY });
 
-    // 성공 시 MyPage 캐시 무효화
-    onSuccess: (_, isBookmarked) => {
+      // 롤백용 이전 캐시 저장
+      const previous = queryClient.getQueryData(LABORATORIES_KEY);
+
       updateLabBookmarkCache(lab.id, !isBookmarked);
 
+      return { previous };
+    },
+
+    // 실패 시 이전 캐시로 롤백
+    onError: (_, __, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(LABORATORIES_KEY, context.previous);
+      }
+    },
+
+    onSuccess: (_, isBookmarked) => {
       // isBookmarked = 클릭 전 상태 → true면 이번 요청은 "해제"
       if (isBookmarked) {
         onUnbookmark?.(lab.id);
       }
-
       queryClient.invalidateQueries({ queryKey: ["mypage"] });
-    },
-
-    // 실패 시 롤백
-    onError: (_, isBookmarked) => {
-      setBookmarked(isBookmarked);
-      setBookmarkCount((prev) => (isBookmarked ? prev + 1 : prev - 1));
     },
   });
 
