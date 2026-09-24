@@ -49,7 +49,7 @@ function LabCard({ lab, onUnbookmark }) {
       const nextBookmarked = !isBookmarked;
       setBookmarked(nextBookmarked);
       setBookmarkCount((prev) => (nextBookmarked ? prev + 1 : prev - 1));
-      return { isBookmarked }; // 롤백용 이전 상태 저장
+      //return { isBookmarked }; // 롤백용 이전 상태 저장 constext안써서 주석처리
     },
 
     // 성공 시 MyPage 캐시 무효화
@@ -62,9 +62,9 @@ function LabCard({ lab, onUnbookmark }) {
     },
 
     // 실패 시 롤백
-    onError: (_, __, context) => {
-      setBookmarked(context.isBookmarked);
-      setBookmarkCount((prev) => (context.isBookmarked ? prev + 1 : prev - 1));
+    onError: (_, isBookmarked) => {
+      setBookmarked(isBookmarked);
+      setBookmarkCount((prev) => (isBookmarked ? prev + 1 : prev - 1));
     },
   });
 
