@@ -1,68 +1,15 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 import LabDetailModal from "./LabDetailModal";
 import BookmarkIcon from "./BookmarkIcon";
-import { addLabBookmark, removeLabBookmark } from "../../api/bookmarkApi";
-import { useAuthStore } from "../../store/authStore";
-import { queryClient } from "../../api/queryClient";
-import {
-  LABORATORIES_KEY,
-  updateLabBookmarkCache,
-} from "../../api/queries/laboratories";
+import { useLabBookmark } from "../../hooks/useLabBookmark";
 
 function LabCard({ lab, onUnbookmark }) {
   const [showModal, setShowModal] = useState(false);
-  const user = useAuthStore((state) => state.user);
-  const navigate = useNavigate();
-
-  // 로컬 state 없이 캐시(props)를 그대로 사용
-  const bookmarked = lab.bookmarked ?? false;
-  const bookmarkCount = lab.bookmarkCount ?? 0;
-
-  const { name, professor, college, department, researchFields } = lab;
-
-  const { mutate: toggleBookmark } = useMutation({
-    mutationFn: (isBookmarked) =>
-      isBookmarked ? removeLabBookmark(lab.id) : addLabBookmark(lab.id),
-
-    // 낙관적 업데이트 - 캐시를 먼저 수정
-    onMutate: async (isBookmarked) => {
-      // 진행 중인 재요청이 내 수정을 덮어쓰지 않도록 멈춤
-      await queryClient.cancelQueries({ queryKey: LABORATORIES_KEY });
-
-      // 롤백용 이전 캐시 저장
-      const previous = queryClient.getQueryData(LABORATORIES_KEY);
-
-      updateLabBookmarkCache(lab.id, !isBookmarked);
-
-      return { previous };
-    },
-
-    // 실패 시 이전 캐시로 롤백
-    onError: (_, __, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(LABORATORIES_KEY, context.previous);
-      }
-    },
-
-    onSuccess: (_, isBookmarked) => {
-      // isBookmarked = 클릭 전 상태 → true면 이번 요청은 "해제"
-      if (isBookmarked) {
-        onUnbookmark?.(lab.id);
-      }
-      queryClient.invalidateQueries({ queryKey: ["mypage"] });
-    },
+  const { bookmarked, bookmarkCount, toggleBookmark } = useLabBookmark(lab, {
+    onUnbookmark,
   });
 
-  const handleBookmark = (e) => {
-    e?.stopPropagation();
-    if (!user) {
-      navigate("/login", { state: { from: window.location.pathname } });
-      return;
-    }
-    toggleBookmark(bookmarked);
-  };
+  const { name, professor, college, department, researchFields } = lab;
 
   return (
     <>
@@ -100,7 +47,7 @@ function LabCard({ lab, onUnbookmark }) {
 
             <button
               aria-label={bookmarked ? "북마크 해제" : "북마크"}
-              onClick={handleBookmark}
+              onClick={toggleBookmark}
               className={`ml-auto flex shrink-0 items-center gap-1.5 text-xs transition-colors ${
                 bookmarked
                   ? "text-brand-500"
@@ -119,7 +66,7 @@ function LabCard({ lab, onUnbookmark }) {
           lab={lab}
           bookmarked={bookmarked}
           bookmarkCount={bookmarkCount}
-          onToggleBookmark={handleBookmark}
+          onToggleBookmark={toggleBookmark}
           onClose={() => setShowModal(false)}
         />
       )}
