@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import LabDetailModal from "../../../components/common/LabDetailModal";
+import { useLabBookmark } from "../../../hooks/useLabBookmark";
 import {
   TICKER_INTERVAL_MS,
   TICKER_FADE_MS,
@@ -37,16 +38,34 @@ function ChevronDown({ flipped = false }) {
   );
 }
 
+// 훅은 조건부로 부를 수 없어서, 모달이 열릴 때만 렌더링되는 작은 컴포넌트로 감쌉니다.
+function RecommendedLabModal({ lab, onClose }) {
+  const { bookmarked, bookmarkCount, toggleBookmark } = useLabBookmark(lab);
+
+  return (
+    <LabDetailModal
+      lab={lab}
+      bookmarked={bookmarked}
+      bookmarkCount={bookmarkCount}
+      onToggleBookmark={toggleBookmark}
+      onClose={onClose}
+    />
+  );
+}
+
 const toggleButtonClass =
   "flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-all duration-150 hover:bg-brand-50 hover:text-brand-500";
 
 function RecommendedLabs({ labs = [] }) {
-  const [selectedLab, setSelectedLab] = useState(null);
+  // 객체 대신 id만 저장 → 북마크로 캐시가 바뀌어도 항상 최신 lab을 찾아옴
+  const [selectedLabId, setSelectedLabId] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const fadeTimer = useRef(null);
+
+  const selectedLab = labs.find((lab) => lab.id === selectedLabId);
 
   const topLabs = useMemo(() => {
     return [...labs]
@@ -107,7 +126,7 @@ function RecommendedLabs({ labs = [] }) {
             </span>
 
             <button
-              onClick={() => setSelectedLab(current)}
+              onClick={() => setSelectedLabId(current?.id)}
               className="min-w-0 flex-1 overflow-hidden text-left"
             >
               <div
@@ -170,7 +189,7 @@ function RecommendedLabs({ labs = [] }) {
               {topLabs.map((lab, index) => (
                 <button
                   key={lab.id}
-                  onClick={() => setSelectedLab(lab)}
+                  onClick={() => setSelectedLabId(lab.id)}
                   className="flex w-full cursor-pointer items-center gap-3 px-4 py-2.5 text-left transition-colors duration-100 hover:bg-gray-50"
                 >
                   <span
@@ -194,7 +213,10 @@ function RecommendedLabs({ labs = [] }) {
       </div>
 
       {selectedLab && (
-        <LabDetailModal lab={selectedLab} onClose={() => setSelectedLab(null)} />
+        <RecommendedLabModal
+          lab={selectedLab}
+          onClose={() => setSelectedLabId(null)}
+        />
       )}
     </>
   );
