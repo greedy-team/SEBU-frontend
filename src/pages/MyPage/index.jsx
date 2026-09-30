@@ -247,12 +247,17 @@ function MyPage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl w-full max-w-sm mx-4 p-6">
             <h2 className="font-bold text-base mb-2">정말 탈퇴하시겠어요?</h2>
-            <p className="text-sm text-gray-500 mb-1">
-              탈퇴 후 30일 이내에 재로그인하면 계정을 복구할 수 있어요.
+            <p className="text-sm text-gray-500 mb-3">
+              탈퇴하면 아래 정책에 따라 계정이 처리돼요.
             </p>
-            <p className="text-sm text-gray-500 mb-6">
-              30일이 지나면 모든 데이터가 삭제됩니다.
-            </p>
+            <ul className="mb-6 space-y-1.5 rounded-xl bg-gray-50 px-4 py-3 text-xs text-gray-500">
+              <li>· 탈퇴 후 1시간 미만: 복구할 수 없어요</li>
+              <li>· 탈퇴 후 1시간 ~ 30일: 재로그인하면 복구할 수 있어요</li>
+              <li>
+                · 탈퇴 후 30일 이상: 계정을 복구할 수 없고, 재로그인 시 신규
+                계정으로 처리돼요
+              </li>
+            </ul>
             <div className="flex gap-3">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
