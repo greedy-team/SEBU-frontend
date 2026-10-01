@@ -29,7 +29,7 @@ function CollegeCard({ college }) {
 
   return (
     <Link
-      to="/colleges"
+      to={`/colleges?college=${college.id}`}
       className="flex w-[220px] shrink-0 flex-col gap-3 rounded-card border border-gray-200 bg-white p-5 transition-all hover:border-brand-200 hover:shadow-card"
     >
       <span className="text-[15px] font-bold text-gray-900">

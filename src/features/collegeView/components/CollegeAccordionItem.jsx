@@ -1,8 +1,8 @@
 import { useState } from "react";
 import DepartmentList from "./DepartmentList";
 
-function CollegeAccordionItem({ college }) {
-  const [isOpen, setIsOpen] = useState(false);
+function CollegeAccordionItem({ college, defaultOpen = false }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const { name, totalLabs, departments } = college;
 
   return (
