@@ -40,6 +40,15 @@ function SearchPage() {
       <Header />
 
       <div className="max-w-6xl mx-auto px-4 py-6">
+        {/* 모바일은 메인 소개 화면이 없으므로, 검색 전에만 서비스 한 줄 소개를 보여줌 */}
+        {searchTerm === "" && (
+          <p className="mb-4 text-[17px] leading-snug font-black break-keep text-gray-900 md:hidden">
+            세종대학교 학부연구생 플랫폼, SEBU
+            <span className="mt-1 block text-[13px] leading-relaxed font-normal text-gray-500">
+              연구실 탐색부터 교수님 컨택, 합격 후기까지 한 번에 확인하세요.
+            </span>
+          </p>
+        )}
         <SearchBar
           value={searchInput}
           onChange={setSearchInput}
@@ -96,7 +105,7 @@ function SearchPage() {
                 />
                 <LabList labs={filteredLabs} />
               </div>
-              <div className="flex flex-col gap-4">
+              <div className="hidden flex-col gap-4 md:flex">
                 <RecommendedLabs labs={rawLabs} />
                 {/* <PopularPostsCard
               posts={popularPosts}
