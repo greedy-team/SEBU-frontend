@@ -15,7 +15,7 @@ function LabCard({ lab, onUnbookmark }) {
     <>
       <div
         onClick={() => setShowModal(true)}
-        className="group relative cursor-pointer overflow-hidden rounded-card border border-gray-200 bg-white p-5 transition-all duration-150 hover:border-brand-500 hover:shadow-widget"
+        className="group relative cursor-pointer overflow-hidden rounded-card border border-gray-200 bg-white p-4 transition-all duration-150 hover:border-brand-500 hover:shadow-widget md:p-5"
       >
         <span className="absolute top-5 bottom-5 left-3 w-1 rounded-full bg-brand-100 transition-colors duration-150 group-hover:bg-brand-500" />
 

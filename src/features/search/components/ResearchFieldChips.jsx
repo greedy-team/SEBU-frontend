@@ -1,98 +1,5 @@
-import { useRef } from "react";
-
-function CheckIcon() {
-  return (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M20 6 9 17l-5-5" />
-    </svg>
-  );
-}
-
-function ChevronIcon({ direction }) {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d={direction === "left" ? "M15 18l-6-6 6-6" : "M9 18l6-6-6-6"} />
-    </svg>
-  );
-}
-
-function Chip({ label, isSelected, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      aria-pressed={isSelected}
-      className={`flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm whitespace-nowrap transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-200 ${
-        isSelected
-          ? "border-brand-500 bg-brand-50 font-bold text-brand-600 shadow-card"
-          : "border-gray-200 bg-white font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
-      }`}
-    >
-      {isSelected && <CheckIcon />}
-      {label}
-    </button>
-  );
-}
-
-// 카테고리가 24개라 줄바꿈하면 화면을 6줄이나 차지합니다.
-// 한 줄로 두고 좌우 화살표로 넘겨봅니다.
-function ScrollableRow({ children }) {
-  const trackRef = useRef(null);
-  const scrollBy = (amount) =>
-    trackRef.current?.scrollBy({ left: amount, behavior: "smooth" });
-
-  const arrowClass =
-    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900";
-
-  return (
-    <div className="flex items-center gap-2">
-      <button
-        type="button"
-        onClick={() => scrollBy(-320)}
-        aria-label="이전 목록 보기"
-        className={arrowClass}
-      >
-        <ChevronIcon direction="left" />
-      </button>
-
-      {/* 스크롤바는 숨기고 화살표로만 넘기게 합니다. */}
-      <div
-        ref={trackRef}
-        className="flex gap-2.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {children}
-      </div>
-
-      <button
-        type="button"
-        onClick={() => scrollBy(320)}
-        aria-label="다음 목록 보기"
-        className={arrowClass}
-      >
-        <ChevronIcon direction="right" />
-      </button>
-    </div>
-  );
-}
+import FilterChip from "./FilterChip";
+import ScrollableRow from "./ScrollableRow";
 
 function ResearchFieldChips({
   categories,
@@ -112,9 +19,10 @@ function ResearchFieldChips({
 
   return (
     <div className="mt-4 flex flex-col gap-4">
+      {/* 카테고리가 24개라 줄바꿈하면 화면을 6줄이나 차지해서 한 줄 캐러셀로 둡니다. */}
       <ScrollableRow>
         {categories.map((category) => (
-          <Chip
+          <FilterChip
             key={category.id}
             label={category.name}
             isSelected={selectedCategoryIds.includes(category.id)}
@@ -131,7 +39,7 @@ function ResearchFieldChips({
           </span>
           <ScrollableRow>
             {fields.map((field) => (
-              <Chip
+              <FilterChip
                 key={field.researchFieldId}
                 label={field.name}
                 isSelected={selectedFieldIds.includes(field.researchFieldId)}

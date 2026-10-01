@@ -65,14 +65,14 @@ function CollegeSection({ colleges, status }) {
     trackRef.current?.scrollBy({ left: amount, behavior: "smooth" });
 
   const arrowClass =
-    "flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900";
+    "hidden h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900 md:flex";
 
   return (
-    <section className="mx-auto max-w-6xl px-6 pt-8 pb-6">
+    <section className="mx-auto max-w-6xl px-4 pt-8 pb-6 md:px-6">
       <div className="flex items-end justify-between gap-4">
         <div>
           <h2 className="text-lg font-bold text-gray-900">단과대학 둘러보기</h2>
-          <p className="mt-1 text-xs text-gray-400">
+          <p className="mt-1 text-xs break-keep text-gray-400">
             세종대학교 {colleges.length}개 단과대학 · 전체 연구실 탐색
           </p>
         </div>

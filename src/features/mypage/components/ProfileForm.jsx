@@ -60,7 +60,7 @@ function ProfileForm({
               key={g}
               aria-pressed={grade === g}
               onClick={() => setGrade(g)}
-              className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+              className={`py-2.5 rounded-xl text-[13px] sm:text-sm whitespace-nowrap font-medium border transition-colors ${
                 grade === g
                   ? "bg-blue-50 border-blue-500 text-blue-600"
                   : "bg-gray-50 border-transparent text-gray-600 hover:bg-gray-100"
@@ -94,7 +94,7 @@ function ProfileForm({
               key={item.label}
               aria-pressed={gpaBand === item.value}
               onClick={() => setGpaBand(item.value)}
-              className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+              className={`py-2.5 rounded-xl text-[13px] sm:text-sm whitespace-nowrap font-medium border transition-colors ${
                 gpaBand === item.value
                   ? "bg-blue-50 border-blue-500 text-blue-600"
                   : "bg-gray-50 border-transparent text-gray-600 hover:bg-gray-100"
@@ -105,8 +105,6 @@ function ProfileForm({
           ))}
         </div>
       </div>
-
-    
 
       {/* 저장하기 버튼 */}
       <button

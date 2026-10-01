@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Routes, Route } from "react-router-dom";
-import MainPage from "./pages/Main";
+import HomePage from "./pages/Home";
 import SearchPage from "./pages/Search";
 import CollegeView from "./pages/CollegeView";
 import LoginPage from "./pages/Login";
@@ -28,7 +28,7 @@ function App() {
       <RateLimitToast />
       <FetchingIndicator />
       <Routes>
-        <Route path="/" element={<MainPage />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/colleges" element={<CollegeView />} />
         <Route path="/login" element={<LoginPage />} />

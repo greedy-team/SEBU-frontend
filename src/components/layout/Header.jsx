@@ -1,8 +1,27 @@
+import { useState, useCallback } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { logout } from "../../features/auth/api/authApi";
 import { initCsrf } from "../../features/auth/api/authApi";
+import MobileMenu from "./MobileMenu";
+
+function HamburgerIcon() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  );
+}
 
 function ArrowRightIcon() {
   return (
@@ -34,6 +53,8 @@ function Header() {
   const user = useAuthStore((state) => state.user);
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   const { pathname } = useLocation();
   const isLabArea = pathname.startsWith("/community/labs");
@@ -58,7 +79,7 @@ function Header() {
       className="sticky top-0 z-40 bg-white"
       style={{ boxShadow: "var(--shadow-header)" }}
     >
-      <div className="mx-auto flex h-14 max-w-6xl items-center px-6">
+      <div className="mx-auto flex h-14 max-w-6xl items-center px-4 md:px-6">
         <Link
           to="/"
           className="text-[20px] font-black tracking-[-0.02em] text-brand-500"
@@ -66,7 +87,7 @@ function Header() {
           SEBU
         </Link>
 
-        <nav className="ml-8 flex items-center gap-1">
+        <nav className="ml-8 hidden items-center gap-1 md:flex">
           <NavLink to="/colleges" className={navItemClass}>
             단과대별 보기
           </NavLink>
@@ -85,7 +106,19 @@ function Header() {
           </Link>
         </nav>
 
-        <div className="ml-auto flex items-center gap-1">
+        {/* 모바일: 햄버거 버튼 */}
+        <button
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          aria-label="메뉴 열기"
+          aria-expanded={menuOpen}
+          className="ml-auto flex h-10 w-10 items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-gray-100 md:hidden"
+        >
+          <HamburgerIcon />
+        </button>
+
+        {/* 데스크톱: 사용자 메뉴 + 탐색 버튼 */}
+        <div className="ml-auto hidden items-center gap-1 md:flex">
           {user ? (
             <>
               <Link
@@ -120,6 +153,10 @@ function Header() {
           </Link>
         </div>
       </div>
+
+      {menuOpen && (
+        <MobileMenu user={user} onLogout={handleLogout} onClose={closeMenu} />
+      )}
     </header>
   );
 }

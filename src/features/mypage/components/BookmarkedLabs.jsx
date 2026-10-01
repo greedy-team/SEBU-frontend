@@ -42,13 +42,13 @@ function BookmarkedLabs({ items = [], onUnbookmark, undoTarget, onUndo }) {
       )}
 
       {undoTarget && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg">
-          <p className="text-sm">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex w-max max-w-[calc(100vw-2rem)] items-center gap-3 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg">
+          <p className="min-w-0 text-sm">
             {undoTarget.item.laboratory.name}을(를) 북마크에서 해제했어요
           </p>
           <button
             onClick={onUndo}
-            className="text-sm font-bold text-brand-300 hover:text-brand-200"
+            className="shrink-0 text-sm font-bold whitespace-nowrap text-brand-300 hover:text-brand-200"
           >
             실행취소
           </button>
