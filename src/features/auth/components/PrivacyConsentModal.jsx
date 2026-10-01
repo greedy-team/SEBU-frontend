@@ -12,6 +12,7 @@ const CONSENT_ITEMS = [
     label: "개인정보 처리방침 동의",
     required: true,
     content: "추후 내용 확정 예정",
+    href: "/privacy",
   },
   {
     id: "sejong",
@@ -102,6 +103,16 @@ function PrivacyConsentModal({ onConfirm }) {
               {expanded[item.id] && (
                 <div className="text-xs text-gray-500 bg-gray-50 rounded-xl p-4 leading-relaxed">
                   {item.content}
+                  {item.href && (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 block text-blue-600 hover:underline"
+                    >
+                      전문 보기
+                    </a>
+                  )}
                 </div>
               )}
             </div>

@@ -39,6 +39,10 @@ function Footer() {
           <p>
             <span className="font-bold text-white">SEBU</span> · 세종대학교
             학부연구생 플랫폼
+            <span className="mx-2 text-gray-700">|</span>
+            <Link to="/privacy" className="transition-colors hover:text-white">
+              개인정보처리방침
+            </Link>
           </p>
           <p>© 2026 SEBU. All rights reserved.</p>
         </div>
