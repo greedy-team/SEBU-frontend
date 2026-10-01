@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300">
-      <div className="mx-auto max-w-6xl px-6 py-10">
+      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
         <div>
           <p className="text-xs font-bold tracking-wide text-gray-500 mb-4">
             서비스

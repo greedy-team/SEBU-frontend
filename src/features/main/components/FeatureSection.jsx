@@ -54,7 +54,7 @@ const FEATURES = [
 
 function FeatureSection() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-14">
+    <section className="mx-auto max-w-6xl px-4 py-10 md:px-6 md:py-14">
       <h2 className="text-lg font-bold text-gray-900">
         SEBU로 할 수 있는 것들
       </h2>
@@ -69,9 +69,7 @@ function FeatureSection() {
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 text-brand-500">
               <Icon />
             </span>
-            <span className="text-[15px] font-bold text-gray-900">
-              {title}
-            </span>
+            <span className="text-[15px] font-bold text-gray-900">{title}</span>
             <span className="text-sm leading-relaxed text-gray-500">
               {description}
             </span>
