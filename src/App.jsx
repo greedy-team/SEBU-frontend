@@ -16,6 +16,7 @@ import LabReviewPage from "./pages/LabReview";
 import LabReviewWritePage from "./pages/LabReviewWrite";
 import { useAuthRestore } from "./features/auth/hooks/useAuthRestore";
 import NotFoundPage from "./pages/NotFound";
+import PrivacyPage from "./pages/Privacy";
 import ScrollToTop from "./components/common/ScrollToTop";
 import FetchingIndicator from "./components/common/FetchingIndicator";
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/design-system" element={<DesignSystem />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
 
         {/* <Route path="/community" element={<CommunityPage />} />
         <Route path="/community/write" element={<PostWritePage />} />
