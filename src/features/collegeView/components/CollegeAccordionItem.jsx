@@ -1,12 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import DepartmentList from "./DepartmentList";
 
 function CollegeAccordionItem({ college, defaultOpen = false }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const itemRef = useRef(null);
   const { name, totalLabs, departments } = college;
 
+  // 메인에서 단과대를 눌러 들어오면 해당 단과대가 위로 부드럽게 올라오게 함
+  useEffect(() => {
+    if (!defaultOpen) return;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    itemRef.current?.scrollIntoView({
+      block: "start",
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  }, [defaultOpen]);
+
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+    <div
+      ref={itemRef}
+      className="scroll-mt-20 bg-white border border-gray-200 rounded-lg overflow-hidden"
+    >
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
