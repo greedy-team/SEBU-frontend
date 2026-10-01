@@ -5,11 +5,16 @@ import { useLaboratoriesQuery } from "../../../api/queries/laboratories";
 const MULTI_SELECT_KEYS = ["colleges", "categoryIds", "fieldIds"];
 
 export function useLabFilter() {
-  const [searchParams] = useSearchParams();
-  const initialKeyword = searchParams.get("keyword") ?? "";
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchTerm = searchParams.get("keyword") ?? "";
 
-  const [searchInput, setSearchInput] = useState(initialKeyword);
-  const [searchTerm, setSearchTerm] = useState(initialKeyword);
+  const [searchInput, setSearchInput] = useState(searchTerm);
+  const [syncedTerm, setSyncedTerm] = useState(searchTerm);
+  // URL이 바뀌면(뒤로가기, 다른 페이지에서 검색 등) 입력창도 따라가게 함
+  if (syncedTerm !== searchTerm) {
+    setSyncedTerm(searchTerm);
+    setSearchInput(searchTerm);
+  }
   const [sortType, setSortType] = useState("RECENT");
 
   const [filters, setFilters] = useState({
@@ -77,7 +82,10 @@ export function useLabFilter() {
     });
   };
 
-  const handleSearch = () => setSearchTerm(searchInput);
+  const handleSearch = () => {
+    const keyword = searchInput.trim();
+    setSearchParams(keyword ? { keyword } : {});
+  };
 
   const finalFilteredLabs = useMemo(() => {
     const filtered = applyFilters(rawLabs, filters, searchTerm);
