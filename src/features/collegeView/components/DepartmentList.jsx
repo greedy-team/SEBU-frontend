@@ -6,15 +6,15 @@ function DepartmentList({ departments }) {
   const selectedDept = departments.find((d) => d.id === selectedDeptId);
 
   return (
-    <div className="grid grid-cols-[200px_1fr] gap-4">
-      {/* 왼쪽 학과 리스트 */}
-      <div className="flex flex-col gap-1">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-[200px_1fr]">
+      {/* 학과 리스트: 모바일은 위쪽 가로 스크롤, 데스크톱은 왼쪽 세로 목록 */}
+      <div className="flex gap-1 overflow-x-auto pb-1 md:flex-col md:overflow-x-visible md:pb-0">
         {departments.map((dept) => (
           <button
             key={dept.id}
             onClick={() => setSelectedDeptId(dept.id)}
             aria-pressed={selectedDeptId === dept.id}
-            className={`text-left px-3 py-2 rounded text-sm ${
+            className={`shrink-0 text-left px-3 py-2 rounded text-sm whitespace-nowrap md:whitespace-normal ${
               selectedDeptId === dept.id
                 ? "bg-blue-50 text-blue-600 font-medium"
                 : "text-gray-600 hover:bg-gray-50"
@@ -29,7 +29,11 @@ function DepartmentList({ departments }) {
       </div>
 
       {/* 오른쪽 연구실 패널 */}
-      {selectedDept && <DepartmentLabPanel department={selectedDept} />}
+      {selectedDept && (
+        <div className="min-w-0">
+          <DepartmentLabPanel department={selectedDept} />
+        </div>
+      )}
     </div>
   );
 }

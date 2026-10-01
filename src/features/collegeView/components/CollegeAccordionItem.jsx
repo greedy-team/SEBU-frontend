@@ -43,7 +43,7 @@ function CollegeAccordionItem({ college, defaultOpen = false }) {
       </button>
 
       {isOpen && (
-        <div className="border-t border-gray-100 p-4">
+        <div className="border-t border-gray-100 p-3 md:p-4">
           <DepartmentList departments={departments} />
         </div>
       )}

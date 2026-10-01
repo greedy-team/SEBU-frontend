@@ -1,9 +1,9 @@
 function PageHeader({ totalColleges, totalLabs }) {
   return (
-    <div className="flex items-end justify-between">
+    <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div>
-        <h1 className="text-2xl font-bold">단과대 전체보기</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-xl font-bold md:text-2xl">단과대 전체보기</h1>
+        <p className="text-sm text-gray-500 mt-1 break-keep">
           전체 단과대학의 연구실을 한눈에 살펴보세요.
         </p>
       </div>
