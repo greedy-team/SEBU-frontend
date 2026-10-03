@@ -56,10 +56,10 @@ function RecommendedLabModal({ lab, onClose }) {
 const toggleButtonClass =
   "flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-all duration-150 hover:bg-brand-50 hover:text-brand-500";
 
-function RecommendedLabs({ labs = [] }) {
+function RecommendedLabs({ labs = [], defaultExpanded = false }) {
   // 객체 대신 id만 저장 → 북마크로 캐시가 바뀌어도 항상 최신 lab을 찾아옴
   const [selectedLabId, setSelectedLabId] = useState(null);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
