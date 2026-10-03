@@ -52,7 +52,7 @@ function LabCard({ lab, onUnbookmark }) {
           <h3 className="text-base font-bold text-gray-900">{name}</h3>
           <p className="mt-1 text-sm text-gray-500">{professor.name} 교수</p>
 
-          <div className="mt-3 flex items-end gap-2">
+          <div className="mt-3 flex flex-col gap-3 md:flex-row md:items-end md:gap-2">
             <div className="flex flex-wrap items-center gap-2">
               {researchFields?.map((field) => (
                 <span
@@ -69,7 +69,7 @@ function LabCard({ lab, onUnbookmark }) {
                 to={`/community/labs/${lab.id}`}
                 onClick={(e) => e.stopPropagation()}
                 aria-label={`${name} 랩실 평가 보러가기`}
-                className="flex items-center gap-1 rounded-full bg-violet-50 px-2.5 py-1 text-xs font-bold text-violet-600 transition-colors hover:bg-violet-100"
+                className="flex items-center gap-1 rounded-full bg-violet-50 px-3 py-1.5 text-xs font-bold text-violet-600 transition-colors hover:bg-violet-100 md:px-2.5 md:py-1"
               >
                 <ReviewIcon />
                 후기
@@ -78,7 +78,7 @@ function LabCard({ lab, onUnbookmark }) {
               <button
                 aria-label={bookmarked ? "북마크 해제" : "북마크"}
                 onClick={toggleBookmark}
-                className={`flex items-center gap-1.5 text-xs transition-colors ${
+                className={`-m-1.5 flex items-center gap-1.5 p-1.5 text-xs transition-colors ${
                   bookmarked
                     ? "text-brand-500"
                     : "text-gray-400 hover:text-brand-500"
