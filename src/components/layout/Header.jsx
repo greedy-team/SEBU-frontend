@@ -5,6 +5,7 @@ import { useAuthStore } from "../../store/authStore";
 import { logout } from "../../features/auth/api/authApi";
 import { initCsrf } from "../../features/auth/api/authApi";
 import MobileMenu from "./MobileMenu";
+import sebuLogo from "../../assets/sebu-logo.svg";
 
 function HamburgerIcon() {
   return (
@@ -23,30 +24,10 @@ function HamburgerIcon() {
   );
 }
 
-function ArrowRightIcon() {
-  return (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14M12 5l7 7-7 7" />
-    </svg>
-  );
-}
-
 const navItemClass = ({ isActive }) =>
   [
-    "rounded-control px-4 py-2 text-[13.5px] whitespace-nowrap transition-all duration-150",
-    isActive
-      ? "bg-brand-50 font-bold text-brand-500"
-      : "font-medium text-gray-700 hover:bg-brand-50 hover:text-brand-500",
+    "px-3 py-2 text-[15px] font-semibold whitespace-nowrap transition-colors duration-150",
+    isActive ? "text-brand-500" : "text-gray-700 hover:text-brand-500",
   ].join(" ");
 
 function Header() {
@@ -75,19 +56,16 @@ function Header() {
   };
 
   return (
-    <header
-      className="sticky top-0 z-40 bg-white"
-      style={{ boxShadow: "var(--shadow-header)" }}
-    >
-      <div className="mx-auto flex h-14 max-w-6xl items-center px-4 md:px-6">
-        <Link
-          to="/"
-          className="text-[20px] font-black tracking-[-0.02em] text-brand-500"
-        >
-          SEBU
+    <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur">
+      <div className="mx-auto flex h-14 max-w-6xl items-center px-4 md:h-[72px] md:px-6">
+        <Link to="/" aria-label="SEBU 홈" className="shrink-0">
+          <img src={sebuLogo} alt="SEBU" className="h-7 w-auto md:h-8" />
         </Link>
 
-        <nav className="ml-8 hidden items-center gap-1 md:flex">
+        <nav className="ml-8 hidden items-center gap-3 md:flex">
+          <NavLink to="/search" className={navItemClass}>
+            연구실 탐색하기
+          </NavLink>
           <NavLink to="/colleges" className={navItemClass}>
             단과대별 보기
           </NavLink>
@@ -117,7 +95,7 @@ function Header() {
           <HamburgerIcon />
         </button>
 
-        {/* 데스크톱: 사용자 메뉴 + 탐색 버튼 */}
+        {/* 데스크톱: 사용자 메뉴 */}
         <div className="ml-auto hidden items-center gap-1 md:flex">
           {user ? (
             <>
@@ -142,15 +120,6 @@ function Header() {
               로그인
             </Link>
           )}
-
-          <Link
-            to="/search"
-            className="ml-1 flex items-center gap-1.5 rounded-full bg-brand-500 px-4 py-2 text-[13px] font-bold whitespace-nowrap text-white transition-all hover:brightness-95"
-            style={{ boxShadow: "var(--shadow-cta)" }}
-          >
-            연구실 탐색하기
-            <ArrowRightIcon />
-          </Link>
         </div>
       </div>
 

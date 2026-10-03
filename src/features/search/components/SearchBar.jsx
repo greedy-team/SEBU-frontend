@@ -1,31 +1,56 @@
+function SearchIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  );
+}
+
 function SearchBar({
   value,
   onChange,
   onSearch,
-  placeholder = "관심 분야, 역량, 연구실 이름을 검색해보세요",
+  placeholder = "관심 분야, 교수명, 연구실 이름을 검색해보세요",
 }) {
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") onSearch();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSearch();
   };
 
   return (
-    <div className="w-full h-12 bg-white border border-gray-200 rounded-lg flex items-center px-4 gap-2">
+    <form
+      role="search"
+      onSubmit={handleSubmit}
+      className="flex h-14 w-full items-center rounded-full border-2 border-brand-200 bg-white pr-2 pl-6 transition-shadow focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-200"
+      style={{ boxShadow: "var(--shadow-widget)" }}
+    >
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKeyDown}
         placeholder={placeholder}
         aria-label="연구실 검색"
-        className="flex-1 outline-none text-sm placeholder:text-gray-400"
+        className="min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-gray-400"
       />
       <button
-        onClick={onSearch}
-        className="text-sm bg-blue-600 text-white px-4 py-1.5 rounded-md hover:bg-blue-700"
+        type="submit"
+        aria-label="검색"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-500 text-white transition-all hover:brightness-95"
       >
-        검색
+        <SearchIcon />
       </button>
-    </div>
+    </form>
   );
 }
 

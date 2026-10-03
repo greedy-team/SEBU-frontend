@@ -1,7 +1,26 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import LabDetailModal from "./LabDetailModal";
 import BookmarkIcon from "./BookmarkIcon";
 import { useLabBookmark } from "../../hooks/useLabBookmark";
+
+function ReviewIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
 
 function LabCard({ lab, onUnbookmark }) {
   const [showModal, setShowModal] = useState(false);
@@ -45,18 +64,30 @@ function LabCard({ lab, onUnbookmark }) {
               ))}
             </div>
 
-            <button
-              aria-label={bookmarked ? "북마크 해제" : "북마크"}
-              onClick={toggleBookmark}
-              className={`ml-auto flex shrink-0 items-center gap-1.5 text-xs transition-colors ${
-                bookmarked
-                  ? "text-brand-500"
-                  : "text-gray-400 hover:text-brand-500"
-              }`}
-            >
-              <BookmarkIcon filled={bookmarked} />
-              {bookmarkCount}
-            </button>
+            <div className="ml-auto flex shrink-0 items-center gap-3">
+              <Link
+                to={`/community/labs/${lab.id}`}
+                onClick={(e) => e.stopPropagation()}
+                aria-label={`${name} 랩실 평가 보러가기`}
+                className="flex items-center gap-1 rounded-full bg-violet-50 px-2.5 py-1 text-xs font-bold text-violet-600 transition-colors hover:bg-violet-100"
+              >
+                <ReviewIcon />
+                후기
+              </Link>
+
+              <button
+                aria-label={bookmarked ? "북마크 해제" : "북마크"}
+                onClick={toggleBookmark}
+                className={`flex items-center gap-1.5 text-xs transition-colors ${
+                  bookmarked
+                    ? "text-brand-500"
+                    : "text-gray-400 hover:text-brand-500"
+                }`}
+              >
+                <BookmarkIcon filled={bookmarked} />
+                {bookmarkCount}
+              </button>
+            </div>
           </div>
         </div>
       </div>

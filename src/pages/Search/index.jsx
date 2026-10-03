@@ -49,11 +49,13 @@ function SearchPage() {
             </span>
           </p>
         )}
-        <SearchBar
-          value={searchInput}
-          onChange={setSearchInput}
-          onSearch={handleSearch}
-        />
+        <div className="mb-5">
+          <SearchBar
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={handleSearch}
+          />
+        </div>
         {isLoading && (
           <div className="flex items-center justify-center py-32">
             <p className="text-sm text-gray-400">불러오는 중이에요…</p>
