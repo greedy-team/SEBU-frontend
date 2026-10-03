@@ -22,7 +22,7 @@ function ScrollToTopButton() {
     <button
       onClick={scrollToTop}
       aria-label="맨 위로 이동"
-      className="fixed bottom-6 right-6 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-brand-500 text-white shadow-lg transition-all hover:brightness-95"
+      className="fixed bottom-6 left-1/2 z-50 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full bg-brand-500 text-white shadow-lg transition-all hover:brightness-95"
     >
       <svg
         width="16"

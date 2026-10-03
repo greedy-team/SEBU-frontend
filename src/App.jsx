@@ -18,6 +18,7 @@ import { useAuthRestore } from "./features/auth/hooks/useAuthRestore";
 import NotFoundPage from "./pages/NotFound";
 import PrivacyPage from "./pages/Privacy";
 import ScrollToTop from "./components/common/ScrollToTop";
+import ScrollToTopButton from "./components/common/ScrollToTopButton";
 import FetchingIndicator from "./components/common/FetchingIndicator";
 function App() {
   useAuthRestore();
@@ -27,6 +28,7 @@ function App() {
       <ScrollToTop />
       <RateLimitToast />
       <FetchingIndicator />
+      <ScrollToTopButton />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/search" element={<SearchPage />} />

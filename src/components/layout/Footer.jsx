@@ -26,7 +26,7 @@ const linkClass = "transition-colors hover:text-white";
 function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300">
-      <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
+      <div className="mx-auto max-w-6xl px-4 pt-12 pb-24 md:px-6 md:pb-12">
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           <div className="flex gap-16 md:gap-24">
             <div>
