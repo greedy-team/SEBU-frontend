@@ -1,6 +1,27 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import BookmarkIcon from "./BookmarkIcon";
+
+// 공용 봉투 아이콘. 색은 버튼 글자색(currentColor)을 따라가서 Gmail은 파랑, 네이버는 초록으로 보입니다.
+function MailIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+      <path d="m22 6-10 7L2 6" />
+    </svg>
+  );
+}
+
 function LabDetailModal({
   lab,
   bookmarked,
@@ -110,16 +131,18 @@ function LabDetailModal({
                       href={buildGmailUrl(lab.professor.email)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 text-center text-xs font-medium bg-blue-50 text-blue-600 rounded-lg px-3 py-2 hover:bg-blue-100"
+                      className="flex flex-1 items-center justify-center gap-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg px-3 py-2 hover:bg-blue-100"
                     >
+                      <MailIcon />
                       Gmail로 보내기
                     </a>
                     <a
                       href={buildNaverUrl(lab.professor.email)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 text-center text-xs font-medium bg-green-50 text-green-600 rounded-lg px-3 py-2 hover:bg-green-100"
+                      className="flex flex-1 items-center justify-center gap-1.5 text-xs font-medium bg-green-50 text-green-600 rounded-lg px-3 py-2 hover:bg-green-100"
                     >
+                      <MailIcon />
                       네이버 메일로 보내기
                     </a>
                   </div>
