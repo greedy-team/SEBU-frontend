@@ -5,6 +5,7 @@ import { useAuthStore } from "../../store/authStore";
 import { logout } from "../../features/auth/api/authApi";
 import { initCsrf } from "../../features/auth/api/authApi";
 import MobileMenu from "./MobileMenu";
+import { NAV_ITEMS } from "../../constants/navigation";
 import sebuLogo from "../../assets/sebu-logo.svg";
 
 function HamburgerIcon() {
@@ -38,8 +39,6 @@ function Header() {
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   const { pathname } = useLocation();
-  const isLabArea = pathname.startsWith("/community/labs");
-  // const isCommunityArea = pathname.startsWith("/community") && !isLabArea;
   const handleLogout = async () => {
     try {
       await logout();
@@ -63,25 +62,11 @@ function Header() {
         </Link>
 
         <nav className="ml-8 hidden items-center gap-3 md:flex">
-          <NavLink to="/search" className={navItemClass}>
-            연구실 탐색하기
-          </NavLink>
-          <NavLink to="/colleges" className={navItemClass}>
-            단과대별 보기
-          </NavLink>
-          {/* 커뮤니티는 MVP 범위에서 제외 */}
-          {/* <NavLink
-            to="/community"
-            className={navItemClass({ isActive: isCommunityArea })}
-          >
-            커뮤니티
-          </NavLink> */}
-          <Link
-            to="/community/labs"
-            className={navItemClass({ isActive: isLabArea })}
-          >
-            랩실 평가
-          </Link>
+          {NAV_ITEMS.map(({ to, label }) => (
+            <NavLink key={to} to={to} className={navItemClass}>
+              {label}
+            </NavLink>
+          ))}
         </nav>
 
         {/* 모바일: 햄버거 버튼 */}
