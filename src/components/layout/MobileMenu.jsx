@@ -1,11 +1,8 @@
 import { useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
-
-const MENU_ITEMS = [
-  { to: "/search", label: "연구실 탐색" },
-  { to: "/colleges", label: "단과대별 보기" },
-  { to: "/community/labs", label: "랩실 평가" },
-];
+import { createPortal } from "react-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { NAV_ITEMS } from "../../constants/navigation";
+import sebuLogo from "../../assets/sebu-logo.svg";
 
 function CloseIcon() {
   return (
@@ -28,13 +25,15 @@ const itemClass = ({ isActive }) =>
   `block rounded-control px-4 py-3 text-[15px] ${
     isActive
       ? "bg-brand-50 font-bold text-brand-600"
-      : "font-medium text-gray-800 hover:bg-gray-50"
+      : "font-semibold text-gray-800 hover:bg-gray-50"
   }`;
 
 const subItemClass =
   "block rounded-control px-4 py-3 text-left text-[14px] font-medium text-gray-600 hover:bg-gray-50";
 
 function MobileMenu({ user, onLogout, onClose }) {
+  const { pathname } = useLocation();
+
   // 메뉴가 열려 있는 동안 뒤 화면 스크롤을 막고 Esc로 닫는다
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -51,7 +50,9 @@ function MobileMenu({ user, onLogout, onClose }) {
     };
   }, [onClose]);
 
-  return (
+  // 헤더에 backdrop-blur가 걸려 있으면 그 안의 fixed 요소가 화면이 아니라 헤더 크기에 갇히므로
+  // 서랍은 body에 직접 그린다.
+  return createPortal(
     <div
       className="fixed inset-0 z-50 md:hidden"
       role="dialog"
@@ -65,7 +66,7 @@ function MobileMenu({ user, onLogout, onClose }) {
         style={{ boxShadow: "var(--shadow-mega)" }}
       >
         <div className="flex h-14 items-center justify-between border-b border-gray-100 px-4">
-          <span className="text-[15px] font-bold text-gray-900">메뉴</span>
+          <img src={sebuLogo} alt="SEBU" className="h-7 w-auto" />
           <button
             type="button"
             onClick={onClose}
@@ -77,8 +78,18 @@ function MobileMenu({ user, onLogout, onClose }) {
         </div>
 
         <div className="flex flex-col gap-1 p-3">
-          {MENU_ITEMS.map(({ to, label }) => (
-            <NavLink key={to} to={to} onClick={onClose} className={itemClass}>
+          {NAV_ITEMS.map(({ to, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              onClick={onClose}
+              className={({ isActive }) =>
+                // 모바일의 홈(/)은 검색 페이지를 그대로 보여주므로 검색 메뉴도 선택 표시
+                itemClass({
+                  isActive: isActive || (to === "/search" && pathname === "/"),
+                })
+              }
+            >
               {label}
             </NavLink>
           ))}
@@ -108,7 +119,8 @@ function MobileMenu({ user, onLogout, onClose }) {
           )}
         </div>
       </nav>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
