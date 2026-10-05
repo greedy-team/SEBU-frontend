@@ -55,10 +55,10 @@ function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center px-4 md:h-16 md:px-6">
+    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 backdrop-blur">
+      <div className="mx-auto flex h-12 max-w-6xl items-center px-4 md:px-6">
         <Link to="/" aria-label="SEBU 홈" className="shrink-0">
-          <img src={sebuLogo} alt="SEBU" className="h-7 w-auto md:h-8" />
+          <img src={sebuLogo} alt="SEBU" className="h-6 w-auto" />
         </Link>
 
         <nav className="ml-6 hidden items-center gap-1 md:flex">
