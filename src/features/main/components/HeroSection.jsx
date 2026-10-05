@@ -36,8 +36,9 @@ function HeroSection() {
   return (
     // 첫 화면에 '연구실 후기'의 첫 항목까지만 보이도록 흰 배경 높이를 화면 높이에 맞추고,
     // 늘어난 높이 안에서 내용을 세로 가운데에 둔다 (위아래 패딩을 같게 해서 여백이 균등).
-    // 285px = 헤더 49px + 첫 항목 끝까지의 거리 230px + 여유 6px
-    <section className="mx-auto max-w-6xl px-4 pt-6 pb-10 md:flex md:min-h-[calc(100svh-285px)] md:flex-col md:justify-center md:px-6 md:py-10">
+    // 305px = 헤더 57px(높이 56px + 테두리 1px) + 첫 항목 끝까지의 거리 230px + 여유 18px
+    // (여유를 키운 만큼 배경이 짧아지고, 다음 항목의 윗부분이 화면 아래에 살짝 보인다)
+    <section className="mx-auto max-w-6xl px-4 pt-6 pb-10 md:flex md:min-h-[calc(100svh-305px)] md:flex-col md:justify-center md:px-6 md:py-10">
       {/* 일러스트는 제목 블록(영문 소제목 + 제목)과 같은 줄에서 세로 가운데를 맞춘다 */}
       <div className="flex items-center justify-between gap-10">
         <div className="min-w-0">
