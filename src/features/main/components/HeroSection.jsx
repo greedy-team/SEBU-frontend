@@ -34,7 +34,10 @@ function HeroSection() {
   };
 
   return (
-    <section className="mx-auto max-w-6xl px-4 pt-6 pb-10 md:px-6 md:pt-8 md:pb-12">
+    // 첫 화면에 '연구실 후기'의 첫 항목까지만 보이도록 흰 배경 높이를 화면 높이에 맞추고,
+    // 늘어난 높이 안에서 내용을 세로 가운데에 둔다 (위아래 패딩을 같게 해서 여백이 균등).
+    // 285px = 헤더 49px + 첫 항목 끝까지의 거리 230px + 여유 6px
+    <section className="mx-auto max-w-6xl px-4 pt-6 pb-10 md:flex md:min-h-[calc(100svh-285px)] md:flex-col md:justify-center md:px-6 md:py-10">
       {/* 일러스트는 제목 블록(영문 소제목 + 제목)과 같은 줄에서 세로 가운데를 맞춘다 */}
       <div className="flex items-center justify-between gap-10">
         <div className="min-w-0">
@@ -66,7 +69,7 @@ function HeroSection() {
       <form
         role="search"
         onSubmit={handleSearch}
-        className="mt-7 flex h-14 max-w-3xl items-center gap-2 rounded-2xl border border-brand-200 bg-gray-100 pr-2 pl-4 transition-shadow focus-within:border-brand-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-brand-200"
+        className="mt-7 flex h-14 max-w-3xl items-center gap-2 rounded-2xl border border-brand-200 bg-gray-50 pr-2 pl-4 transition-shadow focus-within:border-brand-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-brand-200"
       >
         <span className="shrink-0 text-gray-400">
           <SearchIcon />
