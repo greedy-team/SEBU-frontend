@@ -56,12 +56,12 @@ function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center px-4 md:h-[72px] md:px-6">
+      <div className="mx-auto flex h-14 max-w-6xl items-center px-4 md:h-16 md:px-6">
         <Link to="/" aria-label="SEBU 홈" className="shrink-0">
           <img src={sebuLogo} alt="SEBU" className="h-7 w-auto md:h-8" />
         </Link>
 
-        <nav className="ml-8 hidden items-center gap-3 md:flex">
+        <nav className="ml-6 hidden items-center gap-1 md:flex">
           {NAV_ITEMS.map(({ to, label }) => (
             <NavLink key={to} to={to} className={navItemClass}>
               {label}
@@ -81,7 +81,7 @@ function Header() {
         </button>
 
         {/* 데스크톱: 사용자 메뉴 */}
-        <div className="ml-auto hidden items-center gap-1 md:flex">
+        <div className="ml-auto -mr-2 hidden items-center gap-1 md:flex">
           {user ? (
             <>
               <Link
