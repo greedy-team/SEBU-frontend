@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 
-// 레포 주소가 정해지면 채워 넣기 (비어 있으면 비활성 버튼으로 보임)
-const GITHUB_URL = "";
+const GITHUB_URL = "https://github.com/greedy-team/SEBU-frontend";
 
 function GithubIcon() {
   return (
@@ -71,14 +70,11 @@ function Footer() {
               FOLLOW
             </p>
             <a
-              href={GITHUB_URL || undefined}
+              href={GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="GitHub"
-              aria-disabled={!GITHUB_URL}
-              className={`inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-gray-300 transition-colors ${
-                GITHUB_URL ? "hover:bg-white/20 hover:text-white" : "opacity-60"
-              }`}
+              aria-label="GitHub (SEBU-frontend)"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-gray-300 transition-colors hover:bg-white/20 hover:text-white"
             >
               <GithubIcon />
             </a>
