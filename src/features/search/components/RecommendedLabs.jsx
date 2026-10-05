@@ -56,7 +56,12 @@ function RecommendedLabModal({ lab, onClose }) {
 const toggleButtonClass =
   "flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-all duration-150 hover:bg-brand-50 hover:text-brand-500";
 
-function RecommendedLabs({ labs = [], defaultExpanded = false }) {
+// fillHeight: 옆 카드와 세로 길이를 맞춰야 할 때(펼친 상태에서만). 순위 목록 사이 간격이 늘어나 남는 높이를 채운다.
+function RecommendedLabs({
+  labs = [],
+  defaultExpanded = false,
+  fillHeight = false,
+}) {
   // 객체 대신 id만 저장 → 북마크로 캐시가 바뀌어도 항상 최신 lab을 찾아옴
   const [selectedLabId, setSelectedLabId] = useState(null);
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
@@ -104,7 +109,9 @@ function RecommendedLabs({ labs = [], defaultExpanded = false }) {
   return (
     <>
       <div
-        className="overflow-hidden bg-white"
+        className={`overflow-hidden bg-white ${
+          fillHeight ? (isExpanded ? "flex flex-col" : "self-start") : ""
+        }`}
         style={{
           borderRadius: isExpanded ? 16 : 40,
           border: "1px solid var(--color-line-widget)",
@@ -185,7 +192,11 @@ function RecommendedLabs({ labs = [], defaultExpanded = false }) {
 
             <div className="mx-5 mb-1 h-px bg-gray-100" />
 
-            <div className="pt-0.5 pb-3">
+            <div
+              className={`pt-0.5 pb-3 ${
+                fillHeight ? "flex flex-1 flex-col justify-evenly" : ""
+              }`}
+            >
               {topLabs.map((lab, index) => (
                 <button
                   key={lab.id}
