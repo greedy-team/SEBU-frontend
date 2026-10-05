@@ -53,7 +53,7 @@ function HeroSection() {
           src={sebuMark}
           alt=""
           aria-hidden="true"
-          className="hidden w-32 shrink-0 translate-y-6 md:block lg:w-40"
+          className="hidden w-32 shrink-0 translate-y-8 md:block md:-translate-x-14 lg:w-40 lg:-translate-x-20"
         />
       </div>
 
@@ -66,7 +66,7 @@ function HeroSection() {
       <form
         role="search"
         onSubmit={handleSearch}
-        className="mt-7 flex h-14 max-w-3xl items-center gap-2 rounded-2xl border border-brand-200 bg-white pr-2 pl-4 transition-shadow focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-200"
+        className="mt-7 flex h-14 max-w-3xl items-center gap-2 rounded-2xl border border-brand-200 bg-gray-100 pr-2 pl-4 transition-shadow focus-within:border-brand-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-brand-200"
       >
         <span className="shrink-0 text-gray-400">
           <SearchIcon />
