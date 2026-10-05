@@ -34,9 +34,10 @@ function HeroSection() {
   };
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-10 md:px-6 md:py-12">
+    <section className="mx-auto max-w-6xl px-4 pt-6 pb-10 md:px-6 md:pt-8 md:pb-12">
+      {/* 일러스트는 제목 블록(영문 소제목 + 제목)과 같은 줄에서 세로 가운데를 맞춘다 */}
       <div className="flex items-center justify-between gap-10">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0">
           <p className="text-[11px] font-bold tracking-[0.14em] text-brand-500 uppercase">
             Sejong University · Undergraduate Research Platform
           </p>
@@ -46,45 +47,45 @@ function HeroSection() {
             <br />
             플랫폼, SEBU
           </h1>
-
-          <p className="mt-4 text-sm leading-relaxed break-keep text-gray-500 md:mt-5 md:text-[15px]">
-            연구실 탐색부터 교수님 컨택, 합격 후기까지 —
-            <br />
-            학부연구생을 꿈꾸는 세종대생을 위한 전용 플랫폼입니다.
-          </p>
-
-          <form
-            role="search"
-            onSubmit={handleSearch}
-            className="mt-7 flex h-14 max-w-3xl items-center gap-2 rounded-2xl border border-brand-200 bg-white pr-2 pl-4 transition-shadow focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-200 md:mt-7"
-          >
-            <span className="shrink-0 text-gray-400">
-              <SearchIcon />
-            </span>
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="관심 분야, 교수님, 연구실 이름을 검색해보세요"
-              aria-label="연구실 검색"
-              className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
-            />
-            <button
-              type="submit"
-              className="flex h-10 shrink-0 items-center rounded-xl bg-brand-500 px-5 text-sm font-bold text-white transition-all hover:brightness-95"
-            >
-              검색
-            </button>
-          </form>
         </div>
 
         <img
           src={sebuMark}
           alt=""
           aria-hidden="true"
-          className="hidden w-28 shrink-0 md:block lg:w-36"
+          className="hidden w-32 shrink-0 translate-y-6 md:block lg:w-40"
         />
       </div>
+
+      <p className="mt-4 text-sm leading-relaxed break-keep text-gray-500 md:mt-5 md:text-[15px]">
+        연구실 탐색부터 교수님 컨택, 합격 후기까지 —
+        <br />
+        학부연구생을 꿈꾸는 세종대생을 위한 전용 플랫폼입니다.
+      </p>
+
+      <form
+        role="search"
+        onSubmit={handleSearch}
+        className="mt-7 flex h-14 max-w-3xl items-center gap-2 rounded-2xl border border-brand-200 bg-white pr-2 pl-4 transition-shadow focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-200"
+      >
+        <span className="shrink-0 text-gray-400">
+          <SearchIcon />
+        </span>
+        <input
+          type="text"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          placeholder="관심 분야, 교수님, 연구실 이름을 검색해보세요"
+          aria-label="연구실 검색"
+          className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
+        />
+        <button
+          type="submit"
+          className="flex h-10 shrink-0 items-center rounded-xl bg-brand-500 px-5 text-sm font-bold text-white transition-all hover:brightness-95"
+        >
+          검색
+        </button>
+      </form>
     </section>
   );
 }
