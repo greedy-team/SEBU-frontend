@@ -8,6 +8,15 @@ const VISIBLE_DEPARTMENTS = 2;
 const AUTOPLAY_INTERVAL_MS = 3500;
 const CARD_GAP = 16; // 트랙의 gap-4와 같은 값
 
+// 끝없이 이어지는 루프는 카드 한 세트가 화면보다 충분히 길어야 자연스럽다 (카드 6장 ≈ 1400px)
+const MIN_CARDS_FOR_LOOP = 6;
+// 스크롤이 멈춘 뒤 이 시간이 지나면 복제본 위치를 원본 위치로 되돌린다
+const SCROLL_IDLE_MS = 120;
+
+// 복제 카드가 시작되는 위치 = 원본 카드 한 세트의 폭
+const getLoopWidth = (track, count) =>
+  track.children[count].offsetLeft - track.children[0].offsetLeft;
+
 function ChevronIcon({ direction }) {
   return (
     <svg
@@ -26,7 +35,8 @@ function ChevronIcon({ direction }) {
   );
 }
 
-function CollegeCard({ college }) {
+// isClone: 끝없이 이어 보이게 하려고 뒤에 한 번 더 붙인 복제 카드. 스크린리더와 Tab 이동에서는 제외한다.
+function CollegeCard({ college, isClone = false }) {
   const departments = college.departments ?? [];
   const shown = departments.slice(0, VISIBLE_DEPARTMENTS);
   const restCount = departments.length - shown.length;
@@ -34,6 +44,8 @@ function CollegeCard({ college }) {
   return (
     <Link
       to={`/colleges?college=${college.id}`}
+      aria-hidden={isClone || undefined}
+      tabIndex={isClone ? -1 : undefined}
       className="flex w-[220px] shrink-0 flex-col gap-3 rounded-card border border-gray-200 bg-white p-5 transition-all hover:border-brand-200 hover:shadow-card"
     >
       <span className="text-[15px] font-bold text-gray-900">
@@ -101,35 +113,62 @@ function CollegeSection({ colleges, status }) {
   // 마우스를 올리거나 키보드로 포커스한 동안에는 자동 넘김을 멈춘다
   const [isInteracting, setIsInteracting] = useState(false);
 
-  // 카드 한 장씩 넘기고, 끝에서는 반대쪽 끝으로 돌아간다
-  const slide = useCallback((direction) => {
-    const track = trackRef.current;
-    if (!track) return;
+  const idleTimerRef = useRef(null);
+  const count = colleges.length;
+  const hasColleges = status === "success" && count > 0;
+  // 카드가 충분할 때만 뒤에 복제본을 붙여 끝없이 이어지게 한다
+  const canLoop = hasColleges && count >= MIN_CARDS_FOR_LOOP;
 
-    const atStart = track.scrollLeft <= 4;
-    const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+  // 카드 한 장씩 넘긴다. 맨 앞에서 이전을 누르면 복제본 쪽의 같은 위치로 몰래 옮긴 뒤 한 장 되돌아간다.
+  const slide = useCallback(
+    (direction) => {
+      const track = trackRef.current;
+      if (!track) return;
 
-    if (direction > 0 && atEnd) {
-      track.scrollTo({ left: 0, behavior: "smooth" });
-    } else if (direction < 0 && atStart) {
-      track.scrollTo({ left: track.scrollWidth, behavior: "smooth" });
-    } else {
       const cardWidth = track.firstElementChild?.getBoundingClientRect().width;
       const step = (cardWidth ?? 220) + CARD_GAP;
-      track.scrollBy({ left: direction * step, behavior: "smooth" });
-    }
-  }, []);
 
-  const hasColleges = status === "success" && colleges.length > 0;
+      if (canLoop && direction < 0 && track.scrollLeft < 1) {
+        track.scrollTo({
+          left: getLoopWidth(track, count),
+          behavior: "instant",
+        });
+      }
+      track.scrollBy({ left: direction * step, behavior: "smooth" });
+    },
+    [canLoop, count],
+  );
+
+  // 복제본 구간까지 넘어간 뒤 스크롤이 멈추면, 눈에 보이는 변화 없이 원본 구간으로 되돌린다.
+  // 스크롤 도중에 위치를 바꾸면 부드러운 이동이 끊기므로 멈춘 뒤에만 한다.
+  const handleScroll = useCallback(() => {
+    if (!canLoop) return;
+
+    clearTimeout(idleTimerRef.current);
+    idleTimerRef.current = setTimeout(() => {
+      const track = trackRef.current;
+      if (!track) return;
+
+      const loopWidth = getLoopWidth(track, count);
+      if (track.scrollLeft >= loopWidth - 1) {
+        track.scrollTo({
+          left: track.scrollLeft - loopWidth,
+          behavior: "instant",
+        });
+      }
+    }, SCROLL_IDLE_MS);
+  }, [canLoop, count]);
+
+  useEffect(() => () => clearTimeout(idleTimerRef.current), []);
 
   useEffect(() => {
-    if (!hasColleges || !isPlaying || isInteracting) return undefined;
+    if (!canLoop || !isPlaying || isInteracting) return undefined;
 
     const timer = setInterval(() => {
       if (!document.hidden) slide(1);
     }, AUTOPLAY_INTERVAL_MS);
     return () => clearInterval(timer);
-  }, [hasColleges, isPlaying, isInteracting, slide]);
+  }, [canLoop, isPlaying, isInteracting, slide]);
 
   const focusRingClass =
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500";
@@ -212,11 +251,20 @@ function CollegeSection({ colleges, status }) {
 
           <div
             ref={trackRef}
+            onScroll={handleScroll}
             className="flex gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {colleges.map((college) => (
               <CollegeCard key={college.id} college={college} />
             ))}
+            {canLoop &&
+              colleges.map((college) => (
+                <CollegeCard
+                  key={`clone-${college.id}`}
+                  college={college}
+                  isClone
+                />
+              ))}
           </div>
         </div>
       )}
