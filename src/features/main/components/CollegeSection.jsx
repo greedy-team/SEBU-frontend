@@ -1,8 +1,12 @@
-import { useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 // 학과 태그는 두 개까지만 보여주고 나머지는 +N으로 접습니다.
 const VISIBLE_DEPARTMENTS = 2;
+
+// 카드 한 장씩 천천히 넘어가는 자동 캐러셀
+const AUTOPLAY_INTERVAL_MS = 3500;
+const CARD_GAP = 16; // 트랙의 gap-4와 같은 값
 
 function ChevronIcon({ direction }) {
   return (
@@ -59,13 +63,79 @@ function CollegeCard({ college }) {
   );
 }
 
+function PauseIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <rect x="6" y="5" width="4" height="14" rx="1" />
+      <rect x="14" y="5" width="4" height="14" rx="1" />
+    </svg>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10-6.5a1 1 0 0 0 0-1.72l-10-6.5A1 1 0 0 0 8 5.5z" />
+    </svg>
+  );
+}
+
 function CollegeSection({ colleges, status }) {
   const trackRef = useRef(null);
-  const scrollBy = (amount) =>
-    trackRef.current?.scrollBy({ left: amount, behavior: "smooth" });
+  // 모션 줄이기 설정이면 자동 넘김을 끈 채로 시작
+  const [isPlaying, setIsPlaying] = useState(
+    () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  // 마우스를 올리거나 키보드로 포커스한 동안에는 자동 넘김을 멈춘다
+  const [isInteracting, setIsInteracting] = useState(false);
 
-  const arrowClass =
-    "hidden h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900 md:flex";
+  // 카드 한 장씩 넘기고, 끝에서는 반대쪽 끝으로 돌아간다
+  const slide = useCallback((direction) => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const atStart = track.scrollLeft <= 4;
+    const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+
+    if (direction > 0 && atEnd) {
+      track.scrollTo({ left: 0, behavior: "smooth" });
+    } else if (direction < 0 && atStart) {
+      track.scrollTo({ left: track.scrollWidth, behavior: "smooth" });
+    } else {
+      const cardWidth = track.firstElementChild?.getBoundingClientRect().width;
+      const step = (cardWidth ?? 220) + CARD_GAP;
+      track.scrollBy({ left: direction * step, behavior: "smooth" });
+    }
+  }, []);
+
+  const hasColleges = status === "success" && colleges.length > 0;
+
+  useEffect(() => {
+    if (!hasColleges || !isPlaying || isInteracting) return undefined;
+
+    const timer = setInterval(() => {
+      if (!document.hidden) slide(1);
+    }, AUTOPLAY_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [hasColleges, isPlaying, isInteracting, slide]);
+
+  const focusRingClass =
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500";
+  const pauseButtonClass = `hidden h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900 md:flex ${focusRingClass}`;
+  // 카드 높이의 가운데(트랙 아래 여백 8px 보정)에 세로로 맞춘다
+  const sideArrowClass = `absolute top-[calc(50%-4px)] z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-widget transition-colors hover:bg-gray-50 hover:text-gray-900 md:flex ${focusRingClass}`;
 
   return (
     <section className="mx-auto max-w-6xl px-4 pt-8 pb-6 md:px-6">
@@ -80,19 +150,11 @@ function CollegeSection({ colleges, status }) {
         <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"
-            onClick={() => scrollBy(-480)}
-            aria-label="이전 단과대학 보기"
-            className={arrowClass}
+            onClick={() => setIsPlaying((prev) => !prev)}
+            aria-label={isPlaying ? "자동 넘김 일시정지" : "자동 넘김 재생"}
+            className={pauseButtonClass}
           >
-            <ChevronIcon direction="left" />
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollBy(480)}
-            aria-label="다음 단과대학 보기"
-            className={arrowClass}
-          >
-            <ChevronIcon direction="right" />
+            {isPlaying ? <PauseIcon /> : <PlayIcon />}
           </button>
           <Link
             to="/colleges"
@@ -119,14 +181,43 @@ function CollegeSection({ colleges, status }) {
         </p>
       )}
 
-      {status === "success" && colleges.length > 0 && (
+      {hasColleges && (
         <div
-          ref={trackRef}
-          className="mt-6 flex gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          onMouseEnter={() => setIsInteracting(true)}
+          onMouseLeave={() => setIsInteracting(false)}
+          onFocus={(e) => {
+            // 마우스로 버튼을 클릭해 생긴 포커스는 무시한다 (키보드 포커스일 때만 멈춤)
+            if (e.target.matches(":focus-visible")) setIsInteracting(true);
+          }}
+          onBlur={() => setIsInteracting(false)}
+          className="relative mt-6"
         >
-          {colleges.map((college) => (
-            <CollegeCard key={college.id} college={college} />
-          ))}
+          {/* 이전/다음 화살표는 카드 양옆 가장자리에 겹쳐 놓는다 */}
+          <button
+            type="button"
+            onClick={() => slide(-1)}
+            aria-label="이전 단과대학 보기"
+            className={`${sideArrowClass} left-0 -translate-x-1/2`}
+          >
+            <ChevronIcon direction="left" />
+          </button>
+          <button
+            type="button"
+            onClick={() => slide(1)}
+            aria-label="다음 단과대학 보기"
+            className={`${sideArrowClass} right-0 translate-x-1/2`}
+          >
+            <ChevronIcon direction="right" />
+          </button>
+
+          <div
+            ref={trackRef}
+            className="flex gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {colleges.map((college) => (
+              <CollegeCard key={college.id} college={college} />
+            ))}
+          </div>
         </div>
       )}
     </section>
