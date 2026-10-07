@@ -20,7 +20,12 @@ function MainPage() {
           {/* 두 카드의 세로 길이를 맞추려고 items-start를 쓰지 않는다 (기본값 stretch) */}
           <div className="grid gap-6 md:grid-cols-[1fr_340px]">
             <LabReviewHighlights />
-            <RecommendedLabs labs={labs} defaultExpanded fillHeight />
+            <RecommendedLabs
+              labs={labs}
+              defaultExpanded
+              fillHeight
+              collapsible={false}
+            />
           </div>
         </section>
 

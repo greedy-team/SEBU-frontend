@@ -4,7 +4,6 @@ import { useLabBookmark } from "../../../hooks/useLabBookmark";
 import {
   TICKER_INTERVAL_MS,
   TICKER_FADE_MS,
-  rankBadgeClass,
   tickerRankClass,
 } from "../../../constants/designTokens";
 
@@ -57,14 +56,17 @@ const toggleButtonClass =
   "flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-all duration-150 hover:bg-brand-50 hover:text-brand-500";
 
 // fillHeight: 옆 카드와 세로 길이를 맞춰야 할 때(펼친 상태에서만). 순위 목록 사이 간격이 늘어나 남는 높이를 채운다.
+// collapsible: false면 접기/펼치기 토글 없이 항상 펼친 상태로 보여준다 (메인 화면). 기본값 true는 검색 화면 동작 그대로.
 function RecommendedLabs({
   labs = [],
   defaultExpanded = false,
   fillHeight = false,
+  collapsible = true,
 }) {
   // 객체 대신 id만 저장 → 북마크로 캐시가 바뀌어도 항상 최신 lab을 찾아옴
   const [selectedLabId, setSelectedLabId] = useState(null);
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const expanded = !collapsible || isExpanded;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
@@ -85,7 +87,7 @@ function RecommendedLabs({
   }, []);
 
   useEffect(() => {
-    if (isExpanded || isHovered || topLabs.length === 0) return undefined;
+    if (expanded || isHovered || topLabs.length === 0) return undefined;
 
     const interval = setInterval(() => {
       setIsVisible(false);
@@ -99,7 +101,7 @@ function RecommendedLabs({
       clearInterval(interval);
       if (fadeTimer.current) clearTimeout(fadeTimer.current);
     };
-  }, [isExpanded, isHovered, topLabs.length]);
+  }, [expanded, isHovered, topLabs.length]);
 
   const current = topLabs[currentIndex];
   const subtitleOf = (lab) => lab?.department?.name ?? lab?.college?.name ?? "";
@@ -110,10 +112,10 @@ function RecommendedLabs({
     <>
       <div
         className={`overflow-hidden bg-white ${
-          fillHeight ? (isExpanded ? "flex flex-col" : "self-start") : ""
+          fillHeight ? (expanded ? "flex flex-col" : "self-start") : ""
         }`}
         style={{
-          borderRadius: isExpanded ? 16 : 40,
+          borderRadius: expanded ? 16 : 40,
           border: "1px solid var(--color-line-widget)",
           boxShadow: "var(--shadow-widget)",
           transition: "border-radius 0.22s ease",
@@ -121,7 +123,7 @@ function RecommendedLabs({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {!isExpanded ? (
+        {!expanded ? (
           /* ── 접힘: 티커 pill ── */
           <div className="flex items-center gap-2 px-2 py-1.5">
             <span className="flex shrink-0 select-none items-center gap-1.5 rounded-full bg-live-bg px-2.5 py-1 text-[10.5px] font-black whitespace-nowrap text-live">
@@ -173,21 +175,19 @@ function RecommendedLabs({
                   <h3 className="text-[14px] font-black tracking-[-0.01em] text-gray-900">
                     🔥 실시간 인기 연구실
                   </h3>
-                  <span className="relative flex h-2 w-2 shrink-0 items-center justify-center">
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-live-dot opacity-60 animate-ping-slow" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-live-dot" />
-                  </span>
                 </div>
                 <p className="text-[11px] text-gray-400">오늘 {asOf} 기준</p>
               </div>
 
-              <button
-                onClick={() => setIsExpanded(false)}
-                className={toggleButtonClass}
-                aria-label="인기 연구실 접기"
-              >
-                <ChevronDown flipped />
-              </button>
+              {collapsible && (
+                <button
+                  onClick={() => setIsExpanded(false)}
+                  className={toggleButtonClass}
+                  aria-label="인기 연구실 접기"
+                >
+                  <ChevronDown flipped />
+                </button>
+              )}
             </div>
 
             <div className="mx-5 mb-1 h-px bg-gray-100" />
@@ -203,8 +203,11 @@ function RecommendedLabs({
                   onClick={() => setSelectedLabId(lab.id)}
                   className="flex w-full cursor-pointer items-center gap-3 px-4 py-2.5 text-left transition-colors duration-100 hover:bg-gray-50"
                 >
+                  {/* 순위는 배지 없이 숫자만: 1~3위는 파랑, 4위부터는 연한 회색 */}
                   <span
-                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-[12px] font-black ${rankBadgeClass(index + 1)}`}
+                    className={`w-7 shrink-0 text-center text-[17px] font-black ${
+                      index < 3 ? "text-brand-500" : "text-gray-300"
+                    }`}
                   >
                     {index + 1}
                   </span>
