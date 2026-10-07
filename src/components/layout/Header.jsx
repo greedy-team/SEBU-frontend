@@ -6,6 +6,7 @@ import { logout } from "../../features/auth/api/authApi";
 import { initCsrf } from "../../features/auth/api/authApi";
 import MobileMenu from "./MobileMenu";
 import { NAV_ITEMS } from "../../constants/navigation";
+import { REPORT_FORM_URL } from "../../constants/links";
 
 function HamburgerIcon() {
   return (
@@ -20,6 +21,25 @@ function HamburgerIcon() {
       aria-hidden="true"
     >
       <path d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  );
+}
+
+function HeadsetIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z" />
+      <path d="M21 16v2a4 4 0 0 1-4 4h-5" />
     </svg>
   );
 }
@@ -84,7 +104,7 @@ function Header() {
         </button>
 
         {/* 데스크톱: 사용자 메뉴 */}
-        <div className="ml-auto -mr-2 hidden items-center gap-1 md:flex">
+        <div className="ml-auto hidden items-center gap-1 md:flex">
           {user ? (
             <>
               <Link
@@ -109,6 +129,17 @@ function Header() {
               로그인
             </Link>
           )}
+          {/* 신고/제보: 아이콘 버튼, 맨 오른쪽 끝 */}
+          <a
+            href={REPORT_FORM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="신고/제보"
+            title="신고/제보"
+            className="ml-2 flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-900"
+          >
+            <HeadsetIcon />
+          </a>
         </div>
       </div>
 

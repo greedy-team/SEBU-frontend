@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { REPORT_FORM_URL } from "../../constants/links";
 
 const GITHUB_URL = "https://github.com/greedy-team/SEBU-frontend";
 
@@ -48,6 +49,16 @@ function Footer() {
                     커뮤니티
                   </Link>
                 </li> */}
+                <li>
+                  <a
+                    href={REPORT_FORM_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={linkClass}
+                  >
+                    신고/제보
+                  </a>
+                </li>
               </ul>
             </div>
 
