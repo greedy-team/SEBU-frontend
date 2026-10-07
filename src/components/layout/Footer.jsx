@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { REPORT_FORM_URL } from "../../constants/links";
+import { REPORT_FORM_URL, SUPPORT_EMAIL } from "../../constants/links";
 
 const GITHUB_URL = "https://github.com/greedy-team/SEBU-frontend";
 
@@ -28,7 +28,8 @@ function Footer() {
     <footer className="bg-gray-900 text-gray-300">
       <div className="mx-auto max-w-6xl px-4 pt-12 pb-24 md:px-6 md:pb-12">
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
-          <div className="flex gap-16 md:gap-24">
+          {/* 모바일은 칸이 좁아서 고객지원이 다음 줄로 내려가게 줄바꿈을 허용한다 */}
+          <div className="flex flex-wrap gap-x-12 gap-y-8 md:flex-nowrap md:gap-24">
             <div>
               <p className="mb-4 text-xs font-bold tracking-wide text-gray-500">
                 서비스
@@ -49,16 +50,6 @@ function Footer() {
                     커뮤니티
                   </Link>
                 </li> */}
-                <li>
-                  <a
-                    href={REPORT_FORM_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={linkClass}
-                  >
-                    신고/제보
-                  </a>
-                </li>
               </ul>
             </div>
 
@@ -71,6 +62,29 @@ function Footer() {
                   <Link to="/privacy" className={linkClass}>
                     개인정보 처리방침
                   </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="mb-4 text-xs font-bold tracking-wide text-gray-500">
+                고객지원
+              </p>
+              <ul className="flex flex-col gap-3 text-sm">
+                <li>
+                  <a
+                    href={REPORT_FORM_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={linkClass}
+                  >
+                    신고/제보
+                  </a>
+                </li>
+                <li>
+                  <a href={`mailto:${SUPPORT_EMAIL}`} className={linkClass}>
+                    {SUPPORT_EMAIL}
+                  </a>
                 </li>
               </ul>
             </div>
