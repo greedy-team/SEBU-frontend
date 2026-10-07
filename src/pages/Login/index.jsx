@@ -77,11 +77,12 @@ function LoginPage() {
 
         <LoginForm />
 
-        <div className="mt-5 flex items-start gap-2.5 rounded-control bg-brand-50 px-4 py-3.5">
+        {/* 첫 문장이 한 줄에 들어가도록 글자를 작게 하고, 좁은 화면은 안쪽 여백도 줄였다 */}
+        <div className="mt-5 flex items-start gap-2 rounded-control bg-brand-50 px-3 py-3.5 sm:gap-2.5 sm:px-4">
           <span className="mt-px shrink-0 text-brand-500">
             <InfoIcon />
           </span>
-          <p className="text-[12px] leading-relaxed text-gray-600">
+          <p className="text-[10.5px] leading-relaxed break-keep text-balance text-gray-600 sm:text-[11px]">
             세종대학교 포털(portal.sejong.ac.kr) 계정으로 로그인하세요.
             <br />
             재학생·교직원만 이용할 수 있어요.

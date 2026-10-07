@@ -1,8 +1,11 @@
-import { useState, useRef } from "react";
+import { lazy, Suspense, useCallback, useState, useRef } from "react";
 import { useLogin } from "../hooks/useLogin";
 import PrivacyConsentModal from "./PrivacyConsentModal";
 import RecoveryModal from "./RecoveryModal";
 import { useNavigate, useLocation } from "react-router-dom";
+
+// 마크다운 렌더러가 들어 있어서, "자세히 보기"를 누를 때만 불러온다.
+const PrivacyNoticeModal = lazy(() => import("./PrivacyNoticeModal"));
 
 function EyeIcon({ off }) {
   return (
@@ -31,10 +34,16 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConsent, setShowConsent] = useState(false);
+  const [showNotice, setShowNotice] = useState(false);
+  const closeNotice = useCallback(() => setShowNotice(false), []);
   const [recoveryInfo, setRecoveryInfo] = useState(null); // 복구 모달 정보
+  // 개인정보 수집·이용 동의: 기본은 미선택이고, 페이지에 들어올 때마다(= 로그인할 때마다) 다시 받는다
+  const [agreed, setAgreed] = useState(false);
+  const [consentError, setConsentError] = useState(false);
 
   const studentIdRef = useRef(null);
   const passwordRef = useRef(null);
+  const agreeRef = useRef(null);
 
   const { executeLogin, isLoading, errorInfo, clearError } = useLogin({
     onNewUser: () => setShowConsent(true),
@@ -46,6 +55,12 @@ function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isLoading) return;
+    // 동의 없이는 버튼·엔터 어느 쪽으로도 학교 인증 요청을 보내지 않는다
+    if (!agreed) {
+      setConsentError(true);
+      agreeRef.current?.focus();
+      return;
+    }
     executeLogin(studentId, password, (failType) => {
       if (failType === "studentId") studentIdRef.current.focus();
       if (failType === "password") passwordRef.current.focus();
@@ -141,6 +156,47 @@ function LoginForm() {
           </div>
         </div>
 
+        {/* [필수] 개인정보 수집·이용 동의. 자세히 보기를 열기만 해서는 동의되지 않는다 */}
+        <div className="mb-5">
+          <div className="flex items-start justify-between gap-3">
+            <label
+              htmlFor="privacyAgree"
+              className="flex cursor-pointer items-start gap-2.5 text-[13px] leading-snug text-gray-700"
+            >
+              <input
+                id="privacyAgree"
+                ref={agreeRef}
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => {
+                  setAgreed(e.target.checked);
+                  if (e.target.checked) setConsentError(false);
+                }}
+                className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-brand-500"
+              />
+              <span>
+                <span className="font-bold text-brand-500">[필수]</span>{" "}
+                개인정보 수집·이용 동의
+              </span>
+            </label>
+            <button
+              type="button"
+              onClick={() => setShowNotice(true)}
+              className="shrink-0 text-[13px] font-medium text-gray-500 underline underline-offset-2 transition-colors hover:text-gray-800"
+            >
+              자세히 보기
+            </button>
+          </div>
+          {consentError && !agreed && (
+            <p
+              role="alert"
+              className="mt-2 px-1 text-[13px] font-medium text-red-500"
+            >
+              개인정보 수집·이용에 동의해 주세요.
+            </p>
+          )}
+        </div>
+
         {errorInfo.message && (
           <p className="mb-4 px-1 text-[13px] font-medium text-red-500">
             {errorInfo.message}
@@ -150,16 +206,25 @@ function LoginForm() {
         <button
           type="submit"
           disabled={isLoading}
+          aria-disabled={!agreed}
           className={[
-            "w-full rounded-control py-3.5 text-[14px] font-bold transition-all",
+            "w-full rounded-control py-3.5 text-[14px] font-bold text-white transition-all",
             isLoading
-              ? "cursor-not-allowed bg-gray-300 text-white"
-              : "bg-brand-500 text-white hover:brightness-95",
+              ? "cursor-not-allowed bg-gray-300"
+              : agreed
+                ? "bg-brand-500 hover:brightness-95"
+                : "bg-gray-300",
           ].join(" ")}
         >
           {isLoading ? "로그인 중..." : "로그인"}
         </button>
       </form>
+
+      {showNotice && (
+        <Suspense fallback={null}>
+          <PrivacyNoticeModal onClose={closeNotice} />
+        </Suspense>
+      )}
 
       {showConsent && <PrivacyConsentModal onConfirm={handleConsentConfirm} />}
 
