@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import LoginForm from "../../features/auth/components/LoginForm";
-import sebuLogo from "../../assets/sebu-logo.svg";
 
 /**
  * 로그인 페이지.
@@ -60,7 +59,9 @@ function LoginPage() {
           <ArrowLeftIcon />
         </button>
         <Link to="/" aria-label="SEBU 홈">
-          <img src={sebuLogo} alt="SEBU" className="h-7 w-auto" />
+          <span className="text-2xl font-black tracking-[-0.02em] text-brand-500">
+            SEBU
+          </span>
         </Link>
       </header>
 

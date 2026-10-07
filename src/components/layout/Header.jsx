@@ -6,7 +6,6 @@ import { logout } from "../../features/auth/api/authApi";
 import { initCsrf } from "../../features/auth/api/authApi";
 import MobileMenu from "./MobileMenu";
 import { NAV_ITEMS } from "../../constants/navigation";
-import sebuLogo from "../../assets/sebu-logo.svg";
 
 function HamburgerIcon() {
   return (
@@ -27,8 +26,10 @@ function HamburgerIcon() {
 
 const navItemClass = ({ isActive }) =>
   [
-    "px-3 py-2 text-[15px] font-semibold whitespace-nowrap transition-colors duration-150",
-    isActive ? "text-brand-500" : "text-gray-700 hover:text-brand-500",
+    "rounded-control px-3 py-2 text-[15px] whitespace-nowrap transition-colors duration-150",
+    isActive
+      ? "bg-brand-50 font-bold text-brand-500"
+      : "font-semibold text-gray-700 hover:bg-brand-50 hover:text-brand-500",
   ].join(" ");
 
 function Header() {
@@ -38,7 +39,7 @@ function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const handleLogout = async () => {
     try {
       await logout();
@@ -58,7 +59,9 @@ function Header() {
     <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center px-4 md:px-6">
         <Link to="/" aria-label="SEBU 홈" className="shrink-0">
-          <img src={sebuLogo} alt="SEBU" className="h-6 w-auto" />
+          <span className="text-[22px] font-black tracking-[-0.02em] text-brand-500">
+            SEBU
+          </span>
         </Link>
 
         <nav className="ml-6 hidden items-center gap-1 md:flex">
@@ -100,6 +103,7 @@ function Header() {
           ) : (
             <Link
               to="/login"
+              state={{ from: pathname + search }}
               className="px-2 text-[13px] font-medium whitespace-nowrap text-gray-400 transition-colors hover:text-gray-700"
             >
               로그인

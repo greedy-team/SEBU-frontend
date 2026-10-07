@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { NAV_ITEMS } from "../../constants/navigation";
-import sebuLogo from "../../assets/sebu-logo.svg";
 
 function CloseIcon() {
   return (
@@ -32,7 +31,7 @@ const subItemClass =
   "block rounded-control px-4 py-3 text-left text-[14px] font-medium text-gray-600 hover:bg-gray-50";
 
 function MobileMenu({ user, onLogout, onClose }) {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
 
   // 메뉴가 열려 있는 동안 뒤 화면 스크롤을 막고 Esc로 닫는다
   useEffect(() => {
@@ -66,7 +65,9 @@ function MobileMenu({ user, onLogout, onClose }) {
         style={{ boxShadow: "var(--shadow-mega)" }}
       >
         <div className="flex h-14 items-center justify-between border-b border-gray-100 px-4">
-          <img src={sebuLogo} alt="SEBU" className="h-7 w-auto" />
+          <span className="text-[22px] font-black tracking-[-0.02em] text-brand-500">
+            SEBU
+          </span>
           <button
             type="button"
             onClick={onClose}
@@ -113,7 +114,12 @@ function MobileMenu({ user, onLogout, onClose }) {
               </button>
             </>
           ) : (
-            <Link to="/login" onClick={onClose} className={subItemClass}>
+            <Link
+              to="/login"
+              state={{ from: pathname + search }}
+              onClick={onClose}
+              className={subItemClass}
+            >
               로그인
             </Link>
           )}

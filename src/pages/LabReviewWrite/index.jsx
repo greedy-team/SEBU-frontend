@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import LabReviewForm from "../../features/community/components/LabReviewForm";
 import { useLabReviews } from "../../features/community/hooks/useLabReviews";
@@ -19,6 +19,7 @@ function Notice({ heading, description, action }) {
 function LabReviewWritePage() {
   const { laboratoryId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const user = useAuthStore((state) => state.user);
 
   const { laboratory, reviewedByMe, isLoading, errorCode } =
@@ -70,6 +71,7 @@ function LabReviewWritePage() {
             action={
               <Link
                 to="/login"
+                state={{ from: location.pathname + location.search }}
                 className="mt-5 inline-flex h-10 items-center rounded-full bg-brand-500 px-5 text-sm font-bold text-white transition-all hover:brightness-95"
               >
                 로그인하기
