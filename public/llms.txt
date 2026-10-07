@@ -29,7 +29,7 @@ SEBU는 세종대학교 학생들이 연구실 정보를 투명하게 공유하�
 - [연구실 탐색](https://sebu-frontend.vercel.app/search) - 키워드, 단과대, 모집상태로 연구실 검색 및 필터링
 - [단과대별 보기](https://sebu-frontend.vercel.app/colleges) - 단과대별 연구실 목록 조회
 - [커뮤니티](https://sebu-frontend.vercel.app/community) - 세종대 학생들의 자유게시판 및 질문게시판
-- [랩실 평가](https://sebu-frontend.vercel.app/community/labs) - 연구실 익명 후기 조회 및 작성
+- [랩실 후기](https://sebu-frontend.vercel.app/community/labs) - 연구실 익명 후기 조회 및 작성
 - [마이페이지](https://sebu-frontend.vercel.app/mypage) - 프로필 관리 및 북마크한 연구실 목록
 
 ## 페이지 구조
@@ -38,7 +38,7 @@ SEBU는 세종대학교 학생들이 연구실 정보를 투명하게 공유하�
 - `/search` - 연구실 검색 페이지
 - `/colleges` - 단과대별 연구실 페이지
 - `/community` - 커뮤니티 페이지
-- `/community/labs` - 랩실 평가 페이지
+- `/community/labs` - 랩실 후기 페이지
 - `/login` - 로그인 페이지 (세종대 포털 계정 필요)
 - `/mypage` - 마이페이지 (로그인 필요)
 
@@ -50,5 +50,5 @@ SEBU는 세종대학교 학생들이 연구실 정보를 투명하게 공유하�
 
 ## 크롤링 정책
 
-- 공개 페이지(연구실 탐색, 단과대별 보기, 랩실 평가)는 크롤링을 허용합니다.
+- 공개 페이지(연구실 탐색, 단과대별 보기, 랩실 후기)는 크롤링을 허용합니다.
 - 로그인이 필요한 페이지(마이페이지)는 크롤링을 허용하지 않습니다.

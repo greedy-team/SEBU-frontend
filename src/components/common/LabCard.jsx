@@ -68,7 +68,7 @@ function LabCard({ lab, onUnbookmark }) {
               <Link
                 to={`/community/labs/${lab.id}`}
                 onClick={(e) => e.stopPropagation()}
-                aria-label={`${name} 랩실 평가 보러가기`}
+                aria-label={`${name} 랩실 후기 보러가기`}
                 className="flex items-center gap-1 rounded-full bg-violet-50 px-3 py-1.5 text-xs font-bold text-violet-600 transition-colors hover:bg-violet-100 md:px-2.5 md:py-1"
               >
                 <ReviewIcon />

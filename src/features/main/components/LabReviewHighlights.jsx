@@ -44,7 +44,7 @@ function ChevronIcon({ direction }) {
 const pagerButtonClass =
   "flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40";
 
-// 새로 올라온 후기 API가 생기기 전까지는, 랩실 평가 페이지와 같은 기준(후기 많은 순)으로 보여줍니다.
+// 새로 올라온 후기 API가 생기기 전까지는, 랩실 후기 페이지와 같은 기준(후기 많은 순)으로 보여줍니다.
 function LabReviewHighlights() {
   const { data: labs = [], isLoading, error } = useLaboratoriesQuery();
   const [page, setPage] = useState(0);
@@ -70,7 +70,7 @@ function LabReviewHighlights() {
         <div>
           <p className="flex items-center gap-1.5 text-xs font-bold text-brand-500">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
-            랩실 평가
+            랩실 후기
           </p>
           <h2 className="mt-2 text-[22px] font-black tracking-[-0.01em] text-gray-900">
             연구실 후기
@@ -113,7 +113,7 @@ function LabReviewHighlights() {
 
         {error && (
           <p className="py-10 text-center text-sm text-gray-400">
-            랩실 평가를 불러오지 못했어요.
+            랩실 후기를 불러오지 못했어요.
           </p>
         )}
 

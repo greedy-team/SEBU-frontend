@@ -3,5 +3,5 @@ export const NAV_ITEMS = [
   { to: "/search", label: "연구실 탐색하기" },
   { to: "/colleges", label: "단과대별 보기" },
   // 커뮤니티는 MVP 범위에서 제외
-  { to: "/community/labs", label: "랩실 평가" },
+  { to: "/community/labs", label: "랩실 후기" },
 ];

@@ -175,13 +175,13 @@ function LabDetailModal({
           </div>
         </div>
 
-        {/* 7. 하단 고정 - 랩실평가 + 북마크 */}
+        {/* 7. 하단 고정 - 랩실 후기 + 북마크 */}
         <div className="bg-white px-6 pt-3 pb-4 flex flex-col gap-3">
           <Link
             to={`/community/labs/${lab.id}`}
             className="flex items-center justify-center gap-1.5 bg-brand-500 text-white text-sm font-medium rounded-lg py-2.5 hover:brightness-95 transition"
           >
-            랩실 평가 보러가기
+            랩실 후기 보러가기
           </Link>
 
           <button
