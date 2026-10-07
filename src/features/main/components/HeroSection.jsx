@@ -28,9 +28,8 @@ function HeroSection() {
   const handleSearch = (e) => {
     e.preventDefault();
     const keyword = searchInput.trim();
-    navigate(
-      keyword ? `/search?keyword=${encodeURIComponent(keyword)}` : "/search",
-    );
+    // 검색어는 주소에 붙이지 않고 화면 이동 정보로 넘긴다
+    navigate("/search", { state: { keyword } });
   };
 
   return (

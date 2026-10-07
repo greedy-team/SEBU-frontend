@@ -1,16 +1,31 @@
-import { useState, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useState, useMemo } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { applyFilters, applySorting } from "../utils/labFilterUtils";
 import { useLaboratoriesQuery } from "../../../api/queries/laboratories";
 const MULTI_SELECT_KEYS = ["colleges", "categoryIds", "fieldIds"];
 
 export function useLabFilter() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const searchTerm = searchParams.get("keyword") ?? "";
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // 검색어는 주소(?keyword=)에 드러나지 않도록 화면 이동 정보(history state)에 담는다.
+  // 새로고침·뒤로가기·앞으로가기 때는 브라우저가 이 값을 그대로 복원해 준다.
+  // 예전에 공유된 ?keyword= 링크는 한 번 읽고 아래 effect에서 주소를 정리한다.
+  const legacyKeyword = searchParams.get("keyword");
+  const searchTerm = location.state?.keyword ?? legacyKeyword ?? "";
+
+  useEffect(() => {
+    if (legacyKeyword === null) return;
+    navigate(location.pathname, {
+      replace: true,
+      state: { keyword: legacyKeyword },
+    });
+  }, [legacyKeyword, location.pathname, navigate]);
 
   const [searchInput, setSearchInput] = useState(searchTerm);
   const [syncedTerm, setSyncedTerm] = useState(searchTerm);
-  // URL이 바뀌면(뒤로가기, 다른 페이지에서 검색 등) 입력창도 따라가게 함
+  // 검색어가 바뀌면(뒤로가기, 다른 페이지에서 검색 등) 입력창도 따라가게 함
   if (syncedTerm !== searchTerm) {
     setSyncedTerm(searchTerm);
     setSearchInput(searchTerm);
@@ -84,7 +99,7 @@ export function useLabFilter() {
 
   const handleSearch = () => {
     const keyword = searchInput.trim();
-    setSearchParams(keyword ? { keyword } : {});
+    navigate(location.pathname, { state: { keyword } });
   };
 
   const finalFilteredLabs = useMemo(() => {
