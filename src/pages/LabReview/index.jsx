@@ -26,7 +26,7 @@ function LabReviewPage() {
           to="/community/labs"
           className="inline-flex items-center gap-1 text-sm text-gray-500 transition-colors hover:text-gray-900"
         >
-          <span aria-hidden="true">‹</span> 랩실 평가로 돌아가기
+          <span aria-hidden="true">‹</span> 랩실 후기로 돌아가기
         </Link>
 
         {isLoading && (

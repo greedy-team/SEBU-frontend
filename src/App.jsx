@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import MainPage from "./pages/Main";
+import HomePage from "./pages/Home";
 import SearchPage from "./pages/Search";
 import CollegeView from "./pages/CollegeView";
 import LoginPage from "./pages/Login";
@@ -17,7 +17,12 @@ import LabReviewWritePage from "./pages/LabReviewWrite";
 import { useAuthRestore } from "./features/auth/hooks/useAuthRestore";
 import NotFoundPage from "./pages/NotFound";
 import ScrollToTop from "./components/common/ScrollToTop";
+import ScrollToTopButton from "./components/common/ScrollToTopButton";
 import FetchingIndicator from "./components/common/FetchingIndicator";
+
+// 개인정보 처리방침은 마크다운 렌더러를 쓰는 무거운 페이지라서, 열 때만 불러온다.
+const PrivacyPage = lazy(() => import("./pages/Privacy"));
+
 function App() {
   useAuthRestore();
 
@@ -26,13 +31,23 @@ function App() {
       <ScrollToTop />
       <RateLimitToast />
       <FetchingIndicator />
+      <ScrollToTopButton />
       <Routes>
-        <Route path="/" element={<MainPage />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/colleges" element={<CollegeView />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/design-system" element={<DesignSystem />} />
+        <Route
+          path="/privacy"
+          element={
+            // 불러오는 동안 화면이 비면 푸터가 맨 위로 올라와 깜빡이므로 빈 화면 높이를 채운다
+            <Suspense fallback={<div className="min-h-screen bg-gray-50" />}>
+              <PrivacyPage />
+            </Suspense>
+          }
+        />
 
         {/* <Route path="/community" element={<CommunityPage />} />
         <Route path="/community/write" element={<PostWritePage />} />

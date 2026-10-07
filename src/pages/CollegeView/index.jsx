@@ -1,3 +1,4 @@
+import { useSearchParams } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import PageHeader from "../../features/collegeView/components/PageHeader";
 import CollegeAccordionList from "../../features/collegeView/components/CollegeAccordionList";
@@ -5,6 +6,8 @@ import { useCollegeStats } from "../../features/collegeView/hooks/useCollegeStat
 
 function CollegeView() {
   const { colleges, totalColleges, totalLabs } = useCollegeStats(); // colleges 추가
+  const [searchParams] = useSearchParams();
+  const openCollegeId = searchParams.get("college");
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -12,7 +15,10 @@ function CollegeView() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         <PageHeader totalColleges={totalColleges} totalLabs={totalLabs} />
         <div className="mt-6">
-          <CollegeAccordionList colleges={colleges} /> {/* props로 내려주기 */}
+          <CollegeAccordionList
+            colleges={colleges}
+            openCollegeId={openCollegeId}
+          />
         </div>
       </div>
     </div>

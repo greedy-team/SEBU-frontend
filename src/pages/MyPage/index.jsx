@@ -29,10 +29,15 @@ function MyPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [removedLabIds, setRemovedLabIds] = useState(() => new Set());
   const [undoTarget, setUndoTarget] = useState(null);
+  const [showSavedToast, setShowSavedToast] = useState(false);
   const undoTimerRef = useRef(null);
+  const savedToastTimerRef = useRef(null);
 
   useEffect(() => {
-    return () => clearTimeout(undoTimerRef.current);
+    return () => {
+      clearTimeout(undoTimerRef.current);
+      clearTimeout(savedToastTimerRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -47,7 +52,12 @@ function MyPage() {
     isLoading: isFormLoading,
     introError,
     formError,
-  } = useProfileForm(data?.profile, updateUser, () => setIsModalOpen(false));
+  } = useProfileForm(updateUser, () => {
+    setIsModalOpen(false);
+    setShowSavedToast(true);
+    clearTimeout(savedToastTimerRef.current);
+    savedToastTimerRef.current = setTimeout(() => setShowSavedToast(false), 2000);
+  });
 
   // 회원 탈퇴
   const { mutate: withdraw, isPending: isDeleting } = useMutation({
@@ -198,6 +208,28 @@ function MyPage() {
         </div>
       </div>
 
+      {/* 저장 완료 토스트 */}
+      {showSavedToast && (
+        <div className="fixed top-4 left-1/2 z-50 flex items-center gap-2 rounded-full border border-gray-100 bg-white pl-3 pr-4 py-2.5 text-sm font-medium text-gray-900 shadow-widget animate-toast-in [animation-fill-mode:forwards]">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-50 text-green-500">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </span>
+          저장됐어요
+        </div>
+      )}
+
       {/* 프로필 모달 */}
       {isModalOpen && (
         <ProfileModal
@@ -215,12 +247,17 @@ function MyPage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl w-full max-w-sm mx-4 p-6">
             <h2 className="font-bold text-base mb-2">정말 탈퇴하시겠어요?</h2>
-            <p className="text-sm text-gray-500 mb-1">
-              탈퇴 후 30일 이내에 재로그인하면 계정을 복구할 수 있어요.
+            <p className="text-sm text-gray-500 mb-3">
+              탈퇴하면 아래 정책에 따라 계정이 처리돼요.
             </p>
-            <p className="text-sm text-gray-500 mb-6">
-              30일이 지나면 모든 데이터가 삭제됩니다.
-            </p>
+            <ul className="mb-6 space-y-1.5 rounded-xl bg-gray-50 px-4 py-3 text-xs text-gray-500">
+              <li>· 탈퇴 후 1시간 미만: 복구할 수 없어요</li>
+              <li>· 탈퇴 후 1시간 ~ 30일: 재로그인하면 복구할 수 있어요</li>
+              <li>
+                · 탈퇴 후 30일 이상: 계정을 복구할 수 없고, 재로그인 시 신규
+                계정으로 처리돼요
+              </li>
+            </ul>
             <div className="flex gap-3">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}

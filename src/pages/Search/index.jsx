@@ -9,7 +9,6 @@ import RecommendedLabs from "../../features/search/components/RecommendedLabs";
 // import PopularPostsCard from "../../features/community/components/PopularPostsCard";
 // import { usePopularPosts } from "../../features/community/hooks/usePopularPosts";
 import { useLabFilter } from "../../features/search/hooks/useLabFilter";
-import ScrollToTopButton from "../../components/common/ScrollToTopButton";
 
 function SearchPage() {
   const [activeTab, setActiveTab] = useState("college");
@@ -40,11 +39,31 @@ function SearchPage() {
       <Header />
 
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <SearchBar
-          value={searchInput}
-          onChange={setSearchInput}
-          onSearch={handleSearch}
-        />
+        {/* 모바일은 메인 소개 화면이 없으므로, 검색 전에만 메인 히어로와 같은 톤의 소개를 보여줌 */}
+        {searchTerm === "" && (
+          <div className="mb-5 md:hidden">
+            <p className="text-[10.5px] font-bold tracking-[0.14em] text-brand-500 uppercase">
+              Sejong University · Undergraduate Research Platform
+            </p>
+            <h1 className="mt-2 text-2xl leading-[1.25] font-black tracking-[-0.02em] break-keep text-gray-900">
+              세종대학교 학부연구생
+              <br />
+              플랫폼, SEBU
+            </h1>
+            <p className="mt-2 text-[13px] leading-relaxed break-keep text-gray-500">
+              연구실 탐색부터 교수님 컨택, 합격 후기까지
+              <br />
+              학부연구생을 위한 전용 플랫폼입니다.
+            </p>
+          </div>
+        )}
+        <div className="mb-5">
+          <SearchBar
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={handleSearch}
+          />
+        </div>
         {isLoading && (
           <div className="flex items-center justify-center py-32">
             <p className="text-sm text-gray-400">불러오는 중이에요…</p>
@@ -96,7 +115,7 @@ function SearchPage() {
                 />
                 <LabList labs={filteredLabs} />
               </div>
-              <div className="flex flex-col gap-4">
+              <div className="hidden flex-col gap-4 md:flex">
                 <RecommendedLabs labs={rawLabs} />
                 {/* <PopularPostsCard
               posts={popularPosts}
@@ -107,7 +126,6 @@ function SearchPage() {
           </>
         )}
       </div>
-      <ScrollToTopButton />
     </div>
   );
 }

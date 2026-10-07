@@ -88,7 +88,7 @@ function LabReviewList({
     <div className="overflow-hidden rounded-card border border-gray-200 bg-white">
       <div className="flex items-center border-b border-gray-100 px-5 py-4">
         <h2 className="text-sm font-bold text-gray-900">
-          랩실 평가
+          랩실 후기
           <span className="ml-1.5 font-medium text-gray-400">
             {totalElements}개 연구실
           </span>
