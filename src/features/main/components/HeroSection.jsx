@@ -38,7 +38,8 @@ function HeroSection() {
     // 늘어난 높이 안에서 내용을 세로 가운데에 둔다 (위아래 패딩을 같게 해서 여백이 균등).
     // 305px = 헤더 57px(높이 56px + 테두리 1px) + 첫 항목 끝까지의 거리 230px + 여유 18px
     // (여유를 키운 만큼 배경이 짧아지고, 다음 항목의 윗부분이 화면 아래에 살짝 보인다)
-    <section className="mx-auto max-w-6xl px-4 pt-6 pb-10 md:flex md:min-h-[calc(100svh-305px)] md:flex-col md:justify-center md:px-6 md:py-10">
+    // 최대 445px로 제한: 브라우저를 축소(줌 아웃)해서 화면이 커져도 흰 배경이 끝없이 늘어나지 않게 한다.
+    <section className="mx-auto max-w-6xl px-4 pt-6 pb-10 md:flex md:min-h-[min(calc(100svh_-_305px),445px)] md:flex-col md:justify-center md:px-6 md:py-10">
       {/* 일러스트는 제목 블록(영문 소제목 + 제목)과 같은 줄에서 세로 가운데를 맞춘다 */}
       <div className="flex items-center justify-between gap-10">
         <div className="min-w-0">
