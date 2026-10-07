@@ -11,14 +11,17 @@ const CONSENT_ITEMS = [
     id: "privacy",
     label: "개인정보 처리방침 동의",
     required: true,
-    content: "추후 내용 확정 예정",
-    href: "/privacy",
+    content:
+      "SEBU가 처리하는 개인정보의 항목·이용 목적·보유기간, 탈퇴·복구와 즉시 삭제 요청 방법, 해외 인프라 이용 내용은 개인정보 수집·이용 안내와 개인정보 처리방침에서 확인할 수 있어요.",
+    href: "/privacy#login-consent",
   },
   {
     id: "sejong",
     label: "세종대학교 계정 인증 동의",
     required: true,
-    content: "추후 내용 확정 예정",
+    content:
+      "학번과 포털 비밀번호는 세종대학교 계정 인증에만 일시적으로 사용하며 SEBU의 데이터베이스·로그에 저장하지 않아요. 인증에 성공하면 학교에서 확인한 학번·이름·학과를 회원정보에 반영해요.",
+    href: "/privacy#login-consent",
   },
 ];
 
