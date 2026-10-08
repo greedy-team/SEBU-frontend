@@ -1,3 +1,9 @@
+
+<img width="1872" height="488" alt="sebu-logo-blue-transparent" src="https://github.com/user-attachments/assets/b867dc09-6de2-4ac4-b5b0-c14b759b2797" />
+
+
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
