@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { REPORT_FORM_URL, SUPPORT_EMAIL } from "../../constants/links";
 
-const GITHUB_URL = "https://github.com/greedy-team/SEBU-frontend";
+const GITHUB_URL = "https://github.com/greedy-team/SEBU/blob/main/README.md";
 
 function GithubIcon() {
   return (
