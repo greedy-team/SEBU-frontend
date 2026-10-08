@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": " https://api.sebu.kr/api/:path*"
+      "destination": "https://api.sebu.kr/api/:path*"
     },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
