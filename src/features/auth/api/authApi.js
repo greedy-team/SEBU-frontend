@@ -1,8 +1,8 @@
-import client, { postAuth } from "../../../api/client";
+import client from "../../../api/client";
 
 export const sejongLogin = async (studentId, password) => {
   try {
-    const response = await postAuth("/auth/sejong/login", {
+    const response = await client.post("/auth/sejong/login", {
       studentId,
       password,
     });
@@ -19,7 +19,7 @@ export const sejongLogin = async (studentId, password) => {
 
 export const refreshToken = async () => {
   try {
-    const response = await postAuth("/auth/refresh");
+    const response = await client.post("/auth/refresh");
     return { ok: true, result: response.data };
   } catch (error) {
     return {
@@ -48,14 +48,14 @@ export const fetchMe = async () => {
 export const initCsrf = async () => {
   try {
     await client.get("/auth/csrf");
-  } catch {
+  } catch (error) {
     // 실패해도 조용히 넘어감
   }
 };
 
 export const logout = async () => {
   try {
-    const response = await postAuth("/auth/logout");
+    const response = await client.post("/auth/logout");
     return { ok: true, result: response.data };
   } catch (error) {
     return {
@@ -70,7 +70,7 @@ export const logout = async () => {
 // 계정 복구
 export const recoverAccount = async () => {
   try {
-    const response = await postAuth("/auth/recovery");
+    const response = await client.post("/auth/recovery");
     return { ok: true, result: response.data };
   } catch (error) {
     return {

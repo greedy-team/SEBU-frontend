@@ -1,11 +1,6 @@
 import axios from "axios";
 import { useErrorStore } from "../store/errorStore";
 import { useAuthStore } from "../store/authStore";
-import {
-  getAuthRevision,
-  recoverInvalidSession,
-  runAuthMutation,
-} from "./authSession";
 
 const client = axios.create({
   baseURL: "/api/v1",
@@ -13,21 +8,6 @@ const client = axios.create({
   xsrfCookieName: "XSRF-TOKEN",
   xsrfHeaderName: "X-XSRF-TOKEN",
 });
-
-// Keep the browser on /api: Vercel forwards it without changing cookie scope.
-export const postAuth = (url, data) =>
-  runAuthMutation(() => client.post(url, data));
-
-function isPublicRead(config) {
-  if (config.method !== "get") return false;
-  const path = config.url.split(/[?#]/, 1)[0];
-  return (
-    ["/laboratories", "/colleges", "/research-field-categories", "/posts"].includes(path) ||
-    /^\/laboratories\/\d+\/(reviews|review-summary)$/.test(path) ||
-    /^\/posts\/\d+(\/comments)?$/.test(path) ||
-    /^\/users\/\d+\/community-profile$/.test(path)
-  );
-}
 
 let rateLimitedUntil = null;
 let isRefreshing = false;
@@ -55,7 +35,6 @@ client.interceptors.request.use((config) => {
     error.retryAfter = retryAfter;
     return Promise.reject(error);
   }
-  config._authRevision = getAuthRevision();
   return config;
 });
 
@@ -63,7 +42,6 @@ client.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (!originalRequest) return Promise.reject(error);
 
     // 429 처리
     if (error.response?.status === 429) {
@@ -91,28 +69,10 @@ client.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       const errorCode = error.response?.data?.error?.code;
 
-      // Authentication endpoints own their failures; never recursively refresh them.
-      if (originalRequest.url.startsWith("/auth/")) {
-        return Promise.reject(error);
-      }
-
+      // ACCESS_TOKEN_INVALID → 탈퇴 계정 or 인증 버전 불일치
+      // refresh 호출 없이 바로 clearAuth
       if (errorCode === "ACCESS_TOKEN_INVALID") {
-        if (isPublicRead(originalRequest) && !originalRequest._sessionRetry) {
-          originalRequest._sessionRetry = true;
-          try {
-            await recoverInvalidSession(originalRequest._authRevision, async () => {
-              await client.get("/auth/csrf");
-              await client.post("/auth/logout");
-              useAuthStore.getState().clearAuth();
-            });
-            return client(originalRequest);
-          } catch {
-            return Promise.reject(error);
-          }
-        }
-        if (originalRequest._authRevision === getAuthRevision()) {
-          useAuthStore.getState().clearAuth();
-        }
+        useAuthStore.getState().clearAuth();
         return Promise.reject(error);
       }
 
@@ -139,7 +99,7 @@ client.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await postAuth("/auth/refresh");
+        await client.post("/auth/refresh");
         processQueue(null);
         return client(originalRequest);
       } catch (refreshError) {
