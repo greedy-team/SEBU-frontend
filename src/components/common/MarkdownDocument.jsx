@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -31,15 +32,30 @@ const components = {
       {children}
     </ul>
   ),
-  // 웹 주소만 새 탭으로 열고, mailto(이메일) 링크는 그대로 둔다
+  ol: ({ children }) => (
+    <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-[14px] leading-7 break-keep text-gray-600">
+      {children}
+    </ol>
+  ),
+  // 앱 안의 주소(/privacy 등)는 페이지를 새로 불러오지 않고 이동하고,
+  // 웹 주소만 새 탭으로 열며, mailto(이메일) 링크는 그대로 둔다
   a: ({ href, children }) => {
+    const linkClass =
+      "font-medium break-words text-brand-600 underline underline-offset-2 hover:text-brand-700";
+    if ((href ?? "").startsWith("/")) {
+      return (
+        <Link to={href} className={linkClass}>
+          {children}
+        </Link>
+      );
+    }
     const isWebLink = /^https?:/.test(href ?? "");
     return (
       <a
         href={href}
         target={isWebLink ? "_blank" : undefined}
         rel={isWebLink ? "noopener noreferrer" : undefined}
-        className="font-medium break-all text-brand-600 underline underline-offset-2 hover:text-brand-700"
+        className={linkClass}
       >
         {children}
       </a>

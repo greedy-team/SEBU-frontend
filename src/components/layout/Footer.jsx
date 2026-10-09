@@ -59,6 +59,11 @@ function Footer() {
               </p>
               <ul className="flex flex-col gap-3 text-sm">
                 <li>
+                  <Link to="/terms" className={linkClass}>
+                    서비스 이용약관
+                  </Link>
+                </li>
+                <li>
                   <Link to="/privacy" className={linkClass}>
                     개인정보 처리방침
                   </Link>

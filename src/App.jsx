@@ -20,8 +20,9 @@ import ScrollToTop from "./components/common/ScrollToTop";
 import ScrollToTopButton from "./components/common/ScrollToTopButton";
 import FetchingIndicator from "./components/common/FetchingIndicator";
 
-// 개인정보 처리방침은 마크다운 렌더러를 쓰는 무거운 페이지라서, 열 때만 불러온다.
+// 개인정보 처리방침·이용약관은 마크다운 렌더러를 쓰는 무거운 페이지라서, 열 때만 불러온다.
 const PrivacyPage = lazy(() => import("./pages/Privacy"));
+const TermsPage = lazy(() => import("./pages/Terms"));
 
 function App() {
   useAuthRestore();
@@ -45,6 +46,14 @@ function App() {
             // 불러오는 동안 화면이 비면 푸터가 맨 위로 올라와 깜빡이므로 빈 화면 높이를 채운다
             <Suspense fallback={<div className="min-h-screen bg-gray-50" />}>
               <PrivacyPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/terms"
+          element={
+            <Suspense fallback={<div className="min-h-screen bg-gray-50" />}>
+              <TermsPage />
             </Suspense>
           }
         />
