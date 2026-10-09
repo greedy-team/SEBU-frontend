@@ -1,9 +1,27 @@
 import { useEffect } from "react";
 import MarkdownDocument from "../../../components/common/MarkdownDocument";
 import { CURRENT_PRIVACY_DOCUMENTS } from "../../../content/privacy";
+import { CURRENT_TERMS } from "../../../content/terms";
+
+// 창에서 보여줄 문서: 이용약관 또는 개인정보 수집·이용 안내
+const NOTICE_CONTENT = {
+  terms: {
+    label: "서비스 이용약관",
+    document: CURRENT_TERMS.document,
+    fullLinkHref: "/terms",
+    fullLinkText: "이용약관 전체 페이지에서 보기",
+  },
+  privacy: {
+    label: "개인정보 수집·이용 안내",
+    document: CURRENT_PRIVACY_DOCUMENTS.consentNotice,
+    fullLinkHref: "/privacy#privacy-policy",
+    fullLinkText: "개인정보 처리방침 전문 보기",
+  },
+};
 
 /**
- * 로그인 화면의 "자세히 보기"로 여는 개인정보 수집·이용 안내 창.
+ * 로그인 화면에서 이용약관·개인정보 수집·이용 안내를 보여주는 창.
+ * type: "terms" | "privacy"
  *
  * 입력 중인 학번·비밀번호가 사라지지 않도록 페이지를 이동하지 않고 같은 화면에서 띄운다.
  * 이 창을 여는 것만으로 동의하거나 로그인 요청을 보내지 않는다.
@@ -26,7 +44,9 @@ function CloseIcon() {
   );
 }
 
-function PrivacyNoticeModal({ onClose }) {
+function PrivacyNoticeModal({ type = "privacy", onClose }) {
+  const content = NOTICE_CONTENT[type] ?? NOTICE_CONTENT.privacy;
+
   // 창이 열려 있는 동안 뒤 화면 스크롤을 막고 Esc로 닫는다
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -51,7 +71,7 @@ function PrivacyNoticeModal({ onClose }) {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="개인정보 수집·이용 안내"
+        aria-label={content.label}
         className="flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-2xl bg-white sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -67,19 +87,17 @@ function PrivacyNoticeModal({ onClose }) {
         </div>
 
         <div className="overflow-y-auto px-5 pb-6 md:px-8">
-          <MarkdownDocument>
-            {CURRENT_PRIVACY_DOCUMENTS.consentNotice}
-          </MarkdownDocument>
+          <MarkdownDocument>{content.document}</MarkdownDocument>
         </div>
 
         <div className="flex shrink-0 items-center justify-between gap-3 border-t border-gray-100 px-5 py-3 md:px-8">
           <a
-            href="/privacy#privacy-policy"
+            href={content.fullLinkHref}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[13px] font-medium text-brand-600 underline underline-offset-2 hover:text-brand-700"
           >
-            개인정보 처리방침 전문 보기
+            {content.fullLinkText}
           </a>
           <button
             type="button"

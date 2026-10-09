@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { sejongLogin } from "../api/authApi";
 import { useAuthStore } from "../../../store/authStore";
 
-export const useLogin = ({ onNewUser, onRecoveryRequired } = {}) => {
+export const useLogin = ({ onRecoveryRequired } = {}) => {
   const setAuth = useAuthStore((state) => state.setAuth);
   const [isLoading, setIsLoading] = useState(false);
   const [errorInfo, setErrorInfo] = useState({ message: "", field: null });
@@ -60,13 +60,9 @@ export const useLogin = ({ onNewUser, onRecoveryRequired } = {}) => {
         return;
       }
 
-      // 정상 로그인 (AUTHENTICATED)
+      // 정상 로그인 (AUTHENTICATED). 신규 회원도 같은 흐름이다 —
+      // 이용약관·개인정보 동의는 로그인 화면의 필수 체크박스에서 매번 받는다.
       setAuth(user);
-
-      if (user.isNewUser) {
-        onNewUser?.();
-        return;
-      }
 
       const from = location.state?.from;
       if (!from || from === "/login") {

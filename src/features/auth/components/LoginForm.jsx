@@ -1,10 +1,8 @@
 import { lazy, Suspense, useCallback, useState, useRef } from "react";
 import { useLogin } from "../hooks/useLogin";
-import PrivacyConsentModal from "./PrivacyConsentModal";
 import RecoveryModal from "./RecoveryModal";
-import { useNavigate, useLocation } from "react-router-dom";
 
-// 마크다운 렌더러가 들어 있어서, "자세히 보기"를 누를 때만 불러온다.
+// 마크다운 렌더러가 들어 있어서, 이용약관·개인정보 안내를 누를 때만 불러온다.
 const PrivacyNoticeModal = lazy(() => import("./PrivacyNoticeModal"));
 
 function EyeIcon({ off }) {
@@ -28,16 +26,14 @@ function EyeIcon({ off }) {
 }
 
 function LoginForm() {
-  const navigate = useNavigate();
-  const location = useLocation();
   const [studentId, setStudentId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showConsent, setShowConsent] = useState(false);
-  const [showNotice, setShowNotice] = useState(false);
-  const closeNotice = useCallback(() => setShowNotice(false), []);
+  // 안내 창: null(닫힘) | "terms"(이용약관) | "privacy"(개인정보 수집·이용 안내)
+  const [noticeType, setNoticeType] = useState(null);
+  const closeNotice = useCallback(() => setNoticeType(null), []);
   const [recoveryInfo, setRecoveryInfo] = useState(null); // 복구 모달 정보
-  // 개인정보 수집·이용 동의: 기본은 미선택이고, 페이지에 들어올 때마다(= 로그인할 때마다) 다시 받는다
+  // 이용약관·개인정보 수집·이용 동의: 기본은 미선택이고, 페이지에 들어올 때마다(= 로그인할 때마다) 다시 받는다
   const [agreed, setAgreed] = useState(false);
   const [consentError, setConsentError] = useState(false);
 
@@ -46,7 +42,6 @@ function LoginForm() {
   const agreeRef = useRef(null);
 
   const { executeLogin, isLoading, errorInfo, clearError } = useLogin({
-    onNewUser: () => setShowConsent(true),
     onRecoveryRequired: ({ recoveryExpiresIn, recoverableUntil }) => {
       setRecoveryInfo({ recoveryExpiresIn, recoverableUntil });
     },
@@ -84,16 +79,6 @@ function LoginForm() {
     errorInfo.field === "studentId" || errorInfo.field === "global";
   const pwError =
     errorInfo.field === "password" || errorInfo.field === "global";
-
-  const handleConsentConfirm = () => {
-    setShowConsent(false);
-    const from = location.state?.from;
-    if (!from || from === "/login") {
-      navigate("/");
-    } else {
-      navigate(from);
-    }
-  };
 
   return (
     <>
@@ -156,35 +141,42 @@ function LoginForm() {
           </div>
         </div>
 
-        {/* [필수] 개인정보 수집·이용 동의. 자세히 보기를 열기만 해서는 동의되지 않는다 */}
+        {/* [필수] 이용약관 및 개인정보 수집·이용 동의. 약관·안내를 열기만 해서는 동의되지 않는다 */}
         <div className="mb-5">
-          <div className="flex items-start justify-between gap-3">
-            <label
-              htmlFor="privacyAgree"
-              className="flex cursor-pointer items-start gap-2.5 text-[13px] leading-snug text-gray-700"
-            >
-              <input
-                id="privacyAgree"
-                ref={agreeRef}
-                type="checkbox"
-                checked={agreed}
-                onChange={(e) => {
-                  setAgreed(e.target.checked);
-                  if (e.target.checked) setConsentError(false);
-                }}
-                className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-brand-500"
-              />
-              <span>
-                <span className="font-bold text-brand-500">[필수]</span>{" "}
-                개인정보 수집·이용 동의
-              </span>
-            </label>
+          <label
+            htmlFor="privacyAgree"
+            className="flex cursor-pointer items-start gap-2.5 text-[13px] leading-snug text-gray-700"
+          >
+            <input
+              id="privacyAgree"
+              ref={agreeRef}
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => {
+                setAgreed(e.target.checked);
+                if (e.target.checked) setConsentError(false);
+              }}
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-brand-500"
+            />
+            <span>
+              <span className="font-bold text-brand-500">[필수]</span> 이용약관
+              및 개인정보 수집·이용 동의
+            </span>
+          </label>
+          <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 pl-[26px] text-xs">
             <button
               type="button"
-              onClick={() => setShowNotice(true)}
-              className="shrink-0 text-[13px] font-medium text-gray-500 underline underline-offset-2 transition-colors hover:text-gray-800"
+              onClick={() => setNoticeType("terms")}
+              className="font-medium text-gray-500 underline underline-offset-2 transition-colors hover:text-gray-800"
             >
-              자세히 보기
+              이용약관 보기
+            </button>
+            <button
+              type="button"
+              onClick={() => setNoticeType("privacy")}
+              className="font-medium text-gray-500 underline underline-offset-2 transition-colors hover:text-gray-800"
+            >
+              개인정보 수집·이용 안내 보기
             </button>
           </div>
           {consentError && !agreed && (
@@ -192,7 +184,7 @@ function LoginForm() {
               role="alert"
               className="mt-2 px-1 text-[13px] font-medium text-red-500"
             >
-              개인정보 수집·이용에 동의해 주세요.
+              이용약관 및 개인정보 수집·이용에 동의해 주세요.
             </p>
           )}
         </div>
@@ -220,13 +212,11 @@ function LoginForm() {
         </button>
       </form>
 
-      {showNotice && (
+      {noticeType && (
         <Suspense fallback={null}>
-          <PrivacyNoticeModal onClose={closeNotice} />
+          <PrivacyNoticeModal type={noticeType} onClose={closeNotice} />
         </Suspense>
       )}
-
-      {showConsent && <PrivacyConsentModal onConfirm={handleConsentConfirm} />}
 
       {recoveryInfo && (
         <RecoveryModal
